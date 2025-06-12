@@ -1,3 +1,5 @@
 # Pinterist
 
-This repository contains a simple demo page that mimics a Pinterest-style masonry layout using only HTML and CSS. Open `index.html` in your browser to see it in action.
+This project demonstrates a basic Pinterest-style layout built with just HTML, CSS, and a tiny bit of JavaScript.
+
+Open `index.html` in a browser to see sample pins loaded dynamically with infinite scrolling.
