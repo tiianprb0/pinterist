@@ -23,12 +23,13 @@
             background-color: #fff;
             padding: 10px 20px;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            height: 70px; /* Ketinggian header Pinterest */
+            min-height: 70px;
         }
 
         .logo {
@@ -153,20 +154,21 @@
         }
 
         .pin-grid {
-            column-count: 5; /* Jumlah kolom default untuk desktop */
+            column-width: 250px; /* Otomatis menyesuaikan jumlah kolom */
             column-gap: 15px;
         }
 
         .pin {
-            display: inline-block; /* Penting untuk masonry layout dengan column-count */
+            display: inline-block;
             width: 100%;
             margin-bottom: 15px;
-            border-radius: 16px; /* Radius pin Pinterest */
+            border-radius: 16px;
             overflow: hidden;
             position: relative;
             cursor: pointer;
-            background-color: #fff; /* Latar belakang pin jika gambar tidak load */
+            background-color: #fff;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            break-inside: avoid;
         }
 
         .pin img {
@@ -235,12 +237,12 @@
         /* Responsive Design */
         @media (max-width: 1200px) {
             .pin-grid {
-                column-count: 4;
+                column-width: 220px;
             }
         }
         @media (max-width: 992px) {
             .pin-grid {
-                column-count: 3;
+                column-width: 200px;
             }
             .nav-button.today, .nav-button.create {
                 display: none; /* Sembunyikan tombol Today dan Create pada layar kecil */
@@ -248,7 +250,7 @@
         }
         @media (max-width: 768px) {
             .pin-grid {
-                column-count: 2;
+                column-width: 200px;
             }
             .search-container input[type="search"] {
                 font-size: 14px;
@@ -261,7 +263,10 @@
             }
             header {
                 padding: 10px;
-                height: 60px;
+            }
+            .search-container {
+                flex-basis: 100%;
+                margin-top: 8px;
             }
             .logo {
                 width: 30px;
@@ -283,9 +288,13 @@
         }
         @media (max-width: 576px) {
             .pin-grid {
-                column-count: 1; /* Atau 2 jika masih muat */
+                column-width: 100%; /* Satu kolom penuh */
             }
-             .header-icons .icon-button:not(:last-child) { /* Sembunyikan beberapa ikon kecuali profile */
+            .search-container {
+                flex-basis: 100%;
+                margin-top: 8px;
+            }
+            .header-icons .icon-button:not(:last-child) { /* Sembunyikan beberapa ikon kecuali profile */
                 /* display: none; */ /* Kita bisa pilih untuk menyembunyikan atau tidak */
             }
             .profile-icon {
