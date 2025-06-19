@@ -1,0 +1,7 @@
+[
+    {"id": 1, "img": "https://picsum.photos/236/350?random=1", "source": "example.com"},
+    {"id": 2, "img": "https://picsum.photos/236/420?random=2", "source": "another.com"},
+    {"id": 3, "img": "https://picsum.photos/236/300?random=3", "source": "website.org"},
+    {"id": 4, "img": "https://picsum.photos/236/500?random=4", "source": "testsite.dev"},
+    {"id": 5, "img": "https://picsum.photos/236/380?random=5", "source": "coolpics.io"}
+]
