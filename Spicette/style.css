@@ -1,0 +1,1822 @@
+/* Simple CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    overscroll-behavior: none;
+}
+
+/* Header Styling (Desktop & Mobile) */
+header {
+    background-color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.08); */
+    height: 70px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.logo {
+    width: 36px;
+    height: 36px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="%23E60023"><path d="M256 8C119.1 8 8 119.1 8 256s111.1 248 248 248 248-111.1 248-248S392.9 8 256 8zm119.3 270.5c-5.3 14.9-17.5 31.9-41.1 31.9-29.3 0-44.3-21.3-44.3-47.1 0-30.1 19.9-51.3 19.9-51.3s-10.7-43.1-10.7-52.3c0-18.3 12.9-31.3 27.5-31.3 13.1 0 19.3 7.7 19.3 20.3 0 14.1-9.5 35.5-9.5 35.5s6.7-22.5 22.5-22.5c26.1 0 41.5 20.3 41.5 46.5 0 26.7-14.5 44.9-36.1 44.9-7.9 0-14.1-3.7-14.1-3.7s-2.9 11.1-3.9 14.7c-3.5 11.7-10.1 24.7-10.1 24.7s3.9 1.7 8.1 1.7c23.7 0 41.3-20.1 47.1-35.3 3.3-9.3 2.1-19.3 2.1-29.5 0-23.1-5.5-37.9-16.7-50.3-10.9-11.9-27.7-19.9-47.5-19.9-35.7 0-61.9 27.1-61.9 60.9 0 20.7 10.3 39.5 25.9 47.7 1.7 1.1 2.5 1.1 3.3 0 1.7-2.3.9-5.1.9-7.5 0-5.5-2.1-10.1-2.1-10.1s-17.3 71.1-21.1 83.7c-10.5 35.5-30.1 61.5-59.5 61.5-34.5 0-59.3-27.9-59.3-66.1 0-34.3 21.5-64.7 58.1-64.7 18.3 0 30.7 7.7 30.7 24.1 0 13.1-7.5 30.9-12.3 47.7-2.9 10.3-2.3 22.7.9 31.9 3.7 11.5 14.1 20.5 27.9 20.5 18.3 0 30.9-15.3 30.9-39.5 0-18.5-11.1-32.9-29.5-44.3-14.9-9.1-21.5-22.5-21.5-38.7 0-27.3 18.5-49.5 52.1-49.5 27.7 0 43.7 16.5 43.7 40.7 0 21.3-10.1 35.5-25.3 35.5-6.7 0-12.7-4.9-13.3-13.3 0-10.1 6.1-21.7 6.1-21.7z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 8px;
+    cursor: pointer;
+}
+        
+.header-nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-button {
+    padding: 12px 16px; font-weight: bold; border-radius: 24px; cursor: pointer; transition: background-color 0.2s ease; font-size: 16px; border: none;
+}
+.nav-button.active { background-color: #111; color: white; }
+.nav-button:not(.active) { background-color: transparent; color: #111; }
+.nav-button:hover { background-color: #e9e9e9; }
+.nav-button.active:hover { background-color: #333; }
+        
+.search-container { flex-grow: 1; margin: 0 10px; display: flex; align-items: center; }
+.search-container input[type="search"] { width: 100%; padding: 12px 20px 12px 45px; border: none; background-color: #efefef; border-radius: 24px; font-size: 16px; outline: none; }
+.search-container input[type="search"]:focus { background-color: #e0e0e0; }
+.search-icon-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+.search-icon-wrapper svg { position: absolute; left: 15px; width: 18px; height: 18px; fill: #767676; }
+
+.header-icons { display: flex; align-items: center; }
+.icon-button { background: none; border: none; padding: 8px; margin-left: 8px; cursor: pointer; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; position: relative; }
+.icon-button:hover { background-color: #e9e9e9; }
+.icon-button svg { width: 24px; height: 24px; fill: #5f5f5f; }
+.profile-icon { width: 28px; height: 28px; background-color: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #767676; }
+.mobile-notification-icon { display: none; }
+
+.notification-badge {
+    position: absolute; top: 8px; right: 5px; background-color: #e60023;
+    color: white; border-radius: 50%; width: 18px; height: 18px;
+    font-size: 11px; font-weight: bold; display: flex;
+    align-items: center; justify-content: center; border: 2px solid white;
+}
+
+/* Overlays (Search, Login, Add Pin) */
+#searchOverlay, #loginOverlay, #addPinOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #fff; z-index: 1100;
+    display: none; flex-direction: column;
+    padding-top: 15px;
+}
+.overlay-header { display: flex; align-items: center; padding: 0 15px; margin-bottom: 15px; }
+.overlay-header .search-container { margin: 0; }
+.overlay-header button { background: none; border: none; font-size: 16px; font-weight: bold; color: #111; cursor: pointer; margin-left: 10px; padding: 8px; }
+
+.overlay-content { padding: 0 15px; overflow-y: auto; }
+.overlay-content h3, .desktop-categories h3 { 
+    font-size: 16px; color: #333; margin-bottom: 15px; font-weight: bold; 
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+.desktop-categories {
+    padding: 0 20px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out, margin-bottom 0.4s ease-out;
+    margin-bottom: 0;
+}
+main.desktop-search-active .desktop-categories {
+    max-height: 400px; /* Adjust as needed */
+    opacity: 1;
+    margin-bottom: 20px;
+}
+.category-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s ease;
+}
+.category-item:hover {
+    transform: scale(1.03);
+}
+.category-item::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3); transition: background 0.2s ease;
+}
+.category-item:hover::after { background: rgba(0,0,0,0.5); }
+.category-item span {
+    position: relative; z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5); padding: 5px;
+}
+
+/* Main Content - Pin Grid Styling */
+main { padding-top: 20px; }
+.pin-grid { column-count: 5; column-gap: 15px; padding: 0 20px; }
+.pin { display: inline-block; width: 100%; margin-bottom: 15px; border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.pin img { width: 100%; height: auto; display: block; border-radius: 16px; }
+.pin-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 50%); opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; }
+.pin:hover .pin-overlay { opacity: 1; }
+.pin-overlay-top { display: flex; justify-content: flex-end; }
+.pin-overlay-bottom { display: flex; flex-direction: column; align-items: flex-start; } /* Changed to column */
+
+.pin-save-button { background-color: #e60023; color: white; border: none; padding: 12px 16px; border-radius: 24px; font-weight: bold; font-size: 14px; cursor: pointer; }
+.pin-action-icon { 
+    background: rgba(255,255,255,0.9); border:none; border-radius: 50%; 
+    width: 32px; height: 32px; /* Fixed size to prevent elongation */
+    display: flex; align-items: center; justify-content: center; 
+    cursor: pointer;
+    flex-shrink: 0; /* Prevent shrinking when parent is flexed */
+}
+.pin-action-icon svg { width: 18px; height: 18px; fill: #111; }
+
+.pin-info { color: white; font-size: 12px; text-shadow: 0 1px 3px rgba(0,0,0,0.7); width: 100%; } /* Added width 100% */
+.pin-info a { color: white; text-decoration: none; font-weight: bold; }
+.pin-title { color: white; font-size: 14px; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.7); margin-bottom: 5px; }
+.pin-bottom-actions { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 5px; } /* New container for actions */
+
+/* Modal (will be replaced by full section) */
+#messageModal {
+    display: none; /* Hide the old modal */
+}
+
+/* New Full Section Overlays (Pin Detail & Notifications) */
+#pinDetailSection, #notificationSection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f9f9f9; /* Match body background or #fff for overlay look */
+    z-index: 1500; /* Higher than other overlays like login */
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    padding-top: 70px; /* Space for fixed header */
+    overflow-y: auto; /* Allow scrolling content */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+#pinDetailSection .detail-content, #notificationSection .content-wrapper {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    max-width: 800px; /* Max width for content */
+    width: 95%; /* Adjust width for smaller screens */
+    margin: 20px auto; /* Center the content */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items inside */
+}
+
+#pinDetailSection .detail-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+#pinDetailSection .detail-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#pinDetailSection .detail-info h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#pinDetailSection .detail-info p {
+    font-size: 16px;
+    color: #5f5f5f;
+    margin-bottom: 5px;
+}
+
+#pinDetailSection .detail-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#pinDetailSection .detail-actions button {
+    background-color: #e60023;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+}
+#pinDetailSection .detail-actions button:hover {
+    background-color: #ad081b;
+}
+#pinDetailSection .detail-actions button.secondary {
+    background-color: #767676;
+}
+#pinDetailSection .detail-actions button.secondary:hover {
+    background-color: #5f5f5f;
+}
+
+/* Notification Section Specifics */
+#notificationSection h2 {
+    font-size: 28px;
+    color: #E60023;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%; /* Ensure title spans full width */
+}
+
+.notification-list-item {
+    background-color: #fcfcfc;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+    width: 100%; /* Take full width of content-wrapper */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.notification-list-item:last-child {
+    margin-bottom: 0;
+}
+.notification-list-item strong {
+    display: block; /* Make timestamp a block for new line */
+    font-size: 13px;
+    color: #767676;
+    margin-top: 5px;
+}
+.notification-close-btn {
+    background-color: #767676;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    align-self: center; /* Center the button within flex column */
+}
+.notification-close-btn:hover {
+    background-color: #5f5f5f;
+}
+
+
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav-container { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1001; }
+.mobile-bottom-nav { display: flex; padding: 8px; gap: 8px; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 30px; }
+.mobile-nav-item { display: flex; align-items: center; justify-content: center; cursor: pointer; color: #333; width: 50px; height: 50px; border-radius: 50%; transition: background-color 0.2s ease, color 0.2s ease; }
+.mobile-nav-item:hover { background-color: rgba(0, 0, 0, 0.05); }
+.mobile-nav-item.active { background-color: #111; color: #fff; }
+.mobile-nav-item svg { width: 26px; height: 26px; fill: currentColor; }
+.mobile-nav-item .profile-icon { background-color: #e0e0e0; color: #333; }
+.mobile-nav-item.active .profile-icon { background-color: #fff; color: #111; }
+
+#loading-indicator { text-align: center; padding: 20px; font-style: italic; color: #767676; }
+
+/* Login Overlay Specifics */
+#loginOverlay .overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 70px);
+}
+#loginOverlay .login-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+}
+#loginOverlay .login-form h2 {
+    margin-bottom: 20px;
+    color: #111;
+    font-size: 24px;
+}
+#loginOverlay .login-form input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    width: calc(100% - 24px);
+}
+#loginOverlay .login-form button {
+    background-color: #e60023;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#loginOverlay .login-form button:hover {
+    background-color: #ad081b;
+}
+#loginOverlay .register-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #5f5f5f;
+}
+#loginOverlay .register-text a {
+    color: #111;
+    font-weight: bold;
+    text-decoration: none;
+}
+#loginOverlay .register-text a:hover {
+    text-decoration: underline;
+}
+
+/* Clean and Elegant Add Pin Overlay */
+#addPinOverlay .add-pin-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: none; /* No box-shadow for a cleaner look */
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    border: 1px solid #eee; /* Subtle border */
+}
+#addPinOverlay .add-pin-form h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+#addPinOverlay .add-pin-form input {
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+}
+#addPinOverlay .add-pin-form button {
+    background-color: #111; /* Darker button for elegance */
+    transition: background-color 0.3s ease;
+}
+#addPinOverlay .add-pin-form button:hover {
+    background-color: #333;
+}
+
+
+/* Dropdown for More Accounts */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    min-width: 180px;
+    display: none;
+    z-index: 1000;
+    list-style: none;
+}
+
+.dropdown-menu li {
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+.dropdown-menu li:hover {
+    background-color: #f0f0f0;
+}
+.dropdown-menu li.header-item {
+    font-weight: bold;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    cursor: default;
+}
+/* Mobile Profile Dropdown (Sederhana, bisa dikembangkan) */
+#mobileProfileDropdown {
+    position: fixed;
+    bottom: 80px; /* Above mobile nav */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    z-index: 1002;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    max-width: 250px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Glassmorphism border */
+}
+#mobileProfileDropdown button {
+    background-color: #e60023;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
+#mobileProfileDropdown button.secondary {
+    background-color: #767676;
+}
+#mobileProfileDropdown button:hover {
+    opacity: 0.9;
+}
+#mobileProfileDropdown .username-display {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+
+/* Admin & User Page Specifics (for use in admin.php and user.php) */
+.admin-page-container, .user-page-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.admin-page-header, .user-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-page-header h1, .user-page-header h1 {
+    color: #E60023;
+    margin: 0;
+    font-size: 28px;
+}
+
+.admin-logout-btn, .user-logout-btn {
+    background-color: #555;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+.admin-logout-btn:hover, .user-logout-btn:hover {
+    background-color: #777;
+}
+
+.admin-section, .user-section {
+    margin-bottom: 40px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 25px;
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-section h2, .user-section h2 {
+    color: #111;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.admin-form, .user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.admin-form input, .admin-form textarea, .user-form input, .user-form textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.admin-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.admin-form button, .user-form button {
+    background-color: #E60023;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.admin-form button:hover, .user-form button:hover {
+    background-color: #ad081b;
+}
+.admin-form button.secondary, .user-form button.secondary {
+    background-color: #5f5f5f;
+}
+.admin-form button.secondary:hover, .user-form button.secondary:hover {
+    background-color: #767676;
+}
+
+.admin-list, .user-details-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+}
+
+.list-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #333;
+}
+.list-item-content strong {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #111;
+}
+.list-item-content span {
+    color: #555;
+}
+.list-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.list-item-actions {
+    margin-left: 20px;
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.list-item-actions button {
+    background-color: #e60023;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+.list-item-actions button.delete-btn {
+    background-color: #999;
+}
+.list-item-actions button:hover {
+    opacity: 0.9;
+}
+
+#message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    color: green;
+    background-color: #e6ffe6;
+    border: 1px solid green;
+    display: none;
+}
+#message.error {
+    color: red;
+    background-color: #ffe6e6;
+    border: 1px solid red;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-page-container, .user-page-container {
+        margin: 10px;
+        padding: 15px;
+    }
+    .admin-page-header, .user-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .admin-logout-btn, .user-logout-btn {
+        margin-top: 10px;
+        width: 100%;
+    }
+    .list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .list-item-img {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .list-item-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* SPECIFIC MOBILE HEADER HIDING */
+    header .search-container { /* Hide desktop search bar */
+        display: none; 
+    }
+    /* Hide desktop create button using its ID for higher specificity */
+    #desktopCreateButton { 
+        display: none; 
+    }
+    /* Hide desktop profile/more accounts icons in header, ONLY show mobile notification */
+    .header-icons .icon-button:not(.mobile-notification-icon) {
+        display: none; 
+    }
+    .mobile-notification-icon { 
+        display: flex; 
+        margin-left: auto; /* Push to right */
+    }
+    .mobile-bottom-nav-container { 
+        display: block; 
+    }
+    .desktop-categories { 
+        display: none; 
+    }
+    .pin-grid { column-count: 2; column-gap: 10px; padding: 0 10px; }
+    main { padding-top: 10px; padding-bottom: 100px; }
+    .pin { margin-bottom: 10px; }
+
+    /* Adjust overlays for mobile */
+    #searchOverlay .overlay-header,
+    #loginOverlay .overlay-header,
+    #addPinOverlay .overlay-header {
+        padding: 0 10px;
+    }
+    #loginOverlay .overlay-content,
+    #addPinOverlay .overlay-content {
+        justify-content: flex-start; /* Align to top for smaller screens */
+        padding-top: 50px;
+    }
+
+    /* Adjust new full section overlays for mobile */
+    #pinDetailSection, #notificationSection {
+        padding-top: 60px; /* Adjust for smaller header height on mobile */
+    }
+    #pinDetailSection .detail-content, #notificationSection .content-wrapper {
+        margin: 10px auto; /* Less margin on mobile */
+        padding: 15px;
+    }
+    #pinDetailSection .detail-info h2 {
+        font-size: 24px;
+    }
+    #pinDetailSection .detail-info p {
+        font-size: 14px;
+    }
+}
+        
+@media (max-width: 480px) { .search-icon-wrapper svg { left: 12px; width: 16px; height: 16px; } }
+</style>
+</head>
+<body>
+
+    <div id="pinDetailSection">
+        <div class="overlay-header">
+            <button id="closePinDetail" class="secondary">Tutup</button>
+        </div>
+        <div class="detail-content">
+            <img src="" alt="Detail Pin Image" class="detail-image" id="detailPinImage">
+            <div class="detail-info">
+                <h2 id="detailPinTitle"></h2>
+                <p>Diunggah oleh: <span id="detailPinUploadedBy"></span></p>
+                <p>Sumber: <span id="detailPinSource"></span></p>
+            </div>
+            <div class="detail-actions">
+                <button id="detailDownloadButton">Download Pin</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationSection">
+        <div class="overlay-header">
+            <button id="closeNotificationSection" class="secondary">Tutup</button>
+        </div>
+        <div class="content-wrapper">
+            <h2>Notifikasi</h2>
+            <div id="notificationListContainer">
+                <p style="text-align: center; color: #767676;">Tidak ada notifikasi baru.</p>
+            </div>
+            <button id="markAllAsReadButton" class="notification-close-btn" style="display:none;">Tandai Semua Sudah Dibaca</button>
+        </div>
+    </div>
+
+    <div id="searchOverlay">
+        <div class="overlay-header search-overlay-header">
+            <div class="search-container">
+                <div class="search-icon-wrapper">
+                    <svg aria-hidden="true" aria-label="Search" role="img" viewBox="0 0 24 24"><path d="M10 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6m13.12 2.88-4.26-4.26A9.842 9.842 0 0 0 20 10c0-5.52-4.48-10-10-10S0 4.48 0 10s4.48 10 10 10c1.67 0 3.24-.41 4.62-1.14l4.26 4.26a3 3 0 0 0 4.24 0 3 3 0 0 0 0-4.24"></path></svg>
+                    <input type="search" placeholder="Cari ide" id="mobileSearchInputOverlay">
+                </div>
+            </div>
+            <button id="closeSearchOverlay">Batal</button>
+        </div>
+        <div class="overlay-content search-overlay-content">
+            <h3>Ide untuk dijelajahi</h3>
+            <div class="category-grid" id="categoryGridMobile">
+                </div>
+        </div>
+    </div>
+
+    <div id="loginOverlay">
+        <div class="overlay-header">
+            <button id="closeLoginOverlay">Batal</button>
+        </div>
+        <div class="overlay-content">
+            <form class="login-form" id="loginForm">
+                <h2>Selamat datang kembali!</h2>
+                <input type="text" id="loginUsername" placeholder="Nama Pengguna" required>
+                <input type="password" id="loginPassword" placeholder="Kata Sandi" required>
+                <button type="submit">Login</button>
+                <p class="register-text">Belum punya akun? <a href="#" id="showRegister">Daftar</a></p>
+                <p class="register-text">Login sebagai <a href="#" id="loginAsAdmin">Admin</a></p>
+            </form>
+            <form class="login-form" id="registerForm" style="display:none;">
+                <h2>Gabung Spicette</h2>
+                <input type="text" id="registerUsername" placeholder="Nama Pengguna" required>
+                <input type="password" id="registerPassword" placeholder="Kata Sandi" required>
+                <button type="submit">Daftar</button>
+                <p class="register-text">Sudah punya akun? <a href="#" id="showLogin">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="addPinOverlay">
+        <div class="overlay-header">
+            <button id="closeAddPinOverlay">Batal</button>
+        </div>
+        <div class="overlay-content">
+            <form class="add-pin-form" id="addPinForm">
+                <h2>Buat Pin Baru</h2>
+                <input type="text" id="newPinTitle" placeholder="Judul Pin (contoh: Pemandangan Alam Indah)" required>
+                <input type="text" id="newPinImageURL" placeholder="URL Gambar (contoh: https://picsum.photos/236/350)" required>
+                <input type="text" id="newPinSource" placeholder="Sumber (contoh: example.com)" required>
+                <button type="submit">Unggah Pin</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="mobileProfileDropdown">
+        <span class="username-display" id="mobileDropdownUsernameDisplay"></span>
+        <button id="mobileDropdownMyProfile" style="display: none;">Profil Saya</button>
+        <button id="mobileDropdownAdminPanel" style="display: none;">Panel Admin</button>
+        <button id="mobileDropdownLogout">Logout</button>
+        <button class="secondary" id="mobileDropdownClose">Tutup</button>
+    </div>
+
+
+    <header>
+        <div class="logo" onclick="showMessage('Spicette Logo Diklik!')"></div>
+        <div class="header-nav-links">
+            <button class="nav-button active" data-nav="home">Beranda</button>
+            <button class="nav-button" data-nav="create" id="desktopCreateButton">Buat</button>
+            <button class="nav-button saved" data-nav="saved">Disimpan</button>
+        </div>
+
+        <div class="search-container">
+            <div class="search-icon-wrapper">
+                <svg aria-hidden="true" aria-label="Search" role="img" viewBox="0 0 24 24"><path d="M10 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6m13.12 2.88-4.26-4.26A9.842 9.842 0 0 0 20 10c0-5.52-4.48-10-10-10S0 4.48 0 10s4.48 10 10 10c1.67 0 3.24-.41 4.62-1.14l4.26 4.26a3 3 0 0 0 4.24 0 3 3 0 0 0 0-4.24"></path></svg>
+                <input type="search" placeholder="Cari" id="desktopSearchInput">
+            </div>
+        </div>
+        <div class="header-icons">
+            <button class="icon-button" aria-label="Notifikasi" id="notificationButton">
+                <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+            <button class="icon-button" aria-label="Profil" id="profileButton"><div class="profile-icon" id="profileIconLetter">G</div></button>
+            <button class="icon-button" aria-label="Akun lainnya" id="moreAccountsButton"><svg viewBox="0 0 24 24" fill="#5f5f5f" width="24px" height="24px"><path d="M7 10l5 5 5-5H7z"></path></svg></button>
+            <ul class="dropdown-menu" id="moreAccountsDropdown">
+                <li class="header-item" id="dropdownUsernameDisplay">Selamat Datang, Tamu!</li>
+                <li id="dropdownMyProfile" style="display: none;">Profil Saya</li>
+                <li id="dropdownAdminPanel" style="display: none;">Panel Admin</li>
+                <li id="dropdownLogout" style="display: none;">Logout</li>
+            </ul>
+        </div>
+        <button class="icon-button mobile-notification-icon" aria-label="Notifikasi" id="mobileNotificationButton">
+               <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+               <span class="notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
+        </button>
+    </header>
+    
+    <main>
+        <section class="desktop-categories">
+            <h3>Ide untuk dijelajahi</h3>
+            <div class="category-grid" id="categoryGridDesktop">
+                </div>
+        </section>
+        <div class="pin-grid" id="pinGrid"></div>
+        <div id="loading-indicator">Memuat pin lainnya...</div>
+    </main>
+
+    <div class="mobile-bottom-nav-container">
+        <nav class="mobile-bottom-nav">
+            <div class="mobile-nav-item active" data-action="home">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+            </div>
+            <div class="mobile-nav-item" data-action="search">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+            </div>
+            <div class="mobile-nav-item" data-action="create-pin">
+                   <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
+            </div>
+            <div class="mobile-nav-item" data-action="profile">
+                <div class="profile-icon" style="width:28px; height:28px;">G</div>
+            </div>
+        </nav>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Global State ---
+            let currentUser = null;
+            let currentSearchQuery = ''; 
+            const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
+
+            // --- API Endpoints ---
+            const API_BASE_URL = 'api/';
+
+            // --- Elements for Pin Detail Section ---
+            const pinDetailSection = document.getElementById('pinDetailSection');
+            const closePinDetailButton = document.getElementById('closePinDetail');
+            const detailPinImage = document.getElementById('detailPinImage');
+            const detailPinTitle = document.getElementById('detailPinTitle');
+            const detailPinUploadedBy = document.getElementById('detailPinUploadedBy');
+            const detailPinSource = document.getElementById('detailPinSource');
+            const detailDownloadButton = document.getElementById('detailDownloadButton');
+
+            // --- Elements for Notification Section ---
+            const notificationSection = document.getElementById('notificationSection');
+            const closeNotificationSectionButton = document.getElementById('closeNotificationSection');
+            const notificationListContainer = document.getElementById('notificationListContainer');
+            const markAllAsReadButton = document.getElementById('markAllAsReadButton');
+
+            // --- Helper Function for API Requests ---
+            async function makeApiRequest(endpoint, method = 'GET', data = null) {
+                try {
+                    const options = { method };
+                    if (data !== null && typeof data !== 'undefined') {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
+                    } else if (method === 'POST') {
+                        delete options.headers; 
+                    }
+                    
+                    const response = await fetch(API_BASE_URL + endpoint, options);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+                    }
+                    
+                    const textResponse = await response.text();
+                    if (!textResponse) {
+                        return { success: true, message: 'No content' };
+                    }
+
+                    try {
+                        const jsonResponse = JSON.parse(textResponse);
+                        return jsonResponse;
+                    } catch (e) {
+                        console.error('Failed to parse JSON response:', textResponse);
+                        throw new Error(`Invalid JSON response: ${textResponse}`);
+                    }
+
+                } catch (error) {
+                    console.error('API Request Gagal:', error);
+                    // showMessage(`Error jaringan atau server: ${error.message}`, 'Error'); // Removed general error message for overlays
+                    return { success: false, message: 'Error jaringan atau server.' };
+                }
+            }
+
+            // --- Function to Display Messages (used for non-overlay popups like login fails) ---
+            // This now replaces the old showMessage modal for general, non-critical messages.
+            const generalMessageDiv = document.createElement('div');
+            generalMessageDiv.style.cssText = `
+                position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+                background-color: rgba(0,0,0,0.7); color: white; padding: 10px 20px;
+                border-radius: 5px; z-index: 2000; display: none;
+                font-size: 14px; text-align: center;
+            `;
+            document.body.appendChild(generalMessageDiv);
+
+            window.showMessage = function(message, type = 'info') { // type can be 'info', 'success', 'error'
+                // Do not show messages for navigation/search if currentSearchQuery is active
+                const ignoredMessages = ['Beralih ke halaman Beranda', 'Menampilkan pin yang Anda simpan.', 'Menampilkan semua pin.'];
+                if (currentSearchQuery && ignoredMessages.includes(message)) {
+                    return;
+                }
+                
+                generalMessageDiv.textContent = message;
+                generalMessageDiv.style.backgroundColor = 'rgba(0,0,0,0.7)'; // Default
+                if (type === 'error') {
+                    generalMessageDiv.style.backgroundColor = '#e60023';
+                } else if (type === 'success') {
+                    generalMessageDiv.style.backgroundColor = '#4CAF50';
+                }
+
+                generalMessageDiv.style.display = 'block';
+                setTimeout(() => {
+                    generalMessageDiv.style.display = 'none';
+                }, 3000);
+            };
+
+            // --- Pin Detail Section Functions ---
+            function openPinDetail(pinData) {
+                detailPinImage.src = pinData.img;
+                detailPinImage.onerror = function() {
+                    this.onerror=null;
+                    this.src='https://placehold.co/600x800/e0e0e0/767676?text=Gambar+Tidak+Ditemukan';
+                };
+                detailPinTitle.textContent = pinData.title || 'Judul Tidak Ada';
+                detailPinUploadedBy.textContent = pinData.uploadedBy || 'Tidak Diketahui';
+                detailPinSource.textContent = pinData.source || 'Tidak Diketahui';
+
+                // Set up download button for the specific pin
+                detailDownloadButton.onclick = () => downloadPin(pinData.img);
+
+                pinDetailSection.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling background
+            }
+
+            function closePinDetail() {
+                pinDetailSection.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+            closePinDetailButton.addEventListener('click', closePinDetail);
+
+            // --- Notification Section Functions ---
+            async function openNotificationSection() {
+                notificationSection.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling background
+                await renderNotificationList(); // Load and render notifications when opened
+                markAllNotificationsAsRead(); // Mark all as read when section is opened
+            }
+
+            function closeNotificationSection() {
+                notificationSection.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+                updateNotificationBadge(); // Update badge after closing
+            }
+            closeNotificationSectionButton.addEventListener('click', closeNotificationSection);
+
+            async function renderNotificationList() {
+                notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Memuat notifikasi...</p>';
+                try {
+                    const response = await makeApiRequest('notifications.php?action=fetch_all');
+                    if (response.success && response.notifications.length > 0) {
+                        notificationListContainer.innerHTML = ''; // Clear loading message
+                        response.notifications.forEach(notif => {
+                            const notifItem = document.createElement('div');
+                            notifItem.classList.add('notification-list-item');
+                            notifItem.innerHTML = `
+                                ${notif.text}
+                                <strong>${notif.timestamp || 'N/A'}</strong>
+                            `;
+                            notificationListContainer.appendChild(notifItem);
+                        });
+                        markAllAsReadButton.style.display = 'block'; // Show mark as read button if there are notifications
+                    } else {
+                        notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Tidak ada notifikasi.</p>';
+                        markAllAsReadButton.style.display = 'none';
+                    }
+                } catch (error) {
+                    notificationListContainer.innerHTML = '<p style="text-align: center; color: red;">Gagal memuat notifikasi.</p>';
+                    markAllAsReadButton.style.display = 'none';
+                }
+            }
+
+            markAllAsReadButton.addEventListener('click', async () => {
+                await markAllNotificationsAsRead();
+                await renderNotificationList(); // Re-render to show all are read
+                showMessage('Semua notifikasi telah ditandai sebagai dibaca.', 'success');
+            });
+
+
+            // --- Memuat Pin & Kategori ---
+            const mainElement = document.querySelector('main');
+            const pinGrid = document.getElementById('pinGrid');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            let pinsPerPage = 20; 
+            let loadedPinsCount = 0; 
+            const categories = ["Untukmu", "Pakaian", "Dekorasi Rumah", "Resep", "DIY", "Kutipan", "Seni", "Perjalanan"];
+
+            function createPinElement(pinData) {
+                const pinDiv = document.createElement('div');
+                pinDiv.classList.add('pin');
+                pinDiv.dataset.id = pinData.id;
+
+                const img = document.createElement('img');
+                img.src = pinData.img;
+                img.alt = 'Gambar Pin';
+                img.onerror = function() { 
+                    this.onerror=null; 
+                    this.src='https://placehold.co/236x300/e0e0e0/767676?text=Gambar+Tidak+Ditemukan';
+                };
+
+                const overlayDiv = document.createElement('div');
+                overlayDiv.classList.add('pin-overlay');
+                
+                const overlayTop = document.createElement('div');
+                overlayTop.classList.add('pin-overlay-top');
+                
+                const saveButton = document.createElement('button');
+                saveButton.classList.add('pin-save-button');
+                
+                if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                    saveButton.textContent = 'Disimpan';
+                    saveButton.style.backgroundColor = '#767676';
+                    saveButton.disabled = true;
+                } else {
+                    saveButton.textContent = 'Simpan';
+                    saveButton.style.backgroundColor = '#e60023';
+                    saveButton.disabled = false;
+                }
+                
+                saveButton.onclick = async (e) => { 
+                    e.stopPropagation(); 
+                    if (!currentUser) {
+                        showMessage('Silakan login untuk menyimpan pin.', 'Login Diperlukan');
+                        openLogin();
+                        return;
+                    }
+
+                    const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
+                    if (response.success) {
+                        showMessage('Pin berhasil disimpan!', 'success');
+                        saveButton.textContent = 'Disimpan';
+                        saveButton.style.backgroundColor = '#767676';
+                        saveButton.disabled = true;
+                        if (currentUser.savedPins) {
+                             currentUser.savedPins.push(pinData.id);
+                        } else {
+                            currentUser.savedPins = [pinData.id];
+                        }
+                    } else {
+                        showMessage('Gagal menyimpan pin: ' + response.message, 'error');
+                    }
+                };
+                overlayTop.appendChild(saveButton);
+
+                const overlayBottom = document.createElement('div');
+                overlayBottom.classList.add('pin-overlay-bottom');
+
+                const pinTitle = document.createElement('div'); // New element for title
+                pinTitle.classList.add('pin-title');
+                pinTitle.textContent = pinData.title || 'No Title'; // Display title
+                overlayBottom.appendChild(pinTitle);
+
+                const infoDiv = document.createElement('div');
+                infoDiv.classList.add('pin-info');
+                const link = document.createElement('a');
+                link.href = `http://${pinData.source}`;
+                link.target = '_blank';
+                link.textContent = pinData.source;
+                link.onclick = (e) => e.stopPropagation(); 
+                infoDiv.appendChild(link);
+
+                const bottomActions = document.createElement('div'); // New container for download button
+                bottomActions.classList.add('pin-bottom-actions');
+                bottomActions.appendChild(infoDiv); // Put infoDiv inside bottomActions
+
+                const downloadButton = document.createElement('button');
+                downloadButton.classList.add('pin-action-icon');
+                downloadButton.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>`;
+                downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(pinData.img); };
+                
+                bottomActions.appendChild(downloadButton);
+                overlayBottom.appendChild(bottomActions); // Append bottomActions to overlayBottom
+                
+                overlayDiv.appendChild(overlayTop);
+                overlayDiv.appendChild(overlayBottom);
+
+                pinDiv.appendChild(img);
+                pinDiv.appendChild(overlayDiv);
+                
+                pinDiv.onclick = () => openPinDetail(pinData); // Open detail section on pin click
+                
+                return pinDiv;
+            }
+
+            async function loadPins(count, append = true) {
+                loadingIndicator.style.display = 'block';
+                const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
+                let endpoint = '';
+                let params = '';
+
+                if (currentSearchQuery) { // If there's an active search query
+                    endpoint = 'pins.php?action=search';
+                    params = `&query=${encodeURIComponent(currentSearchQuery)}`;
+                } else if (currentTab === 'saved') {
+                    if (!currentUser) {
+                        pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Silakan login untuk melihat pin yang Anda simpan.</p>';
+                        loadingIndicator.style.display = 'none';
+                        return;
+                    }
+                    endpoint = 'pins.php?action=fetch_saved';
+                } else {
+                    endpoint = 'pins.php?action=fetch_all';
+                }
+
+                const response = await makeApiRequest(`${endpoint}${params}`);
+                loadingIndicator.style.display = 'none';
+
+                if (response.success) {
+                    const allPins = response.pins || [];
+                    
+                    const startIndex = append ? loadedPinsCount : 0;
+                    const pinsToDisplay = allPins.slice(startIndex, startIndex + count);
+
+                    if (!append) {
+                        pinGrid.innerHTML = '';
+                        loadedPinsCount = 0;
+                    }
+
+                    const fragment = document.createDocumentFragment();
+                    pinsToDisplay.forEach(pinData => {
+                        const pinElement = createPinElement(pinData);
+                        fragment.appendChild(pinElement);
+                        loadedPinsCount++;
+                    });
+                    pinGrid.appendChild(fragment);
+
+                    if (pinsToDisplay.length === 0 && loadedPinsCount === 0) {
+                        if (currentSearchQuery) {
+                            pinGrid.innerHTML = `<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin ditemukan untuk "${currentSearchQuery}".</p>`;
+                        } else {
+                            pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin untuk ditampilkan.</p>';
+                        }
+                    }
+                } else {
+                    // showMessage('Gagal memuat pin: ' + response.message, 'Error'); // Removed general error message for overlays
+                    pinGrid.innerHTML = '<p style="text-align: center; color: #e60023; margin-top: 50px;">Error saat memuat pin. Silakan coba lagi nanti.</p>';
+                }
+            }
+
+            function loadCategories() {
+                const categoryContainers = [
+                    document.getElementById('categoryGridMobile'),
+                    document.getElementById('categoryGridDesktop')
+                ];
+
+                categoryContainers.forEach(container => {
+                    if (!container) return; 
+                    
+                    container.innerHTML = ''; 
+                    const fragment = document.createDocumentFragment();
+
+                    categories.forEach((cat) => {
+                        const catItem = document.createElement('div');
+                        catItem.className = 'category-item';
+                        
+                        const imageUrl = `https://picsum.photos/200/200?random=${Math.random()}`;
+                        catItem.style.backgroundImage = `url('${imageUrl}')`;
+
+                        const catTitle = document.createElement('span');
+                        catTitle.textContent = cat;
+                        
+                        catItem.appendChild(catTitle);
+                        
+                        catItem.onclick = function() {
+                            currentSearchQuery = cat; 
+                            // showMessage(`Menampilkan pin untuk kategori: ${cat}`); // Hapus notifikasi
+                            if (this.closest('#searchOverlay')) {
+                                closeSearch();
+                            }
+                            mainElement.classList.remove('desktop-search-active');
+                            loadedPinsCount = 0; 
+                            loadPins(pinsPerPage, false);
+                        };
+                        fragment.appendChild(catItem);
+                    });
+                    container.appendChild(fragment);
+                });
+            }
+            
+            loadCategories();
+
+            // --- Infinite Scroll ---
+            window.addEventListener('scroll', () => {
+                // Only load more pins if no overlays are active
+                if (pinDetailSection.style.display === 'none' && notificationSection.style.display === 'none' &&
+                    searchOverlay.style.display === 'none' && loginOverlay.style.display === 'none' &&
+                    addPinOverlay.style.display === 'none' && mobileProfileDropdown.style.display === 'none') {
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+                        loadPins(pinsPerPage, true);
+                    }
+                }
+            });
+
+            // --- Interaksi Pencarian/Kategori Desktop ---
+            const desktopSearchInput = document.getElementById('desktopSearchInput');
+            const desktopCategories = document.querySelector('.desktop-categories');
+            
+            desktopSearchInput.addEventListener('focus', () => {
+                mainElement.classList.add('desktop-search-active');
+            });
+            
+            desktopSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    currentSearchQuery = desktopSearchInput.value.trim();
+                    if (currentSearchQuery) {
+                        showMessage('Mencari: ' + currentSearchQuery);
+                        mainElement.classList.remove('desktop-search-active');
+                        loadedPinsCount = 0; 
+                        loadPins(pinsPerPage, false);
+                    } else {
+                        currentSearchQuery = '';
+                        // showMessage('Menampilkan semua pin.'); // Hapus notifikasi
+                        mainElement.classList.remove('desktop-search-active');
+                        loadedPinsCount = 0;
+                        loadPins(pinsPerPage, false);
+                    }
+                }
+            });
+
+            document.addEventListener('click', (event) => {
+                const isClickInsideSearch = desktopSearchInput.parentElement.parentElement.contains(event.target);
+                const isClickInsideCategories = desktopCategories.contains(event.target);
+                
+                if (!isClickInsideSearch && !isClickInsideCategories) {
+                   mainElement.classList.remove('desktop-search-active');
+                }
+            });
+
+            // --- Logika Tombol Header ---
+            const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
+            const desktopCreateButton = document.getElementById('desktopCreateButton');
+
+            // Event listener for desktop create button
+            desktopCreateButton.addEventListener('click', async function() {
+                if (!currentUser) {
+                    showMessage('Silakan login untuk membuat pin.', 'error');
+                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
+                    openLogin();
+                    return;
+                }
+                openAddPinOverlay();
+            });
+
+            headerNavButtons.forEach(button => {
+                if (button.id === 'desktopCreateButton') return; 
+
+                button.addEventListener('click', async function() {
+                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    const navAction = this.dataset.nav;
+                    currentSearchQuery = ''; 
+
+                    if (navAction === 'home') {
+                        loadedPinsCount = 0;
+                        await loadPins(pinsPerPage, false);
+                    } else if (navAction === 'saved') {
+                        if (!currentUser) {
+                            showMessage('Silakan login untuk melihat pin yang Anda simpan.', 'error');
+                            headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                            document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
+                            return;
+                        }
+                        loadedPinsCount = 0;
+                        await loadPins(pinsPerPage, false);
+                    }
+                });
+            });
+
+
+            // --- Mobile Search Overlay Logic ---
+            const searchOverlay = document.getElementById('searchOverlay');
+            const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
+            const closeSearchBtn = document.getElementById('closeSearchOverlay');
+            
+            const openSearch = () => {
+                searchOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            };
+            
+            const closeSearch = () => {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+            };
+
+            closeSearchBtn.onclick = closeSearch;
+            
+            mobileSearchInputOverlay.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && mobileSearchInputOverlay.value.trim() !== '') {
+                    currentSearchQuery = mobileSearchInputOverlay.value.trim();
+                    showMessage('Mencari: ' + currentSearchQuery);
+                    closeSearch();
+                    loadedPinsCount = 0; 
+                    loadPins(pinsPerPage, false);
+                }
+            });
+
+            // --- Logika Navigasi Mobile ---
+            const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
+            mobileNavItems.forEach(item => {
+                item.addEventListener('click', async function() {
+                    const action = this.dataset.action;
+
+                    // Close any open full-page sections when navigating tabs
+                    closePinDetail();
+                    closeNotificationSection();
+
+                    if (action === 'search') {
+                        openSearch();
+                    } else if (action === 'create-pin') { 
+                         if (!currentUser) {
+                            showMessage('Silakan login untuk membuat pin.', 'error');
+                            return;
+                        }
+                        openAddPinOverlay();
+                    }
+                    else if (action === 'profile') { 
+                        if (!currentUser) {
+                            showMessage('Silakan login untuk melihat profil Anda.', 'error');
+                            openLogin();
+                            return;
+                        }
+                        if (currentUser.isAdmin) {
+                            window.location.href = 'admin.php';
+                        } else {
+                            window.location.href = 'user.php';
+                        }
+                    }
+                    else if (action === 'notifications') { // New action for notification section
+                        openNotificationSection();
+                    }
+                    else { // For home or saved
+                        mobileNavItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        if (action === 'home' || action === 'saved') { 
+                            const desktopButton = document.querySelector(`.header-nav-links .nav-button[data-nav="${action}"]`);
+                            if (desktopButton) {
+                                headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                                desktopButton.classList.add('active');
+                            }
+                        }
+                        currentSearchQuery = ''; 
+
+                        if (action === 'home') {
+                            loadedPinsCount = 0;
+                            await loadPins(pinsPerPage, false);
+                        } else if (action === 'saved') { 
+                            if (!currentUser) {
+                                showMessage('Silakan login untuk melihat pin yang Anda simpan.', 'error');
+                                mobileNavItems.forEach(i => i.classList.remove('active'));
+                                document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
+                                return;
+                            }
+                            loadedPinsCount = 0;
+                            await loadPins(pinsPerPage, false);
+                        }
+                    }
+                });
+            });
+
+            // --- Logika Overlay Login/Daftar ---
+            const loginOverlay = document.getElementById('loginOverlay');
+            const closeLoginBtn = document.getElementById('closeLoginOverlay');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const showRegisterBtn = document.getElementById('showRegister');
+            const showLoginBtn = document.getElementById('showLogin');
+            const loginAsAdminBtn = document.getElementById('loginAsAdmin');
+
+            const profileButton = document.getElementById('profileButton');
+            const profileIconLetter = document.getElementById('profileIconLetter');
+
+            function openLogin() {
+                loginOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                loginForm.style.display = 'flex';
+                registerForm.style.display = 'none';
+            }
+
+            function closeLogin() {
+                loginOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
+            }
+
+            // Desktop Profile Icon behavior
+            profileButton.addEventListener('click', () => {
+                if (!currentUser) {
+                    openLogin();
+                } else {
+                    if (currentUser.isAdmin) {
+                        window.location.href = 'admin.php';
+                    } else {
+                        window.location.href = 'user.php';
+                    }
+                }
+            });
+
+            closeLoginBtn.onclick = closeLogin;
+
+            showRegisterBtn.onclick = (e) => {
+                e.preventDefault();
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'flex';
+            };
+
+            showLoginBtn.onclick = (e) => {
+                e.preventDefault();
+                registerForm.style.display = 'none';
+                loginForm.style.display = 'flex';
+            };
+
+            loginAsAdminBtn.onclick = (e) => {
+                e.preventDefault();
+                document.getElementById('loginUsername').value = 'admin';
+                document.getElementById('loginPassword').value = 'password123';
+                loginForm.dispatchEvent(new Event('submit'));
+            };
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                const response = await makeApiRequest('auth.php?action=login', 'POST', { username, password });
+
+                if (response.success) {
+                    currentUser = response.user;
+                    const savedResponse = await makeApiRequest(`pins.php?action=fetch_saved`);
+                    if (savedResponse.success) {
+                        currentUser.savedPins = savedResponse.pins.map(pin => pin.id);
+                    } else {
+                        currentUser.savedPins = [];
+                    }
+
+                    showMessage(`Selamat datang kembali, ${currentUser.username}!`, 'success');
+                    updateProfileDisplay();
+                    updateHeaderDropdown();
+                    updateNotificationBadge();
+                    closeLogin();
+                    loadedPinsCount = 0;
+                    await loadPins(pinsPerPage, false);
+                } else {
+                    showMessage('Login gagal: ' + response.message, 'error');
+                }
+            });
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('registerUsername').value;
+                const password = document.getElementById('registerPassword').value;
+
+                const response = await makeApiRequest('auth.php?action=register', 'POST', { username, password });
+                
+                if (response.success) {
+                    showMessage('Registrasi berhasil! Anda sekarang bisa login.', 'success');
+                    loginForm.style.display = 'flex';
+                    registerForm.style.display = 'none';
+                } else {
+                    showMessage('Registrasi gagal: ' + response.message, 'error');
+                }
+            });
+
+            // --- Tampilan Profil Pengguna & Dropdown Header ---
+            function updateProfileDisplay() {
+                const mobileProfileIcon = document.querySelector('.mobile-nav-item[data-action="profile"] .profile-icon');
+                if (currentUser) {
+                    profileIconLetter.textContent = currentUser.username.charAt(0).toUpperCase();
+                    profileIconLetter.style.backgroundColor = '#e60023';
+                    profileIconLetter.style.color = 'white';
+
+                    if (mobileProfileIcon) {
+                        mobileProfileIcon.textContent = currentUser.username.charAt(0).toUpperCase();
+                        mobileProfileIcon.style.backgroundColor = '#fff';
+                        mobileProfileIcon.style.color = '#111';
+                    }
+                } else {
+                    profileIconLetter.textContent = 'G';
+                    profileIconLetter.style.backgroundColor = '#ddd';
+                    profileIconLetter.style.color = '#767676';
+
+                    if (mobileProfileIcon) {
+                        mobileProfileIcon.textContent = 'G';
+                        mobileProfileIcon.style.backgroundColor = '#e0e0e0';
+                        mobileProfileIcon.style.color = '#333';
+                    }
+                }
+            }
+
+            const notificationButton = document.getElementById('notificationButton');
+            const mobileNotificationButton = document.getElementById('mobileNotificationButton');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const mobileNotificationBadge = document.getElementById('mobileNotificationBadge');
+
+            async function updateNotificationBadge() {
+                try {
+                    const response = await makeApiRequest('notifications.php?action=fetch_all');
+                    if (response.success) {
+                        const notifications = response.notifications || [];
+                        const unreadCount = notifications.filter(notif => !notif.read).length; 
+                        
+                        if (unreadCount > 0) {
+                            notificationBadge.textContent = unreadCount;
+                            notificationBadge.style.display = 'flex';
+                            mobileNotificationBadge.textContent = unreadCount;
+                            mobileNotificationBadge.style.display = 'flex';
+                        } else {
+                            notificationBadge.style.display = 'none';
+                            mobileNotificationBadge.style.display = 'none';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to update notification badge:', error);
+                }
+            }
+
+            async function markAllNotificationsAsRead() {
+                try {
+                    const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null); 
+                    if (response.success) {
+                        updateNotificationBadge();
+                    }
+                } catch (error) {
+                    console.error('Failed to mark notifications as read:', error);
+                }
+            }
+
+            // Notification button now opens the full notification section
+            notificationButton.addEventListener('click', openNotificationSection);
+            mobileNotificationButton.addEventListener('click', openNotificationSection);
+
+
+            // --- Pin Functions (Download) ---
+            function downloadPin(imageUrl) {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'pin_image.jpg';
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showMessage(`Mengunduh pin.`);
+            }
+
+            // --- Add Pin Overlay ---
+            const addPinOverlay = document.getElementById('addPinOverlay');
+            const closeAddPinOverlayBtn = document.getElementById('closeAddPinOverlay');
+            const addPinForm = document.getElementById('addPinForm');
+            const newPinTitle = document.getElementById('newPinTitle'); // Get new title input
+
+            function openAddPinOverlay() {
+                addPinOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeAddPinOverlay() {
+                addPinOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+                addPinForm.reset();
+            }
+
+            closeAddPinOverlayBtn.onclick = closeAddPinOverlay;
+
+            addPinForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = newPinTitle.value.trim(); // Get title value
+                const imageUrl = document.getElementById('newPinImageURL').value;
+                const source = document.getElementById('newPinSource').value;
+
+                const response = await makeApiRequest('pins.php?action=add', 'POST', { title, imageUrl, source }); // Pass title
+                if (response.success) {
+                    showMessage('Pin berhasil diunggah!', 'success');
+                    closeAddPinOverlay();
+                    loadedPinsCount = 0;
+                    await loadPins(pinsPerPage, false);
+                } else {
+                    showMessage('Gagal mengunggah pin: ' + response.message, 'error');
+                }
+            });
+
+
+            // --- Desktop More Accounts Dropdown ---
+            const moreAccountsButton = document.getElementById('moreAccountsButton');
+            const moreAccountsDropdown = document.getElementById('moreAccountsDropdown');
+            const dropdownUsernameDisplay = document.getElementById('dropdownUsernameDisplay');
+            const dropdownMyProfile = document.getElementById('dropdownMyProfile');
+            const dropdownAdminPanel = document.getElementById('dropdownAdminPanel');
+            const dropdownLogout = document.getElementById('dropdownLogout');
+
+            function toggleDropdown() {
+                updateHeaderDropdown();
+                moreAccountsDropdown.style.display = moreAccountsDropdown.style.display === 'block' ? 'none' : 'block';
+            }
+
+            function updateHeaderDropdown() {
+                if (currentUser) {
+                    dropdownUsernameDisplay.textContent = `Login sebagai ${currentUser.username}`;
+                    dropdownMyProfile.style.display = 'block';
+                    dropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
+                    dropdownLogout.style.display = 'block';
+                } else {
+                    dropdownUsernameDisplay.textContent = 'Selamat Datang, Tamu!';
+                    dropdownMyProfile.style.display = 'none';
+                    dropdownAdminPanel.style.display = 'none';
+                    dropdownLogout.style.display = 'none';
+                }
+            }
+
+            moreAccountsButton.addEventListener('click', toggleDropdown);
+
+            document.addEventListener('click', function(event) {
+                if (!moreAccountsButton.contains(event.target) && !moreAccountsDropdown.contains(event.target)) {
+                    moreAccountsDropdown.style.display = 'none';
+                }
+            });
+
+            dropdownMyProfile.addEventListener('click', () => {
+                if (currentUser) {
+                    window.location.href = 'user.php';
+                }
+                moreAccountsDropdown.style.display = 'none';
+            });
+
+            dropdownAdminPanel.addEventListener('click', () => {
+                if (currentUser && currentUser.isAdmin) {
+                    window.location.href = 'admin.php';
+                } else {
+                    showMessage('Akses ditolak: Diperlukan hak akses administrator.', 'error');
+                }
+                moreAccountsDropdown.style.display = 'none';
+            });
+
+            dropdownLogout.addEventListener('click', async () => {
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
+                if (response.success) {
+                    currentUser = null;
+                    updateProfileDisplay();
+                    updateHeaderDropdown();
+                    showMessage('Logout berhasil.', 'info');
+                    loadedPinsCount = 0;
+                    currentSearchQuery = ''; 
+                    await loadPins(pinsPerPage, false);
+                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
+                } else {
+                    showMessage('Logout gagal: ' + response.message, 'error');
+                }
+                moreAccountsDropdown.style.display = 'none';
+            });
+
+            // Mobile Profile Options (for mobile bottom nav profile icon)
+            const mobileProfileDropdown = document.getElementById('mobileProfileDropdown');
+            const mobileDropdownUsernameDisplay = document.getElementById('mobileDropdownUsernameDisplay');
+            const mobileDropdownMyProfile = document.getElementById('mobileDropdownMyProfile');
+            const mobileDropdownAdminPanel = document.getElementById('mobileDropdownAdminPanel');
+            const mobileDropdownLogout = document.getElementById('mobileDropdownLogout');
+            const mobileDropdownClose = document.getElementById('mobileDropdownClose');
+
+            function showMobileProfileOptions() {
+                if (!currentUser) return;
+
+                mobileDropdownUsernameDisplay.textContent = `Login sebagai ${currentUser.username}`;
+                mobileDropdownMyProfile.style.display = 'block';
+                mobileDropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
+                
+                mobileProfileDropdown.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            mobileDropdownMyProfile.addEventListener('click', () => {
+                if (currentUser) {
+                    window.location.href = 'user.php';
+                }
+                mobileProfileDropdown.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+
+            mobileDropdownAdminPanel.addEventListener('click', () => {
+                if (currentUser && currentUser.isAdmin) {
+                    window.location.href = 'admin.php';
+                } else {
+                    showMessage('Akses ditolak: Diperlukan hak akses administrator.', 'error');
+                }
+                mobileProfileDropdown.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+
+            mobileDropdownLogout.addEventListener('click', async () => {
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
+                if (response.success) {
+                    currentUser = null;
+                    updateProfileDisplay();
+                    updateHeaderDropdown();
+                    showMessage('Logout berhasil.', 'info');
+                    loadedPinsCount = 0;
+                    currentSearchQuery = ''; 
+                    await loadPins(pinsPerPage, false);
+                    mobileNavItems.forEach(i => i.classList.remove('active'));
+                    document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
+                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
+                } else {
+                    showMessage('Logout gagal: ' + response.message, 'error');
+                }
+                mobileProfileDropdown.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+
+            mobileDropdownClose.addEventListener('click', () => {
+                mobileProfileDropdown.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+
+            // --- Cek Sesi Awal dan Muat ---
+            async function initializeApp() {
+                const response = await makeApiRequest('auth.php?action=check_session');
+                if (response.success && response.user) {
+                    currentUser = response.user;
+                    const savedResponse = await makeApiRequest(`pins.php?action=fetch_saved`);
+                    if (savedResponse.success) {
+                        currentUser.savedPins = savedResponse.pins.map(pin => pin.id);
+                    } else {
+                        currentUser.savedPins = [];
+                    }
+                } else {
+                    currentUser = null;
+                }
+                updateProfileDisplay();
+                updateHeaderDropdown();
+                updateNotificationBadge();
+                await loadPins(pinsPerPage, false);
+            }
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
