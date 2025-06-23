@@ -8,53 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Styling for the custom message box at the bottom center */
-        #customMessageBox {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7); /* Transparent black background */
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 500;
-            z-index: 1500; /* Ensure it's above other overlays */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            white-space: nowrap; /* Prevent text from wrapping to new lines */
-        }
-
-        #customMessageBox.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        #customMessageBox.success {
-            background-color: #28a745; /* Green for success */
-        }
-
-        #customMessageBox.error {
-            background-color: #dc3545; /* Red for error */
-        }
-
-        /* Responsive adjustments for the message box */
-        @media (max-width: 480px) {
-            #customMessageBox {
-                width: calc(100% - 40px); /* Fill screen width with padding */
-                bottom: 20px;
-                padding: 10px 15px;
-                font-size: 14px;
-                text-align: center;
-                white-space: normal; /* Allow text to wrap if too long */
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -70,20 +23,18 @@
             </div>
             <div class="pin-detail-info">
                 <h2 id="pinDetailTitle"></h2>
-                <p>Diunggah oleh: <strong id="pinDetailUploadedBy"></strong></p>
-                <p id="pinDetailSourceDisplay"></p>
-                <p id="pinDetailDescription" class="pin-detail-description"></p>
-            </div>
+                <p>Uploaded by: <strong id="pinDetailUploadedBy"></strong></p>
+                <p id="pinDetailSourceDisplay"></p> <p id="pinDetailDescription" class="pin-detail-description"></p> </div>
             <div class="pin-detail-actions">
-                <button id="pinDetailSaveButton" class="pin-save-button">Simpan</button>
-                <button id="pinDetailDownloadButton" class="secondary">Unduh</button>
+                <button id="pinDetailSaveButton" class="pin-save-button">Save</button>
+                <button id="pinDetailDownloadButton" class="secondary">Download</button>
             </div>
         </div>
     </div>
 
     <div id="notificationOverlay">
         <div class="overlay-header">
-            <h2>Notifikasi</h2>
+            <h2>Notifications</h2>
             <button class="icon-button" aria-label="Close Notifications" id="closeNotificationButton">
                 <svg viewBox="0 0 24 24" fill="#5f5f5f" width="24px" height="24px"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
             </button>
@@ -94,47 +45,50 @@
             </div>
         </div>
     </div>
-
+    
     <div id="searchOverlay">
         <div class="overlay-header search-overlay-header">
             <div class="search-container">
                 <div class="search-icon-wrapper">
-                    <svg aria-hidden="true" aria-label="Search" role="img" viewBox="0 0 24 24"><path d="M10 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6m13.12 2.88-4.26-4.26A9.842 9.842 0 0 0 20 10c0-5.52-4.48-10-10-10S0 4.48 0 10s4.48 10 10 10c1.67 0 3.24-.41 4.62-1.14l4.26 4.26a3 3 0 0 0 4.24 0 3 0 0 0 0-4.24"></path></svg>
+                    <svg aria-hidden="true" aria-label="Search" role="img" viewBox="0 0 24 24"><path d="M10 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6m13.12 2.88-4.26-4.26A9.842 9.842 0 0 0 20 10c0-5.52-4.48-10-10-10S0 4.48 0 10s4.48 10 10 10c1.67 0 3.24-.41 4.62-1.14l4.26 4.26a3 3 0 0 0 4.24 0 3 3 0 0 0 0-4.24"></path></svg>
                     <input type="search" placeholder="Search ideas" id="mobileSearchInputOverlay">
                 </div>
             </div>
-            <button id="closeSearchOverlay">Batal</button>
+            <button id="closeSearchOverlay">Cancel</button>
         </div>
         <div class="overlay-content search-overlay-content">
             <div id="mobileSearchHistory"><h3>Search History</h3><ul id="mobileSearchHistoryList" class="search-history-list"></ul></div>
             <ul id="searchSuggestions"></ul>
             <div id="searchResults" class="pin-grid" style="display: none;"></div>
             <div id="searchLoadingIndicator" style="text-align: center; padding: 20px; font-style: italic; color: #767676; display: none;">Searching...</div>
-            <h3 id="categoryExploreTitle">Jelajahi Kategori</h3>
+            <h3 id="categoryExploreTitle">Explore Categories</h3>
             <div class="category-grid" id="categoryGridMobile"></div>
         </div>
     </div>
 
+    <!-- The loginOverlay div has been removed -->
+
     <div id="mobileProfileDropdown">
         <span class="username-display" id="mobileDropdownUsernameDisplay"></span>
-        <button id="mobileDropdownMyProfile" style="display: none;">Profil Saya</button>
-        <button id="mobileDropdownAdminPanel" style="display: none;">Panel Admin</button>
-        <button id="mobileDropdownLogout">Keluar</button>
-        <button class="secondary" id="mobileDropdownClose">Tutup</button>
+        <button id="mobileDropdownMyProfile" style="display: none;">My Profile</button>
+        <button id="mobileDropdownAdminPanel" style="display: none;">Admin Panel</button>
+        <button id="mobileDropdownLogout">Logout</button>
+        <button class="secondary" id="mobileDropdownClose">Close</button>
     </div>
 
+
     <header>
-        <div class="logo" onclick="showMessage('Spicette Logo Clicked!', 'info')"></div>
+        <div class="logo" onclick="showMessage('Spicette Logo Clicked!')"></div>
         <div class="header-nav-links">
-            <button class="nav-button active" data-nav="home">Beranda</button>
-            <button class="nav-button" data-nav="create" id="desktopCreateButton">Buat</button>
-            <button class="nav-button saved" data-nav="saved">Tersimpan</button>
+            <button class="nav-button active" data-nav="home">Home</button>
+            <button class="nav-button" data-nav="create" id="desktopCreateButton">Create</button>
+            <button class="nav-button saved" data-nav="saved">Saved</button>
         </div>
 
         <div class="search-container">
             <div class="search-icon-wrapper">
-                <svg aria-hidden="true" aria-label="Search" role="img" viewBox="0 0 24 24"><path d="M10 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6m13.12 2.88-4.26-4.26A9.842 9.842 0 0 0 20 10c0-5.52-4.48-10-10-10S0 4.48 0 10s4.48 10 10 10c1.67 0 3.24-.41 4.62-1.14l4.26 4.26a3 3 0 0 0 4.24 0 3 0 0 0 0-4.24"></path></svg>
-                <input type="search" placeholder="Search ideas" id="desktopSearchInput">
+                <svg aria-hidden="true" aria-label="Search" role="img" viewBox="0 0 24 24"><path d="M10 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6m13.12 2.88-4.26-4.26A9.842 9.842 0 0 0 20 10c0-5.52-4.48-10-10-10S0 4.48 0 10s4.48 10 10 10c1.67 0 3.24-.41 4.62-1.14l4.26 4.26a3 3 0 0 0 4.24 0 3 3 0 0 0 0-4.24"></path></svg>
+                <input type="search" placeholder="Search" id="desktopSearchInput">
             </div>
             <div id="desktopSearchHistory"><h3>Search History</h3><ul id="desktopSearchHistoryList" class="search-history-list"></ul></div>
             <ul id="desktopSearchSuggestions"></ul>
@@ -147,10 +101,10 @@
             <button class="icon-button" aria-label="Profile" id="profileButton"><div class="profile-icon" id="profileIconLetter">G</div></button>
             <button class="icon-button" aria-label="More accounts" id="moreAccountsButton"><svg viewBox="0 0 24 24" fill="#5f5f5f" width="24px" height="24px"><path d="M7 10l5 5 5-5H7z"></path></svg></button>
             <ul class="dropdown-menu" id="moreAccountsDropdown">
-                <li class="header-item" id="dropdownUsernameDisplay">Selamat datang, Tamu!</li>
-                <li id="dropdownMyProfile" style="display: none;">Profil Saya</li>
-                <li id="dropdownAdminPanel" style="display: none;">Panel Admin</li>
-                <li id="dropdownLogout" style="display: none;">Keluar</li>
+                <li class="header-item" id="dropdownUsernameDisplay">Welcome, Guest!</li>
+                <li id="dropdownMyProfile" style="display: none;">My Profile</li>
+                <li id="dropdownAdminPanel" style="display: none;">Admin Panel</li>
+                <li id="dropdownLogout" style="display: none;">Logout</li>
             </ul>
         </div>
         <button class="icon-button mobile-notification-icon" aria-label="Notifications" id="mobileNotificationButton">
@@ -158,10 +112,10 @@
                <span class="notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
         </button>
     </header>
-
+    
     <main>
         <section class="desktop-categories">
-            <h3>Jelajahi ide</h3>
+            <h3>Explore ideas</h3>
             <div class="category-grid" id="categoryGridDesktop">
                 </div>
         </section>
@@ -175,7 +129,7 @@
                 <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
             </div>
             <div class="mobile-nav-item" data-action="search">
-                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
             </div>
             <div class="mobile-nav-item" data-action="create-pin">
                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
@@ -185,15 +139,11 @@
             </div>
         </nav>
     </div>
-
-    <!-- Custom Message Box -->
-    <div id="customMessageBox"></div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- Global State ---
             let currentUser = null;
-            let currentSearchQuery = '';
+            let currentSearchQuery = ''; 
             let allPinsData = []; // Store all pins data for direct access by ID
             const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
             let searchSuggestionsData = []; // To store data for suggestions
@@ -215,16 +165,16 @@
                         options.headers = { 'Content-Type': 'application/json' };
                         options.body = JSON.stringify(data);
                     } else if (method === 'POST') {
-                        delete options.headers;
+                        delete options.headers; 
                     }
-
+                    
                     const response = await fetch(API_BASE_URL + endpoint, options);
-
+                    
                     if (!response.ok) {
                         const errorText = await response.text();
                         throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
                     }
-
+                    
                     const textResponse = await response.text();
                     if (!textResponse) {
                         return { success: true, message: 'No content' };
@@ -244,39 +194,21 @@
                 }
             }
 
-            // --- Function to Display Messages (using customMessageBox) ---
-            const customMessageBox = document.getElementById('customMessageBox');
-            let messageTimeout;
-
-            function showMessage(msg, type = 'info') { // 'info', 'success', 'error'
-                // Ignore some messages that do not need to be specifically displayed
+            // --- Function to Display Messages (for general errors/success, not for tab changes/notifications now) ---
+            function showMessage(msg, title = null) {
                 const ignoredMessages = ['Switching to Home page', 'Displaying your saved pins.', 'No content', 'Loading more pins...'];
-                if (ignoredMessages.includes(msg)) {
-                    return;
+                if (title === null && ignoredMessages.includes(msg)) {
+                    return; 
                 }
-
-                customMessageBox.textContent = msg;
-                customMessageBox.className = ''; // Reset classes
-                customMessageBox.classList.add('show');
-
-                if (type === 'success') {
-                    customMessageBox.classList.add('success');
-                } else if (type === 'error') {
-                    customMessageBox.classList.add('error');
+                
+                // Using alert for general messages not handled by specific overlays
+                if (title) {
+                    alert(`${title}: ${msg}`);
                 } else {
-                    // Default styling is already handled by base #customMessageBox
+                    alert(msg);
                 }
-
-                clearTimeout(messageTimeout);
-                messageTimeout = setTimeout(() => {
-                    customMessageBox.classList.remove('show');
-                    // Add a slight delay before removing color classes for a smoother transition
-                    setTimeout(() => {
-                        customMessageBox.classList.remove('success', 'error');
-                    }, 300); // Matches CSS transition duration
-                }, 3000); // Display for 3 seconds
             }
-
+            
             // --- Pin Detail Overlay Logic ---
             const pinDetailOverlay = document.getElementById('pinDetailOverlay');
             const closePinDetailButton = document.getElementById('closePinDetailButton');
@@ -284,34 +216,21 @@
             const pinDetailTitle = document.getElementById('pinDetailTitle');
             const pinDetailUploadedBy = document.getElementById('pinDetailUploadedBy');
             const pinDetailSourceDisplay = document.getElementById('pinDetailSourceDisplay');
-            const pinDetailDescription = document.getElementById('pinDetailDescription');
+            const pinDetailDescription = document.getElementById('pinDetailDescription'); 
             const pinDetailSaveButton = document.getElementById('pinDetailSaveButton');
             const pinDetailDownloadButton = document.getElementById('pinDetailDownloadButton');
 
-            // Helper function to update the pin detail save button's visual state
-            function updatePinDetailSaveButtonState(pinId) {
-                const saved = currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinId);
-                if (saved) {
-                    pinDetailSaveButton.textContent = 'Tersimpan';
-                    pinDetailSaveButton.style.backgroundColor = '#767676';
-                } else {
-                    pinDetailSaveButton.textContent = 'Simpan';
-                    pinDetailSaveButton.style.backgroundColor = '#e60023';
-                }
-                pinDetailSaveButton.disabled = false; // Ensure it's always enabled after action
-            }
-
             function openPinDetail(pinData) {
                 pinDetailImage.src = pinData.img;
-                pinDetailImage.onerror = function() {
-                    this.onerror=null;
+                pinDetailImage.onerror = function() { 
+                    this.onerror=null; 
                     this.src='https://placehold.co/500x750/e0e0e0/767676?text=Image+Not+Found';
                 };
                 pinDetailTitle.textContent = pinData.title || 'Untitled';
                 pinDetailUploadedBy.textContent = pinData.uploadedBy || 'Anonymous';
-
+                
                 if (pinData.source) {
-                    pinDetailSourceDisplay.innerHTML = `Sumber: <a href="http://${pinData.source}" target="_blank">${pinData.source}</a>`;
+                    pinDetailSourceDisplay.innerHTML = `Source: <a href="http://${pinData.source}" target="_blank">${pinData.source}</a>`;
                     pinDetailSourceDisplay.style.display = 'block';
                 } else {
                     pinDetailSourceDisplay.innerHTML = '';
@@ -326,53 +245,55 @@
                     pinDetailDescription.style.display = 'none';
                 }
 
-                // Attach a single click listener and dynamically determine save/unsave action
-                pinDetailSaveButton.onclick = async (e) => {
-                    e.stopPropagation();
-                    if (!currentUser) {
-                        showMessage('Please login to save pins.', 'error');
-                        window.location.href = 'login.html'; // Redirect to login page
-                        return;
-                    }
-
-                    const isSaved = currentUser.savedPins && currentUser.savedPins.includes(pinData.id);
-                    let response;
-
-                    if (isSaved) {
-                        response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
+                if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                    pinDetailSaveButton.textContent = 'Saved';
+                    pinDetailSaveButton.style.backgroundColor = '#767676';
+                    pinDetailSaveButton.disabled = false;
+                    pinDetailSaveButton.onclick = async (e) => { 
+                        e.stopPropagation(); 
+                        const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
                         if (response.success) {
-                            showMessage('Pin successfully removed from saved list!', 'success');
-                            currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
+                            showMessage('Pin successfully removed from saved list!', 'Success!');
+                            pinDetailSaveButton.textContent = 'Save';
+                            pinDetailSaveButton.style.backgroundColor = '#e60023';
+                            if (currentUser.savedPins) {
+                                currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
+                            }
+                            const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
+                            if (currentTab === 'saved') {
+                                loadedPinsCount = 0;
+                                await loadPins(pinsPerPage, false);
+                            }
                         } else {
-                            showMessage('Failed to remove pin from saved list: ' + response.message, 'error');
+                            showMessage('Failed to remove pin from saved list: ' + response.message, 'Error!');
                         }
-                    } else {
-                        response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
+                    };
+                } else {
+                    pinDetailSaveButton.textContent = 'Save';
+                    pinDetailSaveButton.style.backgroundColor = '#e60023';
+                    pinDetailSaveButton.disabled = false;
+                    pinDetailSaveButton.onclick = async (e) => { 
+                        e.stopPropagation(); 
+                        if (!currentUser) {
+                            showMessage('Please login to save pins.', 'Login Required');
+                            window.location.href = 'login.html'; // Redirect to login page
+                            return;
+                        }
+                        const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
                         if (response.success) {
-                            showMessage('Pin saved successfully!', 'success');
+                            showMessage('Pin saved successfully!', 'Success!');
+                            pinDetailSaveButton.textContent = 'Saved';
+                            pinDetailSaveButton.style.backgroundColor = '#767676';
                             if (currentUser.savedPins) {
                                 currentUser.savedPins.push(pinData.id);
                             } else {
                                 currentUser.savedPins = [pinData.id];
                             }
                         } else {
-                            showMessage('Failed to save pin: ' + response.message, 'error');
+                            showMessage('Failed to save pin: ' + response.message, 'Error!');
                         }
-                    }
-
-                    // Update button state immediately after action
-                    updatePinDetailSaveButtonState(pinData.id);
-
-                    // Optionally, if on 'saved' tab, reload pins to reflect change
-                    const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
-                    if (currentTab === 'saved') {
-                        loadedPinsCount = 0;
-                        await loadPins(pinsPerPage, false);
-                    }
-                };
-
-                // Initialize button state when opening the pin detail
-                updatePinDetailSaveButtonState(pinData.id);
+                    };
+                }
 
                 pinDetailDownloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(pinData.img); };
 
@@ -421,7 +342,7 @@
             async function openNotificationPage() {
                 notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Loading notifications...</p>';
                 const response = await makeApiRequest('notifications.php?action=fetch_all');
-
+                
                 if (response.success && response.notifications.length > 0) {
                     notificationListContainer.innerHTML = '';
                     response.notifications.forEach(notif => {
@@ -453,21 +374,8 @@
             const mainElement = document.querySelector('main');
             const pinGrid = document.getElementById('pinGrid');
             const loadingIndicator = document.getElementById('loading-indicator');
-            let pinsPerPage = 20;
-            let loadedPinsCount = 0;
-
-            // Helper function for grid pin button state
-            function updateGridPinSaveButtonState(buttonElement, pinId) {
-                const saved = currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinId);
-                if (saved) {
-                    buttonElement.textContent = 'Tersimpan';
-                    buttonElement.style.backgroundColor = '#767676';
-                } else {
-                    buttonElement.textContent = 'Simpan';
-                    buttonElement.style.backgroundColor = '#e60023';
-                }
-                buttonElement.disabled = false;
-            }
+            let pinsPerPage = 20; 
+            let loadedPinsCount = 0; 
 
             function createPinElement(pinData) {
                 const pinDiv = document.createElement('div');
@@ -477,64 +385,71 @@
                 const img = document.createElement('img');
                 img.src = pinData.img;
                 img.alt = 'Pin Image';
-                img.onerror = function() {
-                    this.onerror=null;
+                img.onerror = function() { 
+                    this.onerror=null; 
                     this.src='https://placehold.co/236x300/e0e0e0/767676?text=Image+Not+Found';
                 };
 
                 const overlayDiv = document.createElement('div');
                 overlayDiv.classList.add('pin-overlay');
-
+                
                 const overlayTop = document.createElement('div');
                 overlayTop.classList.add('pin-overlay-top');
-
+                
                 const saveButton = document.createElement('button');
                 saveButton.classList.add('pin-save-button');
-
-                // Initialize button state when creating the pin element
-                updateGridPinSaveButtonState(saveButton, pinData.id);
-
-                saveButton.onclick = async (e) => {
-                    e.stopPropagation();
+                
+                if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                    saveButton.textContent = 'Saved';
+                    saveButton.style.backgroundColor = '#767676';
+                    saveButton.disabled = false; // Can be unsaved
+                } else {
+                    saveButton.textContent = 'Save';
+                    saveButton.style.backgroundColor = '#e60023';
+                    saveButton.disabled = false;
+                }
+                
+                saveButton.onclick = async (e) => { 
+                    e.stopPropagation(); 
                     if (!currentUser) {
-                        showMessage('Please login to save pins.', 'error');
+                        showMessage('Please login to save pins.', 'Login Required');
                         window.location.href = 'login.html'; // Redirect to login page
                         return;
                     }
 
-                    const isSaved = currentUser.savedPins && currentUser.savedPins.includes(pinData.id);
-                    let response;
-
-                    if (isSaved) {
-                        response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
+                    if (currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                        // If already saved, perform unsave
+                        const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
                         if (response.success) {
-                            showMessage('Pin successfully removed from saved list!', 'success');
-                            currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
+                            showMessage('Pin successfully removed from saved list!', 'Success!');
+                            saveButton.textContent = 'Save';
+                            saveButton.style.backgroundColor = '#e60023';
+                            if (currentUser.savedPins) {
+                                currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
+                            }
+                            const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
+                            if (currentTab === 'saved') {
+                                loadedPinsCount = 0;
+                                await loadPins(pinsPerPage, false);
+                            }
                         } else {
-                            showMessage('Failed to remove pin from saved list: ' + response.message, 'error');
+                            showMessage('Failed to remove pin from saved list: ' + response.message, 'Error!');
                         }
                     } else {
-                        response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
+                        // If not saved, perform save
+                        const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
                         if (response.success) {
-                            showMessage('Pin saved successfully!', 'success');
+                            showMessage('Pin saved successfully!', 'Success!');
+                            saveButton.textContent = 'Saved';
+                            saveButton.style.backgroundColor = '#767676';
                             if (currentUser.savedPins) {
                                 currentUser.savedPins.push(pinData.id);
                             } else {
                                 currentUser.savedPins = [pinData.id];
                             }
                         } else {
-                            showMessage('Failed to save pin: ' + response.message, 'error');
+                            showMessage('Failed to save pin: ' + response.message, 'Error!');
                         }
-                    }
-
-                    // Update button state immediately after action
-                    updateGridPinSaveButtonState(saveButton, pinData.id);
-
-                    // Optionally, if on 'saved' tab, reload pins to reflect change
-                    const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
-                    if (currentTab === 'saved') {
-                        loadedPinsCount = 0;
-                        await loadPins(pinsPerPage, false);
                     }
                 };
                 overlayTop.appendChild(saveButton);
@@ -542,26 +457,26 @@
                 const overlayBottom = document.createElement('div');
                 overlayBottom.classList.add('pin-overlay-bottom');
 
-                const pinTitle = document.createElement('div');
+                const pinTitle = document.createElement('div'); 
                 pinTitle.classList.add('pin-title');
-                pinTitle.textContent = pinData.title || 'No Title';
+                pinTitle.textContent = pinData.title || 'No Title'; 
                 overlayBottom.appendChild(pinTitle);
 
-                const bottomActions = document.createElement('div');
+                const bottomActions = document.createElement('div'); 
                 bottomActions.classList.add('pin-bottom-actions');
 
-                const infoDiv = document.createElement('div');
+                const infoDiv = document.createElement('div'); 
                 infoDiv.classList.add('pin-info');
                 if (pinData.source) {
                     const link = document.createElement('a');
                     link.href = `http://${pinData.source}`;
                     link.target = '_blank';
                     link.textContent = pinData.source;
-                    link.onclick = (e) => e.stopPropagation();
+                    link.onclick = (e) => e.stopPropagation(); 
                     infoDiv.appendChild(link);
                 } else {
                     infoDiv.textContent = 'No Source';
-                    infoDiv.style.opacity = '0.7';
+                    infoDiv.style.opacity = '0.7'; 
                 }
                 bottomActions.appendChild(infoDiv);
 
@@ -569,18 +484,18 @@
                 downloadButton.classList.add('pin-action-icon');
                 downloadButton.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>`;
                 downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(pinData.img); };
-
+                
                 bottomActions.appendChild(downloadButton);
-                overlayBottom.appendChild(bottomActions);
-
+                overlayBottom.appendChild(bottomActions); 
+                
                 overlayDiv.appendChild(overlayTop);
                 overlayDiv.appendChild(overlayBottom);
 
                 pinDiv.appendChild(img);
                 pinDiv.appendChild(overlayDiv);
-
+                
                 pinDiv.onclick = () => openPinDetail(pinData);
-
+                
                 return pinDiv;
             }
 
@@ -590,7 +505,7 @@
                 let endpoint = '';
                 let params = '';
 
-                if (currentSearchQuery) {
+                if (currentSearchQuery) { 
                     endpoint = 'pins.php?action=search';
                     params = `&query=${encodeURIComponent(currentSearchQuery)}`;
                 } else if (currentTab === 'saved') {
@@ -610,11 +525,11 @@
                 if (response.success) {
                     // Always update allPinsData with the latest full list of pins from fetch_all or search
                     if (!currentTab || currentTab === 'home' || currentSearchQuery) {
-                       allPinsData = response.pins || [];
-                    }
+                       allPinsData = response.pins || []; 
+                    } 
 
                     const pinsToDisplay = response.pins || [];
-
+                    
                     const startIndex = append ? loadedPinsCount : 0;
                     const slicedPinsToDisplay = pinsToDisplay.slice(startIndex, startIndex + count);
 
@@ -639,7 +554,7 @@
                         }
                     }
                 } else {
-                    showMessage('Failed to load pins: ' + response.message, 'error');
+                    showMessage('Failed to load pins: ' + response.message, 'Error!');
                     pinGrid.innerHTML = '<p style="text-align: center; color: #e60023; margin-top: 50px;">Error loading pins. Please try again later.</p>';
                 }
             }
@@ -696,7 +611,7 @@
                     desktopLi.addEventListener('click', () => {
                         desktopSearchInput.value = historyItem;
                         performSearch(historyItem);
-                        searchSuggestionsListDesktop.style.display = 'none';
+                        desktopSearchSuggestions.style.display = 'none';
                         desktopSearchHistoryContainer.style.display = 'none';
                     });
                     desktopSearchHistoryList.appendChild(desktopLi);
@@ -714,7 +629,7 @@
             }
 
             // --- Search Suggestions Logic ---
-            const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay');
+            const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
             const desktopSearchInput = document.getElementById('desktopSearchInput');
             const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
             const searchSuggestionsListDesktop = document.getElementById('desktopSearchSuggestions');
@@ -727,23 +642,23 @@
 
             function showSuggestions(inputElement, suggestionsList, query) {
                 suggestionsList.innerHTML = '';
-                suggestionsList.style.display = 'none';
+                suggestionsList.style.display = 'none'; 
 
-                if (query.length < 2) {
+                if (query.length < 2) { 
                     searchResultsContainer.style.display = 'none';
                     categoryExploreTitle.style.display = 'block';
                     categoryGridMobile.style.display = 'grid';
-                    renderSearchHistory();
+                    renderSearchHistory(); 
                     return;
                 }
-
+                
                 if (inputElement === desktopSearchInput) {
                     desktopSearchHistoryContainer.style.display = 'none';
                 } else {
                     mobileSearchHistoryContainer.style.display = 'none';
                 }
 
-                const filteredSuggestions = allPinsData.filter(pin =>
+                const filteredSuggestions = allPinsData.filter(pin => 
                     (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
                     (pin.source && pin.source.toLowerCase().includes(query.toLowerCase())) ||
                     (pin.content && pin.content.toLowerCase().includes(query.toLowerCase()))
@@ -768,8 +683,8 @@
                     categoryGridMobile.style.display = 'none';
                 } else {
                     suggestionsList.style.display = 'none';
-                    searchResultsContainer.style.display = 'none';
-                    categoryExploreTitle.style.display = 'block';
+                    searchResultsContainer.style.display = 'none'; 
+                    categoryExploreTitle.style.display = 'block'; 
                     categoryGridMobile.style.display = 'grid';
                 }
             }
@@ -819,7 +734,7 @@
 
             mobileSearchInputOverlay.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault();
+                    e.preventDefault(); 
                     const query = mobileSearchInputOverlay.value.trim();
                     if (query) {
                         performSearch(query);
@@ -838,28 +753,28 @@
 
             desktopSearchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault();
+                    e.preventDefault(); 
                     const query = desktopSearchInput.value.trim();
                     if (query) {
                         mainElement.classList.remove('desktop-search-active');
                         currentSearchQuery = query;
                         loadedPinsCount = 0;
                         performSearch(query); // Call performSearch for desktop as well
-                        searchSuggestionsListDesktop.style.display = 'none';
-                        desktopSearchHistoryContainer.style.display = 'none';
+                        desktopSearchSuggestions.style.display = 'none'; 
+                        desktopSearchHistoryContainer.style.display = 'none'; 
                     }
                 }
             });
-
+            
             // Handle clicks outside search suggestions to hide them
             document.addEventListener('click', (event) => {
                 const isClickInsideDesktopSearchInput = desktopSearchInput.parentElement.contains(event.target);
-                const isClickInsideDesktopSuggestions = searchSuggestionsListDesktop.contains(event.target);
+                const isClickInsideDesktopSuggestions = desktopSearchSuggestions.contains(event.target);
                 const isClickInsideDesktopHistory = desktopSearchHistoryContainer.contains(event.target);
 
                 if (!isClickInsideDesktopSearchInput && !isClickInsideDesktopSuggestions && !isClickInsideDesktopHistory) {
-                    searchSuggestionsListDesktop.style.display = 'none';
-                    renderSearchHistory();
+                    desktopSearchSuggestions.style.display = 'none';
+                    renderSearchHistory(); 
                 }
 
             });
@@ -874,33 +789,33 @@
                 try {
                     const response = await makeApiRequest('categories.php?action=fetch_all');
                     if (response.success && response.categories) {
-                        const categories = response.categories;
+                        const categories = response.categories; 
 
                         categoryContainers.forEach(container => {
-                            if (!container) return;
-                            container.innerHTML = '';
+                            if (!container) return; 
+                            container.innerHTML = ''; 
                             const fragment = document.createDocumentFragment();
 
                             categories.forEach((cat) => {
                                 const catItem = document.createElement('div');
                                 catItem.className = 'category-item';
-
+                                
                                 // Use imageUrl from category data
-                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`;
+                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`; 
                                 catItem.style.backgroundImage = `url('${imageUrl}')`;
 
                                 const catTitle = document.createElement('span');
                                 catTitle.textContent = cat.name; // Use 'name' property
-
+                                
                                 catItem.appendChild(catTitle);
-
+                                
                                 catItem.onclick = function() {
-                                    currentSearchQuery = cat.name;
-                                    if (this.closest('#searchOverlay')) {
-                                        performSearch(cat.name);
+                                    currentSearchQuery = cat.name; 
+                                    if (this.closest('#searchOverlay')) { 
+                                        performSearch(cat.name); 
                                     } else {
                                         mainElement.classList.remove('desktop-search-active');
-                                        loadedPinsCount = 0;
+                                        loadedPinsCount = 0; 
                                         performSearch(cat.name); // Search by category on desktop as well
                                     }
                                 };
@@ -921,16 +836,17 @@
                     });
                 }
             }
-
+            
             loadCategories();
 
             // --- Infinite Scroll ---
             window.addEventListener('scroll', () => {
-                if (loadingIndicator.style.display === 'none' &&
-                    searchOverlay.style.display === 'none' &&
+                if (loadingIndicator.style.display === 'none' && 
+                    searchOverlay.style.display === 'none' && 
+                    // loginOverlay.style.display === 'none' && // Removed login overlay
                     mobileProfileDropdown.style.display === 'none' &&
-                    pinDetailOverlay.style.display === 'none' &&
-                    notificationOverlay.style.display === 'none'
+                    pinDetailOverlay.style.display === 'none' && 
+                    notificationOverlay.style.display === 'none' 
                 ) {
                     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
                         const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
@@ -943,23 +859,23 @@
 
             // --- Desktop Search/Category Interaction ---
             const desktopCategories = document.querySelector('.desktop-categories');
-
+            
             desktopSearchInput.addEventListener('focus', () => {
                 mainElement.classList.add('desktop-search-active');
-                pinGrid.style.display = 'none';
+                pinGrid.style.display = 'none'; 
                 loadingIndicator.style.display = 'none';
-                renderSearchHistory();
+                renderSearchHistory(); 
             });
-
+            
             document.addEventListener('click', (event) => {
                 const isClickInsideHeaderSearch = desktopSearchInput.parentElement.contains(event.target);
                 const isClickInsideDesktopCategories = desktopCategories.contains(event.target);
-
+                
                 if (!isClickInsideHeaderSearch && !isClickInsideDesktopCategories) {
                    mainElement.classList.remove('desktop-search-active');
                    // If search results are showing, keep them; otherwise, load regular pins
                    if (searchResultsContainer.style.display !== 'column') {
-                       pinGrid.style.display = 'column';
+                       pinGrid.style.display = 'column'; 
                        loadPins(pinsPerPage, false);
                    }
                 }
@@ -979,15 +895,15 @@
             });
 
             headerNavButtons.forEach(button => {
-                if (button.id === 'desktopCreateButton') return;
+                if (button.id === 'desktopCreateButton') return; 
 
                 button.addEventListener('click', async function() {
                     headerNavButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     const navAction = this.dataset.nav;
-                    currentSearchQuery = '';
+                    currentSearchQuery = ''; 
 
-                    pinGrid.style.display = 'column';
+                    pinGrid.style.display = 'column'; 
                     searchResultsContainer.style.display = 'none';
                     searchLoadingIndicator.style.display = 'none';
 
@@ -997,7 +913,7 @@
                         await loadPins(pinsPerPage, false);
                     } else if (navAction === 'saved') {
                         if (!currentUser) {
-                            showMessage('Please login to view your saved pins.', 'error');
+                            showMessage('Please login to view your saved pins.', 'Login Required');
                             headerNavButtons.forEach(btn => btn.classList.remove('active'));
                             document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
                             window.location.href = 'login.html'; // Redirect to login
@@ -1013,7 +929,7 @@
             // --- Mobile Search Overlay Logic ---
             const searchOverlay = document.getElementById('searchOverlay');
             const closeSearchBtn = document.getElementById('closeSearchOverlay');
-
+            
             const openSearch = () => {
                 searchOverlay.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
@@ -1025,19 +941,19 @@
                 searchLoadingIndicator.style.display = 'none';
                 categoryExploreTitle.style.display = 'block';
                 categoryGridMobile.style.display = 'grid';
-                renderSearchHistory();
+                renderSearchHistory(); 
             };
-
+            
             const closeSearch = () => {
                 searchOverlay.style.display = 'none';
                 document.body.style.overflow = '';
             };
 
             closeSearchBtn.onclick = closeSearch;
-
+            
             mobileSearchInputOverlay.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault();
+                    e.preventDefault(); 
                     const query = mobileSearchInputOverlay.value.trim();
                     if (query) {
                         performSearch(query);
@@ -1054,17 +970,17 @@
                     closePinDetail();
                     closeNotificationPage();
                     closeSearch();
-
+                    
                     if (action === 'search') {
                         openSearch();
-                    } else if (action === 'create-pin') {
+                    } else if (action === 'create-pin') { 
                          if (!currentUser) {
                             window.location.href = 'login.html'; // Redirect to login
                             return;
                         }
-                        window.location.href = 'create.html';
+                        window.location.href = 'create.html'; 
                     }
-                    else if (action === 'profile') {
+                    else if (action === 'profile') { 
                         if (!currentUser) {
                             window.location.href = 'login.html'; // Redirect to login
                             return;
@@ -1075,26 +991,26 @@
                             window.location.href = 'user.php';
                         }
                     }
-                    else {
+                    else { 
                         mobileNavItems.forEach(i => i.classList.remove('active'));
                         this.classList.add('active');
-                        if (action === 'home' || action === 'saved') {
+                        if (action === 'home' || action === 'saved') { 
                             const desktopButton = document.querySelector(`.header-nav-links .nav-button[data-nav="${action}"]`);
                             if (desktopButton) {
                                 headerNavButtons.forEach(btn => btn.classList.remove('active'));
                                 desktopButton.classList.add('active');
                             }
                         }
-                        currentSearchQuery = '';
-                        pinGrid.style.display = 'column';
-                        searchResultsContainer.style.display = 'none';
+                        currentSearchQuery = ''; 
+                        pinGrid.style.display = 'column'; 
+                        searchResultsContainer.style.display = 'none'; 
                         searchLoadingIndicator.style.display = 'none';
 
 
                         if (action === 'home') {
                             loadedPinsCount = 0;
                             await loadPins(pinsPerPage, false);
-                        } else if (action === 'saved') {
+                        } else if (action === 'saved') { 
                             if (!currentUser) {
                                 window.location.href = 'login.html'; // Redirect to login
                                 mobileNavItems.forEach(i => i.classList.remove('active'));
@@ -1107,6 +1023,9 @@
                     }
                 });
             });
+
+            // --- Login/Register Overlay Logic ---
+            // Removed loginOverlay div and related elements as they are now in login.html
 
             const profileButton = document.getElementById('profileButton');
             const profileIconLetter = document.getElementById('profileIconLetter');
@@ -1159,8 +1078,8 @@
                     const response = await makeApiRequest('notifications.php?action=fetch_all');
                     if (response.success) {
                         const notifications = response.notifications || [];
-                        const unreadCount = notifications.filter(notif => !notif.read).length;
-
+                        const unreadCount = notifications.filter(notif => !notif.read).length; 
+                        
                         if (unreadCount > 0) {
                             notificationBadge.textContent = unreadCount;
                             notificationBadge.style.display = 'flex';
@@ -1178,7 +1097,7 @@
 
             async function markAllNotificationsAsRead() {
                 try {
-                    const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null);
+                    const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null); 
                     if (response.success) {
                         updateNotificationBadge();
                     }
@@ -1249,27 +1168,27 @@
                 if (currentUser && currentUser.isAdmin) {
                     window.location.href = 'admin.php';
                 } else {
-                    showMessage('Access denied: Administrator privileges required.', 'error');
+                    showMessage('Access denied: Administrator privileges required.', 'Error');
                 }
                 moreAccountsDropdown.style.display = 'none';
             });
 
             dropdownLogout.addEventListener('click', async () => {
-                const response = await makeApiRequest('auth.php?action=logout', 'POST', null);
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
                 if (response.success) {
                     currentUser = null;
                     updateProfileDisplay();
                     updateHeaderDropdown();
-                    showMessage('Logout successful.', 'success');
+                    showMessage('Logout successful.', 'Logout');
                     loadedPinsCount = 0;
-                    currentSearchQuery = '';
+                    currentSearchQuery = ''; 
                     await loadPins(pinsPerPage, false);
                     mobileNavItems.forEach(i => i.classList.remove('active'));
                     document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
                     headerNavButtons.forEach(btn => btn.classList.remove('active'));
                     document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
                 } else {
-                    showMessage('Logout failed: ' + response.message, 'error');
+                    showMessage('Logout failed: ' + response.message, 'Error');
                 }
                 moreAccountsDropdown.style.display = 'none';
             });
@@ -1288,7 +1207,7 @@
                 mobileDropdownUsernameDisplay.textContent = `Logged in as ${currentUser.username}`;
                 mobileDropdownMyProfile.style.display = 'block';
                 mobileDropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
-
+                
                 mobileProfileDropdown.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
             }
@@ -1314,28 +1233,28 @@
                 if (currentUser && currentUser.isAdmin) {
                     window.location.href = 'admin.php';
                 } else {
-                    showMessage('Access denied: Administrator privileges required.', 'error');
+                    showMessage('Access denied: Administrator privileges required.', 'Error');
                 }
                 mobileProfileDropdown.style.display = 'none';
                 document.body.style.overflow = '';
             });
 
             mobileDropdownLogout.addEventListener('click', async () => {
-                const response = await makeApiRequest('auth.php?action=logout', 'POST', null);
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
                 if (response.success) {
                     currentUser = null;
                     updateProfileDisplay();
                     updateHeaderDropdown();
-                    showMessage('Logout successful.', 'success');
+                    showMessage('Logout successful.', 'Logout');
                     loadedPinsCount = 0;
-                    currentSearchQuery = '';
+                    currentSearchQuery = ''; 
                     await loadPins(pinsPerPage, false);
                     mobileNavItems.forEach(i => i.classList.remove('active'));
                     document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
                     headerNavButtons.forEach(btn => btn.classList.remove('active'));
                     document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
                 } else {
-                    showMessage('Logout failed: ' + response.message, 'error');
+                    showMessage('Logout failed: ' + response.message, 'Error');
                 }
                 mobileProfileDropdown.style.display = 'none';
                 document.body.style.overflow = '';
@@ -1350,6 +1269,7 @@
             async function initializeApp() {
                 loadSearchHistory(); // Load search history when app starts
                 const urlParams = new URLSearchParams(window.location.search);
+                // Removed loginParam check as login overlay is removed
 
                 const response = await makeApiRequest('auth.php?action=check_session');
                 if (response.success && response.user) {
@@ -1366,12 +1286,12 @@
                 updateProfileDisplay();
                 updateHeaderDropdown();
                 updateNotificationBadge();
-
+                
                 const allPinsResponse = await makeApiRequest('pins.php?action=fetch_all');
                 if (allPinsResponse.success) {
                     allPinsData = allPinsResponse.pins;
                 } else {
-                    console.error("Failed to load all pins on initialization:", allPinsResponse.message);
+                    console.error("Failed to load all pins on init:", allPinsResponse.message);
                 }
 
                 await loadPins(pinsPerPage, false);
