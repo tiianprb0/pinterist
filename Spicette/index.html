@@ -51,7 +51,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="searchOverlay">
         <div class="overlay-header search-overlay-header">
             <div class="search-container">
@@ -113,7 +113,7 @@
                <i class="fas fa-bell"></i> <span class="notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
         </button>
     </header>
-    
+
     <main>
         <section class="desktop-categories">
             <h3>Explore ideas</h3>
@@ -144,7 +144,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // --- Global State ---
             let currentUser = null;
-            let currentSearchQuery = ''; 
+            let currentSearchQuery = '';
             let allPinsData = []; // Store all pins data for direct access by ID
             const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
             let searchSuggestionsData = []; // To store data for suggestions
@@ -166,16 +166,16 @@
                         options.headers = { 'Content-Type': 'application/json' };
                         options.body = JSON.stringify(data);
                     } else if (method === 'POST') {
-                        delete options.headers; 
+                        delete options.headers;
                     }
-                    
+
                     const response = await fetch(API_BASE_URL + endpoint, options);
-                    
+
                     if (!response.ok) {
                         const errorText = await response.text();
                         throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
                     }
-                    
+
                     const textResponse = await response.text();
                     if (!textResponse) {
                         return { success: true, message: 'No content' };
@@ -217,27 +217,26 @@
                     customAlert.classList.remove('show');
                 }, 3000);
             }
-            
+
             // --- Pin Detail Overlay Logic ---
             const pinDetailOverlay = document.getElementById('pinDetailOverlay');
             const closePinDetailButton = document.getElementById('closePinDetailButton');
             const pinDetailImage = document.getElementById('pinDetailImage');
             const pinDetailTitle = document.getElementById('pinDetailTitle');
             const pinDetailUploadedBy = document.getElementById('pinDetailUploadedBy');
-            const pinDetailSourceDisplay = document.getElementById('pinDetailSourceDisplay'); // Keep this, might be used for source URL
-            const pinDetailDescription = document.getElementById('pinDetailDescription'); 
-            const pinDetailCategories = document.getElementById('pinDetailCategories'); // New: Categories container
-            const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton'); // New: Save button on image
+            const pinDetailDescription = document.getElementById('pinDetailDescription');
+            const pinDetailCategories = document.getElementById('pinDetailCategories');
+            const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton');
             const pinDetailDownloadButton = document.getElementById('pinDetailDownloadButton');
-            const pinDetailShareButton = document.getElementById('pinDetailShareButton'); // New: Share button
+            const pinDetailShareButton = document.getElementById('pinDetailShareButton');
 
             // Function to update the save button state on the detail overlay (the one on the image)
             function updatePinDetailImageSaveButton(pinData) {
                 if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
                     pinDetailImageSaveButton.textContent = 'Saved';
                     pinDetailImageSaveButton.style.backgroundColor = '#767676';
-                    pinDetailImageSaveButton.onclick = async (e) => { 
-                        e.stopPropagation(); 
+                    pinDetailImageSaveButton.onclick = async (e) => {
+                        e.stopPropagation();
                         const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
                         if (response.success) {
                             showMessage('Pin successfully removed from saved list!', 'success');
@@ -261,8 +260,8 @@
                 } else {
                     pinDetailImageSaveButton.textContent = 'Save';
                     pinDetailImageSaveButton.style.backgroundColor = '#e60023';
-                    pinDetailImageSaveButton.onclick = async (e) => { 
-                        e.stopPropagation(); 
+                    pinDetailImageSaveButton.onclick = async (e) => {
+                        e.stopPropagation();
                         if (!currentUser) {
                             showMessage('Please login to save pins.', 'info');
                             window.location.href = 'login.html';
@@ -293,13 +292,13 @@
 
             function openPinDetail(pinData) {
                 pinDetailImage.src = pinData.img;
-                pinDetailImage.onerror = function() { 
-                    this.onerror=null; 
+                pinDetailImage.onerror = function() {
+                    this.onerror=null;
                     this.src='https://thumbs.dreamstime.com/b/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.jpg';
                 };
                 pinDetailTitle.textContent = pinData.title || 'Untitled';
                 // Corrected: Ensure "by " prefix is added here, as it was removed from HTML
-                pinDetailUploadedBy.textContent = `by ${pinData.uploadedBy || 'Anonymous'}`; 
+                pinDetailUploadedBy.textContent = `by ${pinData.uploadedBy || 'Anonymous'}`;
 
                 // Display description
                 if (pinData.content) {
@@ -309,23 +308,19 @@
                     pinDetailDescription.textContent = '';
                     pinDetailDescription.style.display = 'none';
                 }
-                
+
                 // Display categories as hashtags
                 pinDetailCategories.innerHTML = '';
                 if (pinData.categories && pinData.categories.length > 0) {
                     pinData.categories.forEach(category => {
                         const span = document.createElement('span');
                         span.classList.add('pin-category-tag');
-                        span.textContent = `#${category.trim()}`;
-                        span.onclick = (e) => {
-                            e.stopPropagation();
-                            closePinDetail(); // Close detail overlay first
-                            currentSearchQuery = category.trim();
-                            performSearch(category.trim()); // Perform search for this category
-                        };
+                        // MODIFIED: Link to the new tag.php page for the category
+                        const categoryPermalink = category.trim().toLowerCase().replace(/ /g, '-');
+                        span.innerHTML = `<a href="tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${category.trim()}</a>`;
                         pinDetailCategories.appendChild(span);
                     });
-                    pinDetailCategories.style.display = 'flex'; // Use flex for categories with gap
+                    pinDetailCategories.style.display = 'flex';
                 } else {
                     pinDetailCategories.style.display = 'none';
                 }
@@ -401,7 +396,7 @@
             async function openNotificationPage() {
                 notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Loading notifications...</p>';
                 const response = await makeApiRequest('notifications.php?action=fetch_all');
-                
+
                 if (response.success && response.notifications.length > 0) {
                     notificationListContainer.innerHTML = '';
                     response.notifications.forEach(notif => {
@@ -433,8 +428,8 @@
             const mainElement = document.querySelector('main');
             const pinGrid = document.getElementById('pinGrid');
             const loadingIndicator = document.getElementById('loading-indicator');
-            let pinsPerPage = 20; 
-            let loadedPinsCount = 0; 
+            let pinsPerPage = 20;
+            let loadedPinsCount = 0;
 
             function createPinElement(pinData) {
                 const pinDiv = document.createElement('div');
@@ -444,20 +439,20 @@
                 const img = document.createElement('img');
                 img.src = pinData.img;
                 img.alt = 'Pin Image';
-                img.onerror = function() { 
-                    this.onerror=null; 
+                img.onerror = function() {
+                    this.onerror=null;
                     this.src='https://thumbs.dreamstime.com/b/no-thumbnail-image-placeholder-forums-blogs-websites-148010362.jpg';
                 };
 
                 const overlayDiv = document.createElement('div');
                 overlayDiv.classList.add('pin-overlay');
-                
+
                 const overlayTop = document.createElement('div');
                 overlayTop.classList.add('pin-overlay-top');
-                
+
                 const saveButton = document.createElement('button');
                 saveButton.classList.add('pin-save-button');
-                
+
                 // Initial state for save button on grid pins
                 if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
                     saveButton.textContent = 'Saved';
@@ -466,9 +461,9 @@
                     saveButton.textContent = 'Save';
                     saveButton.style.backgroundColor = '#e60023';
                 }
-                
-                saveButton.onclick = async (e) => { 
-                    e.stopPropagation(); 
+
+                saveButton.onclick = async (e) => {
+                    e.stopPropagation();
                     if (!currentUser) {
                         showMessage('Please login to save pins.', 'info');
                         window.location.href = 'login.html';
@@ -521,26 +516,26 @@
                 const overlayBottom = document.createElement('div');
                 overlayBottom.classList.add('pin-overlay-bottom');
 
-                const pinTitle = document.createElement('div'); 
+                const pinTitle = document.createElement('div');
                 pinTitle.classList.add('pin-title');
-                pinTitle.textContent = pinData.title || 'No Title'; 
+                pinTitle.textContent = pinData.title || 'No Title';
                 overlayBottom.appendChild(pinTitle);
 
-                const bottomActions = document.createElement('div'); 
+                const bottomActions = document.createElement('div');
                 bottomActions.classList.add('pin-bottom-actions');
 
-                const infoDiv = document.createElement('div'); 
+                const infoDiv = document.createElement('div');
                 infoDiv.classList.add('pin-info');
                 if (pinData.source) {
                     const link = document.createElement('a');
                     link.href = `http://${pinData.source}`;
                     link.target = '_blank';
                     link.textContent = pinData.source;
-                    link.onclick = (e) => e.stopPropagation(); 
+                    link.onclick = (e) => e.stopPropagation();
                     infoDiv.appendChild(link);
                 } else {
                     infoDiv.textContent = 'No Source';
-                    infoDiv.style.opacity = '0.7'; 
+                    infoDiv.style.opacity = '0.7';
                 }
                 bottomActions.appendChild(infoDiv);
 
@@ -548,18 +543,18 @@
                 downloadButton.classList.add('pin-action-icon');
                 downloadButton.innerHTML = `<i class="fas fa-download"></i>`; // Font Awesome download icon
                 downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(pinData.img); };
-                
+
                 bottomActions.appendChild(downloadButton);
-                overlayBottom.appendChild(bottomActions); 
-                
+                overlayBottom.appendChild(bottomActions);
+
                 overlayDiv.appendChild(overlayTop);
                 overlayDiv.appendChild(overlayBottom);
 
                 pinDiv.appendChild(img);
                 pinDiv.appendChild(overlayDiv);
-                
+
                 pinDiv.onclick = () => openPinDetail(pinData);
-                
+
                 return pinDiv;
             }
 
@@ -570,7 +565,7 @@
                 let endpoint = '';
                 let params = '';
 
-                if (currentSearchQuery) { 
+                if (currentSearchQuery) {
                     endpoint = 'pins.php?action=search';
                     params = `&query=${encodeURIComponent(currentSearchQuery)}`;
                 } else if (currentTab === 'saved') {
@@ -589,12 +584,12 @@
 
                 if (response.success) {
                     if (!currentTab || currentTab === 'home' || currentSearchQuery === '') { // Only update allPinsData for home/empty search
-                       allPinsData = response.pins || []; 
-                    } 
+                       allPinsData = response.pins || [];
+                    }
                     console.log("Pins fetched successfully. Total pins from API:", response.pins ? response.pins.length : 0); // Debugging
 
                     const pinsToDisplay = response.pins || [];
-                    
+
                     const startIndex = append ? loadedPinsCount : 0;
                     const slicedPinsToDisplay = pinsToDisplay.slice(startIndex, startIndex + count);
 
@@ -705,7 +700,7 @@
             }
 
             // --- Search Suggestions Logic ---
-            const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
+            const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay');
             const desktopSearchInput = document.getElementById('desktopSearchInput');
             const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
             const searchSuggestionsListDesktop = document.getElementById('desktopSearchSuggestions');
@@ -718,23 +713,23 @@
 
             function showSuggestions(inputElement, suggestionsList, query) {
                 suggestionsList.innerHTML = '';
-                suggestionsList.style.display = 'none'; 
+                suggestionsList.style.display = 'none';
 
-                if (query.length < 2) { 
+                if (query.length < 2) {
                     searchResultsContainer.style.display = 'none';
                     categoryExploreTitle.style.display = 'block';
                     categoryGridMobile.style.display = 'grid';
-                    renderSearchHistory(); 
+                    renderSearchHistory();
                     return;
                 }
-                
+
                 if (inputElement === desktopSearchInput) {
                     desktopSearchHistoryContainer.style.display = 'none';
                 } else {
                     mobileSearchHistoryContainer.style.display = 'none';
                 }
 
-                const filteredSuggestions = allPinsData.filter(pin => 
+                const filteredSuggestions = allPinsData.filter(pin =>
                     (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
                     (pin.source && pin.source.toLowerCase().includes(query.toLowerCase())) ||
                     (pin.content && pin.content.toLowerCase().includes(query.toLowerCase())) ||
@@ -760,8 +755,8 @@
                     categoryGridMobile.style.display = 'none';
                 } else {
                     suggestionsList.style.display = 'none';
-                    searchResultsContainer.style.display = 'none'; 
-                    categoryExploreTitle.style.display = 'block'; 
+                    searchResultsContainer.style.display = 'none';
+                    categoryExploreTitle.style.display = 'block';
                     categoryGridMobile.style.display = 'grid';
                 }
             }
@@ -772,7 +767,7 @@
 
                 searchLoadingIndicator.style.display = 'block';
                 searchResultsContainer.innerHTML = '';
-                searchResultsContainer.style.display = 'none'; // Hide results until fetched
+                searchResultsContainer.style.display = 'none';
 
                 searchSuggestionsListMobile.style.display = 'none';
                 searchSuggestionsListDesktop.style.display = 'none';
@@ -811,7 +806,7 @@
 
             mobileSearchInputOverlay.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault(); 
+                    e.preventDefault();
                     const query = mobileSearchInputOverlay.value.trim();
                     if (query) {
                         performSearch(query);
@@ -822,11 +817,11 @@
             // Desktop search input listener
             desktopSearchInput.addEventListener('focus', () => {
                 mainElement.classList.add('desktop-search-active');
-                pinGrid.style.display = 'none'; 
+                pinGrid.style.display = 'none';
                 loadingIndicator.style.display = 'none';
-                desktopSearchInput.value = currentSearchQuery; 
-                renderSearchHistory(); 
-                desktopSearchSuggestions.style.display = 'none'; 
+                desktopSearchInput.value = currentSearchQuery;
+                renderSearchHistory();
+                desktopSearchSuggestions.style.display = 'none';
             });
 
             desktopSearchInput.addEventListener('blur', (event) => {
@@ -835,19 +830,19 @@
                     const isFocusStillInsideSearchRelatedArea = searchArea.contains(event.relatedTarget) ||
                                                  desktopSearchHistoryContainer.contains(event.relatedTarget) ||
                                                  desktopSearchSuggestions.contains(event.relatedTarget) ||
-                                                 searchResultsContainer.contains(event.relatedTarget); 
-                    
+                                                 searchResultsContainer.contains(event.relatedTarget);
+
                     if (!isFocusStillInsideSearchRelatedArea) {
                         resetMainContentToHome();
                     }
-                }, 100); 
+                }, 100);
             });
 
 
             desktopSearchInput.addEventListener('input', (e) => {
                 clearTimeout(searchTimeout);
                 const query = e.target.value.trim();
-                currentSearchQuery = query; 
+                currentSearchQuery = query;
                 searchTimeout = setTimeout(() => {
                     showSuggestions(desktopSearchInput, searchSuggestionsListDesktop, query);
                 }, 300);
@@ -855,36 +850,36 @@
 
             desktopSearchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault(); 
+                    e.preventDefault();
                     const query = desktopSearchInput.value.trim();
                     if (query) {
                         mainElement.classList.remove('desktop-search-active');
                         currentSearchQuery = query;
                         loadedPinsCount = 0;
                         performSearch(query); // Call performSearch for desktop as well
-                        desktopSearchSuggestions.style.display = 'none'; 
-                        desktopSearchHistoryContainer.style.display = 'none'; 
+                        desktopSearchSuggestions.style.display = 'none';
+                        desktopSearchHistoryContainer.style.display = 'none';
                     }
                 }
             });
-            
+
             // Helper function to reset view to home page
             async function resetMainContentToHome() {
-                desktopSearchInput.value = ''; 
-                currentSearchQuery = ''; 
+                desktopSearchInput.value = '';
+                currentSearchQuery = '';
                 desktopSearchSuggestions.style.display = 'none';
                 desktopSearchHistoryContainer.style.display = 'none';
-                searchResultsContainer.innerHTML = ''; 
-                searchResultsContainer.style.display = 'none'; 
-                loadedPinsCount = 0; 
-                mainElement.classList.remove('desktop-search-active'); 
-                
+                searchResultsContainer.innerHTML = '';
+                searchResultsContainer.style.display = 'none';
+                searchLoadingIndicator.style.display = 'none';
+                mainElement.classList.remove('desktop-search-active');
+
                 // Explicitly remove any inline display property set by JS or extensions
-                pinGrid.style.removeProperty('display'); 
+                pinGrid.style.removeProperty('display');
                 // Then set it. CSS !important in style.css will ensure it's visible.
-                pinGrid.style.display = 'column'; 
-                
-                await loadPins(pinsPerPage, false); 
+                pinGrid.style.display = 'column';
+
+                await loadPins(pinsPerPage, false);
             }
 
             // Handle clicks outside search elements to close them and revert to home page view
@@ -894,16 +889,16 @@
                                                  desktopSearchSuggestions.contains(event.target) ||
                                                  desktopSearchHistoryContainer.contains(event.target) ||
                                                  searchResultsContainer.contains(event.target);
-            
+
                 if (!desktopSearchInput.matches(':focus') && !isClickInsideDesktopSearchUI) {
                     resetMainContentToHome();
                 }
 
                 // If clicking outside mobile search overlay, close it
                 const isClickInsideMobileSearchOverlay = searchOverlay.contains(event.target);
-                const mobileSearchTriggerButton = document.querySelector('.mobile-nav-item[data-action="search"]'); 
+                const mobileSearchTriggerButton = document.querySelector('.mobile-nav-item[data-action="search"]');
                 const isMobileSearchTriggerButtonClick = mobileSearchTriggerButton && mobileSearchTriggerButton.contains(event.target);
-                
+
                 if (searchOverlay.style.display === 'flex' && !isClickInsideMobileSearchOverlay && !isMobileSearchTriggerButtonClick) {
                     closeSearch();
                 }
@@ -920,35 +915,30 @@
                 try {
                     const response = await makeApiRequest('categories.php?action=fetch_all');
                     if (response.success && response.categories) {
-                        const categories = response.categories; 
+                        const categories = response.categories;
 
                         categoryContainers.forEach(container => {
-                            if (!container) return; 
-                            container.innerHTML = ''; 
+                            if (!container) return;
+                            container.innerHTML = '';
                             const fragment = document.createDocumentFragment();
 
                             categories.forEach((cat) => {
                                 const catItem = document.createElement('div');
                                 catItem.className = 'category-item';
-                                
+
                                 // Use imageUrl from category data
-                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`; 
+                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`;
                                 catItem.style.backgroundImage = `url('${imageUrl}')`;
 
                                 const catTitle = document.createElement('span');
-                                catTitle.textContent = cat.name; 
-                                
+                                catTitle.textContent = cat.name;
+
                                 catItem.appendChild(catTitle);
-                                
+
                                 catItem.onclick = function() {
-                                    currentSearchQuery = cat.name; 
-                                    if (this.closest('#searchOverlay')) { 
-                                        performSearch(cat.name); 
-                                    } else {
-                                        mainElement.classList.remove('desktop-search-active');
-                                        loadedPinsCount = 0; 
-                                        performSearch(cat.name); 
-                                    }
+                                    // MODIFIED: Navigate to the new tag.php page
+                                    const categoryPermalink = cat.name.trim().toLowerCase().replace(/ /g, '-');
+                                    window.location.href = `tag/${encodeURIComponent(categoryPermalink)}`;
                                 };
                                 fragment.appendChild(catItem);
                             });
@@ -967,16 +957,16 @@
                     });
                 }
             }
-            
+
             loadCategories();
 
             // --- Infinite Scroll ---
             window.addEventListener('scroll', () => {
-                if (loadingIndicator.style.display === 'none' && 
-                    searchOverlay.style.display === 'none' && 
+                if (loadingIndicator.style.display === 'none' &&
+                    searchOverlay.style.display === 'none' &&
                     mobileProfileDropdown.style.display === 'none' &&
-                    pinDetailOverlay.style.display === 'none' && 
-                    notificationOverlay.style.display === 'none' 
+                    pinDetailOverlay.style.display === 'none' &&
+                    notificationOverlay.style.display === 'none'
                 ) {
                     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
                         const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
@@ -989,7 +979,7 @@
 
             // --- Desktop Search/Category Interaction ---
             const desktopCategories = document.querySelector('.desktop-categories');
-            
+
 
             // --- Header Button Logic ---
             const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
@@ -998,29 +988,29 @@
             desktopCreateButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (!currentUser) {
-                    window.location.href = 'login.html'; 
+                    window.location.href = 'login.html';
                 } else {
                     window.location.href = 'create.html';
                 }
             });
 
             headerNavButtons.forEach(button => {
-                if (button.id === 'desktopCreateButton') return; 
+                if (button.id === 'desktopCreateButton') return;
 
                 button.addEventListener('click', async function() {
                     headerNavButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     const navAction = this.dataset.nav;
-                    currentSearchQuery = ''; 
+                    currentSearchQuery = '';
 
                     desktopSearchHistoryContainer.style.display = 'none';
                     desktopSearchSuggestions.style.display = 'none';
-                    searchResultsContainer.innerHTML = ''; 
-                    searchResultsContainer.style.display = 'none'; 
+                    searchResultsContainer.innerHTML = '';
+                    searchResultsContainer.style.display = 'none';
                     searchLoadingIndicator.style.display = 'none';
-                    mainElement.classList.remove('desktop-search-active'); 
+                    mainElement.classList.remove('desktop-search-active');
 
-                    pinGrid.style.display = 'column'; 
+                    pinGrid.style.display = 'column';
 
 
                     if (navAction === 'home') {
@@ -1031,7 +1021,7 @@
                             showMessage('Please login to view your saved pins.', 'error');
                             headerNavButtons.forEach(btn => btn.classList.remove('active'));
                             document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
-                            window.location.href = 'login.html'; 
+                            window.location.href = 'login.html';
                             return;
                         }
                         loadedPinsCount = 0;
@@ -1044,7 +1034,7 @@
             // --- Mobile Search Overlay Logic ---
             const searchOverlay = document.getElementById('searchOverlay');
             const closeSearchBtn = document.getElementById('closeSearchOverlay');
-            
+
             const openSearch = () => {
                 searchOverlay.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
@@ -1056,9 +1046,9 @@
                 searchLoadingIndicator.style.display = 'none';
                 categoryExploreTitle.style.display = 'block';
                 categoryGridMobile.style.display = 'grid';
-                renderSearchHistory(); 
+                renderSearchHistory();
             };
-            
+
             const closeSearch = () => {
                 searchOverlay.style.display = 'none';
                 document.body.style.overflow = '';
@@ -1068,7 +1058,7 @@
             };
 
             closeSearchBtn.onclick = closeSearch;
-            
+
 
             // --- Mobile Navigation Logic ---
             const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
@@ -1078,18 +1068,18 @@
 
                     closePinDetail();
                     closeNotificationPage();
-                    closeSearch(); 
-                    
+                    closeSearch();
+
                     if (action === 'search') {
                         openSearch();
-                    } else if (action === 'create-pin') { 
+                    } else if (action === 'create-pin') {
                          if (!currentUser) {
                             window.location.href = 'login.html';
                             return;
                         }
-                        window.location.href = 'create.html'; 
+                        window.location.href = 'create.html';
                     }
-                    else if (action === 'profile') { 
+                    else if (action === 'profile') {
                         if (!currentUser) {
                             window.location.href = 'login.html';
                             return;
@@ -1100,18 +1090,18 @@
                             window.location.href = 'user.php';
                         }
                     }
-                    else { 
+                    else {
                         mobileNavItems.forEach(i => i.classList.remove('active'));
                         this.classList.add('active');
-                        if (action === 'home' || action === 'saved') { 
+                        if (action === 'home' || action === 'saved') {
                             const desktopButton = document.querySelector(`.header-nav-links .nav-button[data-nav="${action}"]`);
                             if (desktopButton) {
                                 headerNavButtons.forEach(btn => btn.classList.remove('active'));
                                 desktopButton.classList.add('active');
                             }
                         }
-                        currentSearchQuery = ''; 
-                        
+                        currentSearchQuery = '';
+
                         searchResultsContainer.innerHTML = '';
                         searchResultsContainer.style.display = 'none';
                         searchLoadingIndicator.style.display = 'none';
@@ -1122,7 +1112,7 @@
                         if (action === 'home') {
                             loadedPinsCount = 0;
                             await loadPins(pinsPerPage, false);
-                        } else if (action === 'saved') { 
+                        } else if (action === 'saved') {
                             if (!currentUser) {
                                 window.location.href = 'login.html';
                                 mobileNavItems.forEach(i => i.classList.remove('active'));
@@ -1144,7 +1134,7 @@
 
             profileButton.addEventListener('click', () => {
                 if (!currentUser) {
-                    window.location.href = 'login.html'; 
+                    window.location.href = 'login.html';
                 } else {
                     if (currentUser.isAdmin) {
                         window.location.href = 'admin.php';
@@ -1190,8 +1180,8 @@
                     const response = await makeApiRequest('notifications.php?action=fetch_all');
                     if (response.success) {
                         const notifications = response.notifications || [];
-                        const unreadCount = notifications.filter(notif => !notif.read).length; 
-                        
+                        const unreadCount = notifications.filter(notif => !notif.read).length;
+
                         if (unreadCount > 0) {
                             notificationBadge.textContent = unreadCount;
                             notificationBadge.style.display = 'flex';
@@ -1209,7 +1199,7 @@
 
             async function markAllNotificationsAsRead() {
                 try {
-                    const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null); 
+                    const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null);
                     if (response.success) {
                         updateNotificationBadge();
                     }
@@ -1287,14 +1277,14 @@
             });
 
             dropdownLogout.addEventListener('click', async () => {
-                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null);
                 if (response.success) {
                     currentUser = null;
                     updateProfileDisplay();
                     updateHeaderDropdown();
                     showMessage('Logout successful.', 'Logout');
                     loadedPinsCount = 0;
-                    currentSearchQuery = ''; 
+                    currentSearchQuery = '';
                     await loadPins(pinsPerPage, false);
                     mobileNavItems.forEach(i => i.classList.remove('active'));
                     document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
@@ -1320,7 +1310,7 @@
                 mobileDropdownUsernameDisplay.textContent = `Logged in as ${currentUser.username}`;
                 mobileDropdownMyProfile.style.display = 'block';
                 mobileDropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
-                
+
                 mobileProfileDropdown.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
             }
@@ -1330,7 +1320,7 @@
                 if (currentUser) {
                     showMobileProfileOptions();
                 } else {
-                    window.location.href = 'login.html'; 
+                    window.location.href = 'login.html';
                 }
             });
 
@@ -1353,14 +1343,14 @@
             });
 
             mobileDropdownLogout.addEventListener('click', async () => {
-                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null);
                 if (response.success) {
                     currentUser = null;
                     updateProfileDisplay();
                     updateHeaderDropdown();
                     showMessage('Logout successful.', 'Logout');
                     loadedPinsCount = 0;
-                    currentSearchQuery = ''; 
+                    currentSearchQuery = '';
                     await loadPins(pinsPerPage, false);
                     mobileNavItems.forEach(i => i.classList.remove('active'));
                     document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
@@ -1380,7 +1370,7 @@
 
             // --- Check Initial Session and Load ---
             async function initializeApp() {
-                loadSearchHistory(); 
+                loadSearchHistory();
                 const urlParams = new URLSearchParams(window.location.search);
 
                 const response = await makeApiRequest('auth.php?action=check_session');
@@ -1398,10 +1388,10 @@
                 updateProfileDisplay();
                 updateHeaderDropdown();
                 updateNotificationBadge();
-                
+
                 const allPinsResponse = await makeApiRequest('pins.php?action=fetch_all');
                 if (allPinsResponse.success) {
-                    allPinsData = allPinsResponse.pins; 
+                    allPinsData = allPinsResponse.pins;
                 } else {
                     console.error("Failed to load all pins on init:", allPinsResponse.message);
                 }
