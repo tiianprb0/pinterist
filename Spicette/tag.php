@@ -41,7 +41,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         }
         .tag-page-header p {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 20px;
+            font-size: 15px;
             color: #5f5f5f;
         }
         /* Ensure pin-grid on tag page does not get affected by desktop-search-active class in main */
@@ -82,28 +82,25 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 </button>
             </div>
 
-            <div class="pin-detail-header-info">
+            <div class="pin-header-info">
                 <h2 id="pinDetailTitle"></h2>
-                <div class="pin-detail-meta-row">
-                    <p class="uploaded-by-text"><strong id="pinDetailUploadedBy"></strong></p>
-                    <button id="pinDetailShareButton" class="icon-button-small">
-                        <i class="fas fa-share-alt"></i>
+                <div class="uploaded-by-and-share">
+                    <p class="uploaded-by-text">oleh <strong id="pinDetailUploadedBy"></strong></p>
+                    <button id="pinDetailShareButton" class="secondary">
+                        <i class="fas fa-share-alt"></i> Share
                     </button>
                 </div>
             </div>
 
             <div class="pin-detail-img-main-container">
                 <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Save</button>
-                <button id="pinDetailDownloadButton" class="pin-download-button image-overlay-button">
-                    <i class="fas fa-download"></i>
-                </button>
-            </div>
+                </div>
 
             <p id="pinDetailDescription" class="pin-detail-description"></p>
             <div class="dashed-line"></div>
             <div id="pinDetailCategories" class="pin-categories"></div>
 
-            </div>
+        </div>
     </div>
 
     <div id="notificationOverlay">
@@ -254,7 +251,6 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         const pinDetailDescription = document.getElementById('pinDetailDescription');
         const pinDetailCategories = document.getElementById('pinDetailCategories');
         const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton');
-        const pinDetailDownloadButton = document.getElementById('pinDetailDownloadButton');
         const pinDetailShareButton = document.getElementById('pinDetailShareButton');
 
         function updatePinDetailImageSaveButton(pinData) {
@@ -326,7 +322,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
         function openPinDetail(pinData) {
             pinDetailTitle.textContent = pinData.title || 'Untitled';
-            pinDetailUploadedBy.textContent = `oleh ${pinData.uploadedBy || 'Anonim'}`;
+            pinDetailUploadedBy.textContent = ` ${pinData.uploadedBy || 'Anonim'}`;
 
             // Mengelola deskripsi umum pin
             if (pinData.description) {
@@ -340,7 +336,6 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             // Mengosongkan dan mengisi container gambar utama
             pinDetailImageMainContainer.innerHTML = '';
             pinDetailImageMainContainer.appendChild(pinDetailImageSaveButton); // Pastikan tombol save selalu ada
-            pinDetailImageMainContainer.appendChild(pinDetailDownloadButton); // NEW: Tombol download selalu ada di container gambar
 
             // Menentukan tampilan gambar berdasarkan display_type
             if (pinData.images && pinData.images.length > 0) {
@@ -455,20 +450,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 pinDetailShareButton.style.display = 'none';
             }
 
-            // Download button logic (NEW: dipindahkan ke container gambar)
-            pinDetailDownloadButton.onclick = (e) => { 
-                e.stopPropagation(); 
-                let imageUrlToDownload = '';
-                if (pinData.images && pinData.images.length > 0) {
-                    imageUrlToDownload = getCorrectedImagePath(pinData.images[0].url); // Always download the first image for now
-                }
-                
-                if (imageUrlToDownload) {
-                    downloadPin(imageUrlToDownload); 
-                } else {
-                    showMessage('Tidak ada gambar untuk diunduh.', 'info');
-                }
-            };
+            // Download button logic is now handled only by fullImageOverlay
 
             pinDetailOverlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -532,8 +514,8 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             slider.addEventListener('touchend', (e) => {
                 touchEndX = e.changedTouches[0].screenX;
                 if (isDragging) {
+                    // Removed e.preventDefault() as it causes "Unable to preventDefault inside passive event listener" error
                     e.stopPropagation(); 
-                    e.preventDefault(); 
                 }
             }, { passive: true }); 
         }
