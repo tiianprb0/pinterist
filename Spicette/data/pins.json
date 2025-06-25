@@ -1,0 +1,85 @@
+[
+    {
+        "id": "pin_685aaa7ecec5c_1750772350",
+        "title": "Eca Padel",
+        "description": "",
+        "images": [
+            {
+                "url": "./uploads/pins/pin_685aaa7ece785.jpeg",
+                "description": ""
+            }
+        ],
+        "display_type": "stacked",
+        "category": "Untukmu",
+        "uploadedBy": "tiianprb",
+        "created_at": "2025-06-24 20:39:10"
+    },
+    {
+        "id": "pin_685aaac56b148_1750772421",
+        "title": "Eca Ikat Rambut",
+        "description": "",
+        "images": [
+            {
+                "url": "./uploads/pins/pin_685aaac56ab56.jpeg",
+                "description": "Suka lihatnya"
+            }
+        ],
+        "display_type": "stacked",
+        "category": "Untukmu",
+        "uploadedBy": "tiianprb",
+        "created_at": "2025-06-24 20:40:21"
+    },
+    {
+        "id": "pin_685aab0102626_1750772481",
+        "title": "Ecaa",
+        "description": "",
+        "images": [
+            {
+                "url": "./uploads/pins/pin_685aab010235a.jpeg",
+                "description": ""
+            }
+        ],
+        "display_type": "stacked",
+        "category": "Untukmu",
+        "uploadedBy": "tiianprb",
+        "created_at": "2025-06-24 20:41:21"
+    },
+    {
+        "id": "pin_685aab2302345_1750772515",
+        "title": "Aw Eca",
+        "description": "",
+        "images": [
+            {
+                "url": "./uploads/pins/pin_685aab2301999.jpeg",
+                "description": ""
+            },
+            {
+                "url": "./uploads/pins/pin_685aab2301e92.jpeg",
+                "description": ""
+            }
+        ],
+        "display_type": "slider",
+        "category": "Untukmu",
+        "uploadedBy": "tiianprb",
+        "created_at": "2025-06-24 20:41:55"
+    },
+    {
+        "id": "pin_685b61f2a084b_1750819314",
+        "title": "Awww",
+        "description": "",
+        "images": [
+            {
+                "url": "./uploads/pins/pin_685b61f29f30c.jpeg",
+                "description": ""
+            },
+            {
+                "url": "./uploads/pins/pin_685b61f29f520.png",
+                "description": ""
+            }
+        ],
+        "display_type": "slider",
+        "category": "Untukmu",
+        "uploadedBy": "tiianprb",
+        "created_at": "2025-06-25 09:41:54"
+    }
+]

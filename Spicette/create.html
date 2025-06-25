@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Pin Baru - Spicette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> 
+    <!-- Font Awesome untuk ikon kamera -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+             box-shadow: none !important; /* Dihilangkan box-shadow */
+        }
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px); /* Kurangi tinggi header */
+            padding: 20px;
+        }
+        .create-pin-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        .create-pin-container h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: normal;
+        }
+        .create-pin-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .create-pin-container input,
+        .create-pin-container textarea,
+        .create-pin-container select { /* Tambahkan select */
+            padding: 12px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .create-pin-container textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .create-pin-container button {
+            background-color: #111;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .create-pin-container button:hover {
+            background-color: #333;
+        }
+        .message-box {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            text-align: left;
+        }
+        .message-box.success {
+            background-color: #e6ffe6;
+            color: green;
+            border: 1px solid green;
+        }
+        .message-box.error {
+            background-color: #ffe6e6;
+            color: red;
+            border: 1px solid red;
+        }
+        /* New styles for radio buttons and image descriptions */
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            justify-content: flex-start; /* Align left */
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 5px;
+        }
+        .form-group-inline {
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            text-align: left; /* Align left */
+        }
+        .form-group-inline label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+            color: #777;
+        }
+        .form-group-inline textarea {
+            width: calc(100% - 20px); /* Adjust for padding */
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'"></div>
+        <div class="header-nav-links">
+            <button class="nav-button" onclick="window.location.href='index.html'">Home</button>
+            <button class="nav-button active">Create</button>
+        </div>
+        <div class="search-container" style="flex-grow: 1;"></div>
+        <div class="header-icons">
+            </div>
+    </header>
+
+    <main>
+        <div class="create-pin-container">
+            <h2>Buat Pin Baru</h2>
+            <div id="createMessage" class="message-box"></div>
+            <form id="createPinForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Judul Pin:</label>
+                    <input type="text" id="title" name="title" placeholder="Masukkan judul pin" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Deskripsi Umum Pin (opsional):</label>
+                    <textarea id="description" name="description" rows="5" placeholder="Deskripsi umum untuk pin ini"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="images">Pilih Gambar (bisa lebih dari satu):</label>
+                    <input type="file" id="images" name="images[]" accept="image/*" multiple required>
+                </div>
+
+                <div class="form-group">
+                    <label>Jenis Tampilan Detail Pin:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="displayStacked" name="display_type" value="stacked" checked>
+                        <label for="displayStacked">Gambar Berjejer ke Bawah (dengan deskripsi per foto)</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="displaySlider" name="display_type" value="slider">
+                        <label for="displaySlider">Slider Gambar (tanpa deskripsi per foto)</label>
+                    </div>
+                </div>
+
+                <div id="imageDescriptionsContainer" class="form-group">
+                    <!-- Deskripsi gambar individual akan ditambahkan di sini secara dinamis -->
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Kategori Utama:</label>
+                    <select id="category" name="category" required>
+                        <!-- Kategori akan dimuat dari API -->
+                    </select>
+                </div>
+
+                <button type="submit">Unggah Pin</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            setupImageInputListener();
+            setupDisplayTypeListener();
+        });
+
+        const createMessageDiv = document.getElementById('createMessage');
+
+        function showMessage(msg, type = 'info') {
+            createMessageDiv.textContent = msg;
+            createMessageDiv.className = 'message-box ' + type;
+            createMessageDiv.style.display = 'block';
+            setTimeout(() => {
+                createMessageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Mengambil kategori dari API dan mengisi dropdown
+        async function loadCategories() {
+            try {
+                const response = await fetch('./api/categories.php?action=fetch_all');
+                const result = await response.json();
+                const categorySelect = document.getElementById('category');
+                
+                if (result.success && result.categories) {
+                    // Tambahkan opsi default
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Pilih Kategori';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    categorySelect.appendChild(defaultOption);
+
+                    result.categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.name;
+                        option.textContent = cat.name;
+                        categorySelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Failed to load categories:', result.message);
+                    showMessage('Gagal memuat kategori. Silakan coba lagi.', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                showMessage('Terjadi kesalahan jaringan saat memuat kategori.', 'error');
+            }
+        }
+
+        // Menangani perubahan pada input file gambar untuk menambahkan input deskripsi
+        function setupImageInputListener() {
+            const imagesInput = document.getElementById('images');
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
+            const displayStackedRadio = document.getElementById('displayStacked');
+
+            imagesInput.addEventListener('change', () => {
+                imageDescriptionsContainer.innerHTML = ''; // Hapus deskripsi sebelumnya
+                const files = imagesInput.files;
+
+                if (displayStackedRadio.checked && files.length > 0) {
+                    const header = document.createElement('h3');
+                    header.textContent = 'Deskripsi Gambar Individual (Opsional):';
+                    imageDescriptionsContainer.appendChild(header);
+
+                    Array.from(files).forEach((file, index) => {
+                        const fileDescriptionDiv = document.createElement('div');
+                        fileDescriptionDiv.className = 'form-group-inline'; // Gaya opsional
+                        fileDescriptionDiv.innerHTML = `
+                            <label for="image_desc_${index}">${file.name}:</label>
+                            <textarea id="image_desc_${index}" name="image_descriptions[]" rows="2" placeholder="Deskripsi untuk gambar ini (opsional)"></textarea>
+                        `;
+                        imageDescriptionsContainer.appendChild(fileDescriptionDiv);
+                    });
+                }
+            });
+        }
+
+        // Menangani perubahan pada pilihan jenis tampilan
+        function setupDisplayTypeListener() {
+            const displayStackedRadio = document.getElementById('displayStacked');
+            const displaySliderRadio = document.getElementById('displaySlider');
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
+            const imagesInput = document.getElementById('images'); 
+
+            const toggleDescriptions = () => {
+                const files = imagesInput.files;
+                if (files.length === 1) {
+                    displayStackedRadio.checked = true;
+                    displaySliderRadio.disabled = true; 
+                    imageDescriptionsContainer.style.display = 'block';
+                    imagesInput.dispatchEvent(new Event('change')); // Memicu event change
+                } else {
+                    displaySliderRadio.disabled = false; 
+                    if (displayStackedRadio.checked) {
+                        imageDescriptionsContainer.style.display = 'block';
+                        imagesInput.dispatchEvent(new Event('change')); 
+                    } else {
+                        imageDescriptionsContainer.style.display = 'none';
+                        imageDescriptionsContainer.innerHTML = ''; 
+                    }
+                }
+            };
+
+            displayStackedRadio.addEventListener('change', toggleDescriptions);
+            displaySliderRadio.addEventListener('change', toggleDescriptions);
+            imagesInput.addEventListener('change', toggleDescriptions); 
+
+            // Panggil sekali saat memuat untuk pengaturan awal
+            toggleDescriptions();
+        }
+
+        // Menangani pengiriman formulir untuk membuat pin baru
+        document.getElementById('createPinForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData();
+
+            formData.append('title', document.getElementById('title').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
+
+            // TIDAK perlu mengirim user_id dari sini, akan diambil dari sesi di PHP
+            // const dummyUserId = 'tiianprb@gmail.com'; 
+            // formData.append('user_id', dummyUserId); 
+
+            // Tambahkan file gambar
+            const imagesInput = document.getElementById('images');
+            if (imagesInput.files.length === 0) {
+                showMessage('Harap pilih setidaknya satu gambar.', 'error');
+                return;
+            }
+            for (const file of imagesInput.files) {
+                formData.append('images[]', file);
+            }
+
+            // Tambahkan deskripsi individual jika mode stacked dipilih dan ada file
+            if (document.getElementById('displayStacked').checked && imagesInput.files.length > 0) {
+                const imageDescriptions = [];
+                const descriptionTextareas = document.querySelectorAll('#imageDescriptionsContainer textarea[name="image_descriptions[]"]');
+                descriptionTextareas.forEach(textarea => {
+                    imageDescriptions.push(textarea.value);
+                });
+                formData.append('image_descriptions', JSON.stringify(imageDescriptions));
+            }
+
+            try {
+                // Mengirim FormData langsung ke pins.php karena pins.php sekarang menangani unggahan file
+                const response = await fetch('./api/pins.php', {
+                    method: 'POST',
+                    body: formData 
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showMessage('Pin berhasil dibuat!', 'success');
+                    form.reset(); 
+                    // Reset dinamis elemen deskripsi gambar
+                    document.getElementById('imageDescriptionsContainer').innerHTML = '';
+                    document.getElementById('displaySlider').disabled = false; // Aktifkan lagi slider
+                    document.getElementById('displayStacked').checked = true; // Kembali ke default stacked
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html'; 
+                    }, 1500); // Tunggu sebentar sebelum redirect
+                } else {
+                    showMessage('Gagal membuat pin: ' + result.message + (result.errors ? '\n' + result.errors.join('\n') : ''), 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Terjadi kesalahan saat berkomunikasi dengan server.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
