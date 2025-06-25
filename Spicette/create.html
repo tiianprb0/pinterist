@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Pin - Spicette</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Base styles from style.css */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            overscroll-behavior: none;
+            margin: 0;
+        }
+
+        /* Main content */
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Back button container, inspired by search.php .search-pin-action-icon */
+        .back-button-container {
+            margin-bottom: 20px;
+            align-self: flex-start;
+        }
+
+        .back-button {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .back-button:hover {
+            background-color: #e9e9e9;
+            transform: scale(1.1);
+        }
+
+        .back-button .fas {
+            font-size: 20px;
+            color: #111;
+        }
+
+        /* Form styling */
+        .create-pin-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .create-pin-form h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 25px;
+            color: #111;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            color: #333;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #e60023;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-group.select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 24 24" fill="%23767676"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 30px;
+        }
+
+        /* Upload button styling */
+        .create-pin-form button {
+            background-color: #e60023;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            width: 100%;
+            position: relative;
+        }
+
+        .create-pin-form button:hover {
+            background-color: #ad081b;
+            transform: translateY(-2px);
+        }
+
+        .create-pin-form button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            border: 3px solid #fff;
+            border-top: 3px solid #e60023;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .create-pin-form button:disabled .loading-spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Radio button styling */
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .radio-group:hover {
+            transform: scale(1.02);
+        }
+
+        .radio-group:hover label {
+            color: #e60023;
+        }
+
+        .radio-group input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            margin-right: 5px;
+        }
+
+        .radio-group input[type="radio"]:checked {
+            border-color: #e60023;
+            background-color: #e60023;
+        }
+
+        .radio-group input[type="radio"]:checked::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .radio-group label {
+            font-size: 14px;
+            color: #333;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .form-group-inline {
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8f8f8;
+            margin-bottom: 10px;
+        }
+
+        .form-group-inline label {
+            font-size: 13px;
+            color: #767676;
+        }
+
+        .form-group-inline textarea {
+            font-size: 14px;
+        }
+
+        /* Custom alert */
+        .custom-alert {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .custom-alert.success {
+            background-color: #28a745;
+        }
+
+        .custom-alert.error {
+            background-color: #dc3545;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            main {
+                margin: 20px 10px;
+                padding: 0 10px;
+            }
+
+            .create-pin-form h2 {
+                font-size: 22px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .create-pin-form button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .back-button {
+                width: 36px;
+                height: 36px;
+            }
+
+            .back-button .fas {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 13px;
+            }
+
+            .radio-group input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+
+            .radio-group input[type="radio"]:checked::after {
+                width: 8px;
+                height: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.location.href='index.html'" aria-label="Back">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+        <form id="createPinForm" class="create-pin-form" enctype="multipart/form-data">
+            <h2>Create New Pin</h2>
+            <div id="createMessage" class="custom-alert"></div>
+            <div class="form-group">
+                <label for="title">Pin Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter pin title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Pin Description (optional):</label>
+                <textarea id="description" name="description" placeholder="Describe your pin"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="images">Select Images (multiple allowed):</label>
+                <input type="file" id="images" name="images[]" accept="image/*" multiple required>
+            </div>
+            <div class="form-group">
+                <label>Pin Display Type:</label>
+                <div class="radio-group">
+                    <input type="radio" id="displayStacked" name="display_type" value="stacked" checked>
+                    <label for="displayStacked">Stacked Images!</label>
+                </div>
+                <div class="radio-group">
+                    <input type="radio" id="displaySlider" name="display_type" value="slider">
+                    <label for="displaySlider">Image Slider!</label>
+                </div>
+            </div>
+            <div id="imageDescriptionsContainer" class="form-group"></div>
+            <div class="form-group">
+                <label for="category">Main Category:</label>
+                <select id="category" name="category" required>
+                    <!-- Categories loaded from API -->
+                </select>
+            </div>
+            <button type="submit" id="uploadButton">Upload Pin <span class="loading-spinner"></span></button>
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            setupImageInputListener();
+            setupDisplayTypeListener();
+        });
+
+        const createMessageDiv = document.getElementById('createMessage');
+        const uploadButton = document.getElementById('uploadButton');
+
+        // Show message with custom alert
+        function showMessage(msg, type = 'info') {
+            createMessageDiv.textContent = msg;
+            createMessageDiv.className = `custom-alert ${type} show`;
+            setTimeout(() => {
+                createMessageDiv.classList.remove('show');
+            }, 3000);
+        }
+
+        // Load categories from API
+        async function loadCategories() {
+            try {
+                const response = await fetch('./api/categories.php?action=fetch_all');
+                const result = await response.json();
+                const categorySelect = document.getElementById('category');
+                
+                if (result.success && result.categories) {
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select Category';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    categorySelect.appendChild(defaultOption);
+
+                    result.categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.name;
+                        option.textContent = cat.name;
+                        categorySelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Failed to load categories:', result.message);
+                    showMessage('Failed to load categories. Try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                showMessage('Network error while loading categories.', 'error');
+            }
+        }
+
+        // Handle image input changes
+        function setupImageInputListener() {
+            const imagesInput = document.getElementById('images');
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
+            const displayStackedRadio = document.getElementById('displayStacked');
+
+            imagesInput.addEventListener('change', () => {
+                imageDescriptionsContainer.innerHTML = '';
+                const files = imagesInput.files;
+
+                if (displayStackedRadio.checked && files.length > 0) {
+                    const header = document.createElement('h3');
+                    header.textContent = 'Individual Image Descriptions (Optional):';
+                    header.style.fontSize = '16px';
+                    header.style.color = '#333';
+                    header.style.marginBottom = '15px';
+                    header.style.fontWeight = 'bold';
+                    imageDescriptionsContainer.appendChild(header);
+
+                    Array.from(files).forEach((file, index) => {
+                        const fileDescriptionDiv = document.createElement('div');
+                        fileDescriptionDiv.className = 'form-group-inline';
+                        fileDescriptionDiv.innerHTML = `
+                            <label for="image_desc_${index}">${file.name}:</label>
+                            <textarea id="image_desc_${index}" name="image_descriptions[]" placeholder="Describe this image (optional)"></textarea>
+                        `;
+                        imageDescriptionsContainer.appendChild(fileDescriptionDiv);
+                    });
+                }
+            });
+        }
+
+        // Handle display type radio buttons
+        function setupDisplayTypeListener() {
+            const displayStackedRadio = document.getElementById('displayStacked');
+            const displaySliderRadio = document.getElementById('displaySlider');
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
+            const imagesInput = document.getElementById('images');
+
+            const toggleDescriptions = () => {
+                const files = imagesInput.files;
+                if (files.length === 1) {
+                    displayStackedRadio.checked = true;
+                    displaySliderRadio.disabled = true;
+                    imageDescriptionsContainer.style.display = 'block';
+                    imagesInput.dispatchEvent(new Event('change'));
+                } else {
+                    displaySliderRadio.disabled = false;
+                    if (displayStackedRadio.checked) {
+                        imageDescriptionsContainer.style.display = 'block';
+                        imagesInput.dispatchEvent(new Event('change'));
+                    } else {
+                        imageDescriptionsContainer.style.display = 'none';
+                        imageDescriptionsContainer.innerHTML = '';
+                    }
+                }
+            };
+
+            displayStackedRadio.addEventListener('change', toggleDescriptions);
+            displaySliderRadio.addEventListener('change', toggleDescriptions);
+            imagesInput.addEventListener('change', toggleDescriptions);
+
+            toggleDescriptions();
+        }
+
+        // Handle form submission
+        document.getElementById('createPinForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            uploadButton.disabled = true; // Disable button to show loading
+
+            const form = event.target;
+            const formData = new FormData();
+
+            formData.append('title', document.getElementById('title').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
+
+            const imagesInput = document.getElementById('images');
+            if (imagesInput.files.length === 0) {
+                showMessage('Please select at least one image.', 'error');
+                uploadButton.disabled = false;
+                return;
+            }
+            for (const file of imagesInput.files) {
+                formData.append('images[]', file);
+            }
+
+            if (document.getElementById('displayStacked').checked && imagesInput.files.length > 0) {
+                const imageDescriptions = [];
+                const descriptionTextareas = document.querySelectorAll('#imageDescriptionsContainer textarea[name="image_descriptions[]"]');
+                descriptionTextareas.forEach(textarea => {
+                    imageDescriptions.push(textarea.value);
+                });
+                formData.append('image_descriptions', JSON.stringify(imageDescriptions));
+            }
+
+            try {
+                const response = await fetch('./api/pins.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showMessage('Pin created successfully!', 'success');
+                    form.reset();
+                    document.getElementById('imageDescriptionsContainer').innerHTML = '';
+                    document.getElementById('displaySlider').disabled = false;
+                    document.getElementById('displayStacked').checked = true;
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showMessage('Failed to create pin: ' + result.message + (result.errors ? '\n' + result.errors.join('\n') : ''), 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Network error during upload.', 'error');
+            } finally {
+                uploadButton.disabled = false; // Re-enable button
+            }
+        });
+    </script>
+</body>
+</html>
