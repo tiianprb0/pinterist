@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Gaya untuk mencegah scrolling pada body */
+        body.no-scroll {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
@@ -16,7 +22,7 @@
         <div class="pin-detail-content">
             <div class="pin-detail-back-container">
                 <button class="pin-detail-back-button" onclick="window.closePinDetail()">
-                    <i class="fas fa-arrow-left"></i> Back
+                    <i class="fas fa-arrow-left"></i> Kembali
                 </button>
             </div>
 
@@ -25,15 +31,15 @@
                 <div class="uploaded-by-and-share">
                     <p class="uploaded-by-text">oleh <strong id="pinDetailUploadedBy"></strong></p>
                     <button id="pinDetailShareButton" class="secondary">
-                        <i class="fas fa-share-alt"></i> Share
+                        <i class="fas fa-share-alt"></i> Bagikan
                     </button>
                 </div>
             </div>
 
             <div class="pin-detail-img-main-container">
-                <!-- Pin image(s) will be loaded here, can be stacked or swipe gallery -->
-                <!-- This is the main container for images and save button -->
-                <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Save</button>
+                <!-- Gambar Pin akan dimuat di sini, bisa bertumpuk atau galeri geser -->
+                <!-- Ini adalah container utama untuk gambar dan tombol simpan -->
+                <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Simpan</button>
             </div>
 
             <p id="pinDetailDescription" class="pin-detail-description"></p>
@@ -42,29 +48,29 @@
 
             <!-- Removed Share and Download buttons from here as they are moved -->
             <div class="pin-detail-actions" style="display: none;">
-                <!-- This is an empty div, hidden to avoid disturbing the layout -->
+                <!-- Ini adalah div kosong, disembunyikan agar tidak mengganggu tata letak -->
             </div>
         </div>
     </div>
 
-    <!-- NEW: Full Image Overlay -->
+    <!-- BARU: Overlay Gambar Penuh -->
     <div id="fullImageOverlay" class="full-image-overlay">
         <button class="close-full-image-button" onclick="window.closeFullImageOverlay()">&times;</button>
-        <img id="fullImageDisplay" src="" alt="Full Size Image">
+        <img id="fullImageDisplay" src="" alt="Gambar Ukuran Penuh">
         <button id="fullImageDownloadButton" class="download-button-on-image">
-            <i class="fas fa-download"></i> Download
+            <i class="fas fa-download"></i> Unduh
         </button>
     </div>
 
     <div id="notificationOverlay">
         <div class="overlay-header">
-            <h2>Notifications</h2>
-            <button class="icon-button" aria-label="Close Notifications" id="closeNotificationButton">
+            <h2>Notifikasi</h2>
+            <button class="icon-button" aria-label="Tutup Notifikasi" id="closeNotificationButton">
                 <i class="fas fa-times"></i> </button>
         </div>
         <div class="notification-page-container">
             <div class="notification-list" id="notificationListContainer">
-                <p style="text-align: center; color: #767676;">No notifications.</p>
+                <p style="text-align: center; color: #767676;">Tidak ada notifikasi.</p>
             </div>
         </div>
     </div>
@@ -73,70 +79,70 @@
         <div class="overlay-header search-overlay-header">
             <div class="search-container">
                 <div class="search-icon-wrapper">
-                    <i class="fas fa-search"></i> <input type="search" placeholder="Search ideas" id="mobileSearchInputOverlay">
+                    <i class="fas fa-search"></i> <input type="search" placeholder="Cari ide" id="mobileSearchInputOverlay">
                 </div>
             </div>
-            <button id="closeSearchOverlay">Cancel</button>
+            <button id="closeSearchOverlay">Batal</button>
         </div>
         <div class="overlay-content search-overlay-content">
-            <div id="mobileSearchHistory"><h3>Search History</h3><ul id="mobileSearchHistoryList" class="search-history-list"></ul></div>
+            <div id="mobileSearchHistory"><h3>Riwayat Pencarian</h3><ul id="mobileSearchHistoryList" class="search-history-list"></ul></div>
             <ul id="searchSuggestions"></ul>
-            <h3 id="categoryExploreTitle">Explore Categories</h3>
+            <h3 id="categoryExploreTitle">Jelajahi Kategori</h3>
             <div class="category-grid" id="categoryGridMobile"></div>
         </div>
     </div>
 
     <div id="mobileProfileDropdown">
         <span class="username-display" id="mobileDropdownUsernameDisplay"></span>
-        <button class="secondary" id="mobileDropdownMyProfile" style="display: none;">My Profile</button>
-        <button class="secondary" id="mobileDropdownAdminPanel" style="display: none;">Admin Panel</button>
-        <button class="secondary" id="mobileDropdownLogout">Logout</button>
-        <button class="secondary" id="mobileDropdownClose">Close</button>
+        <button class="secondary" id="mobileDropdownMyProfile" style="display: none;">Profil Saya</button>
+        <button class="secondary" id="mobileDropdownAdminPanel" style="display: none;">Panel Admin</button>
+        <button class="secondary" id="mobileDropdownLogout">Keluar</button>
+        <button class="secondary" id="mobileDropdownClose">Tutup</button>
     </div>
 
 
     <header>
         <div class="logo" onclick="window.location.href='index.html'"></div>
         <div class="header-nav-links">
-            <button class="nav-button active" data-nav="home">Home</button>
-            <button class="nav-button" data-nav="create" id="desktopCreateButton">Create</button>
-            <button class="nav-button saved" data-nav="saved">Saved</button>
+            <button class="nav-button active" data-nav="home">Beranda</button>
+            <button class="nav-button" data-nav="create" id="desktopCreateButton">Buat</button>
+            <button class="nav-button saved" data-nav="saved">Disimpan</button>
         </div>
 
         <div class="search-container">
             <div class="search-icon-wrapper">
-                <i class="fas fa-search"></i> <input type="search" placeholder="Search" id="desktopSearchInput">
+                <i class="fas fa-search"></i> <input type="search" placeholder="Cari" id="desktopSearchInput">
             </div>
-            <div id="desktopSearchHistory"><h3>Search History</h3><ul id="desktopSearchHistoryList" class="search-history-list"></ul></div>
+            <div id="desktopSearchHistory"><h3>Riwayat Pencarian</h3><ul id="desktopSearchHistoryList" class="search-history-list"></ul></div>
             <ul id="desktopSearchSuggestions"></ul>
         </div>
         <div class="header-icons">
-            <button class="icon-button" aria-label="Notifications" id="notificationButton">
+            <button class="icon-button" aria-label="Notifikasi" id="notificationButton">
                 <i class="fas fa-bell"></i> <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
             </button>
-            <button class="icon-button" aria-label="Profile" id="profileButton"><div class="profile-icon" id="profileIconLetter">G</div></button>
-            <button class="icon-button" aria-label="More accounts" id="moreAccountsButton">
+            <button class="icon-button" aria-label="Profil" id="profileButton"><div class="profile-icon" id="profileIconLetter">G</div></button>
+            <button class="icon-button" aria-label="Akun Lainnya" id="moreAccountsButton">
                 <i class="fas fa-caret-down"></i> </button>
             <ul class="dropdown-menu" id="moreAccountsDropdown">
-                <li class="header-item" id="dropdownUsernameDisplay">Welcome, Guest!</li>
-                <li id="dropdownMyProfile" style="display: none;">My Profile</li>
-                <li id="dropdownAdminPanel" style="display: none;">Admin Panel</li>
-                <li id="dropdownLogout" style="display: none;">Logout</li>
+                <li class="header-item" id="dropdownUsernameDisplay">Selamat datang, Tamu!</li>
+                <li id="dropdownMyProfile" style="display: none;">Profil Saya</li>
+                <li id="dropdownAdminPanel" style="display: none;">Panel Admin</li>
+                <li id="dropdownLogout" style="display: none;">Keluar</li>
             </ul>
         </div>
-        <button class="icon-button mobile-notification-icon" aria-label="Notifications" id="mobileNotificationButton">
+        <button class="icon-button mobile-notification-icon" aria-label="Notifikasi" id="mobileNotificationButton">
                <i class="fas fa-bell"></i> <span class="notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
         </button>
     </header>
     
     <main>
         <section class="desktop-categories">
-            <h3>Explore ideas</h3>
+            <h3>Jelajahi ide</h3>
             <div class="category-grid" id="categoryGridDesktop">
                 </div>
         </section>
         <div class="pin-grid" id="pinGrid"></div>
-        <div id="loading-indicator">Loading more pins...</div>
+        <div id="loading-indicator">Memuat lebih banyak pin...</div>
     </main>
 
     <div class="mobile-bottom-nav-container">
@@ -160,20 +166,20 @@
             // --- Global State ---
             let currentUser = null;
             let currentSearchQuery = ''; 
-            let allPinsData = []; // Store all pins data for direct access by ID
+            let allPinsData = []; // Menyimpan semua data pin untuk akses langsung berdasarkan ID
             const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
-            let searchSuggestionsData = []; // To store data for suggestions
-            let selectedSuggestionIndex = -1; // For keyboard navigation in suggestions
+            let searchSuggestionsData = []; // Untuk menyimpan data saran
+            let selectedSuggestionIndex = -1; // Untuk navigasi keyboard dalam saran
 
-            // NEW: Search History variables
+            // BARU: Variabel Riwayat Pencarian
             const SEARCH_HISTORY_LS_KEY = 'spicette_search_history';
             const MAX_SEARCH_HISTORY = 5;
             let searchHistory = [];
 
-            // --- API Endpoints ---
+            // --- Titik Akhir API ---
             const API_BASE_URL = 'api/';
 
-            // --- Helper Function for API Requests ---
+            // --- Fungsi Pembantu untuk Permintaan API ---
             async function makeApiRequest(endpoint, method = 'GET', data = null) {
                 try {
                     const options = { method };
@@ -181,7 +187,7 @@
                         options.headers = { 'Content-Type': 'application/json' };
                         options.body = JSON.stringify(data);
                     } else if (method === 'POST') {
-                        // For FormData, do NOT set Content-Type header; browser does it automatically
+                        // Untuk FormData, JANGAN atur header Content-Type; browser melakukannya secara otomatis
                         delete options.headers; 
                     }
                     
@@ -189,38 +195,38 @@
                     
                     if (!response.ok) {
                         const errorText = await response.text();
-                        throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+                        throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
                     }
                     
                     const textResponse = await response.text();
                     if (!textResponse) {
-                        return { success: true, message: 'No content' };
+                        return { success: true, message: 'Tidak ada konten' };
                     }
 
                     try {
                         const jsonResponse = JSON.parse(textResponse);
                         return jsonResponse;
                     } catch (e) {
-                        console.error('Failed to parse JSON response:', textResponse);
-                        throw new Error(`Invalid JSON response: ${textResponse}`);
+                        console.error('Gagal mengurai respons JSON:', textResponse);
+                        throw new Error(`Respons JSON tidak valid: ${textResponse}`);
                     }
 
                 } catch (error) {
-                    console.error('API Request Failed:', error);
-                    return { success: false, message: 'Network or server error.' };
+                    console.error('Permintaan API Gagal:', error);
+                    return { success: false, message: 'Kesalahan jaringan atau server.' };
                 }
             }
 
-            // --- Function to Display Messages (for general errors/success, not for tab changes/notifications now) ---
+            // --- Fungsi untuk Menampilkan Pesan (untuk kesalahan/sukses umum, bukan untuk perubahan tab/notifikasi sekarang) ---
             const customAlert = document.getElementById('customAlert');
             let alertTimeout;
 
             function showMessage(msg, type = 'info') {
-                // Clear any existing timeout to prevent rapid overlapping alerts
+                // Hapus timeout yang ada untuk mencegah notifikasi tumpang tindih secara cepat
                 clearTimeout(alertTimeout);
 
                 customAlert.textContent = msg;
-                customAlert.className = 'custom-alert'; // Reset classes
+                customAlert.className = 'custom-alert'; // Atur ulang kelas
                 if (type === 'error') {
                     customAlert.classList.add('error');
                 } else if (type === 'success') {
@@ -228,13 +234,13 @@
                 }
                 customAlert.classList.add('show');
 
-                // Hide after 3 seconds
+                // Sembunyikan setelah 3 detik
                 alertTimeout = setTimeout(() => {
                     customAlert.classList.remove('show');
                 }, 3000);
             }
             
-            // --- Pin Detail Overlay Logic ---
+            // --- Logika Overlay Detail Pin ---
             const pinDetailOverlay = document.getElementById('pinDetailOverlay');
             const pinDetailImageMainContainer = document.querySelector('.pin-detail-img-main-container'); // Container utama gambar
             const pinDetailTitle = document.getElementById('pinDetailTitle');
@@ -247,7 +253,7 @@
             // Fungsi untuk memperbarui status tombol simpan di detail overlay
             function updatePinDetailImageSaveButton(pinData) {
                 if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
-                    pinDetailImageSaveButton.textContent = 'Saved';
+                    pinDetailImageSaveButton.textContent = 'Disimpan';
                     pinDetailImageSaveButton.style.backgroundColor = '#767676';
                     pinDetailImageSaveButton.onclick = async (e) => { 
                         e.stopPropagation(); 
@@ -259,7 +265,7 @@
                             // Perbarui juga tombol yang sesuai di grid jika terlihat
                             const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
                             if (gridSaveButton) {
-                                gridSaveButton.textContent = 'Save';
+                                gridSaveButton.textContent = 'Simpan';
                                 gridSaveButton.style.backgroundColor = '#e60023';
                             }
                             const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
@@ -272,7 +278,7 @@
                         }
                     };
                 } else {
-                    pinDetailImageSaveButton.textContent = 'Save';
+                    pinDetailImageSaveButton.textContent = 'Simpan';
                     pinDetailImageSaveButton.style.backgroundColor = '#e60023';
                     pinDetailImageSaveButton.onclick = async (e) => { 
                         e.stopPropagation(); 
@@ -293,7 +299,7 @@
                             // Perbarui juga tombol yang sesuai di grid jika terlihat
                             const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
                             if (gridSaveButton) {
-                                gridSaveButton.textContent = 'Saved';
+                                gridSaveButton.textContent = 'Disimpan';
                                 gridSaveButton.style.backgroundColor = '#767676';
                             }
                         } else {
@@ -303,10 +309,11 @@
                 }
             }
 
-            // Global function for closing pin detail (accessible via window)
+            // Fungsi global untuk menutup detail pin (dapat diakses melalui window)
             window.closePinDetail = function() {
                 pinDetailOverlay.style.display = 'none';
-                document.body.style.overflow = '';
+                // Hapus kelas 'no-scroll' dari body
+                document.body.classList.remove('no-scroll');
 
                 const currentUrl = new URL(window.location.href);
                 if (currentUrl.searchParams.has('pin')) {
@@ -317,7 +324,7 @@
 
 
             function openPinDetail(pinData) {
-                pinDetailTitle.textContent = pinData.title || 'Untitled';
+                pinDetailTitle.textContent = pinData.title || 'Tanpa Judul';
                 pinDetailUploadedBy.textContent = `${pinData.uploadedBy || 'Anonim'}`; 
 
                 // Mengelola deskripsi umum pin
@@ -354,9 +361,9 @@
                                 this.onerror=null; 
                                 this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
                             };
-                            imgElement.onclick = (e) => { // Click image in slider to open full image overlay
+                            imgElement.onclick = (e) => { // Klik gambar dalam slider untuk membuka overlay gambar penuh
                                 e.stopPropagation();
-                                window.openFullImageOverlay(imgElement.src); // Pass imgElement.src
+                                window.openFullImageOverlay(imgElement.src); // Kirim imgElement.src
                             };
                             slide.appendChild(imgElement);
                             swipeInner.appendChild(slide); // Tambahkan slide ke swipeInner
@@ -376,9 +383,9 @@
                                 this.onerror=null; 
                                 this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
                             };
-                            imgElement.onclick = (e) => { // Click image in stacked view to open full image overlay
+                            imgElement.onclick = (e) => { // Klik gambar dalam tampilan bertumpuk untuk membuka overlay gambar penuh
                                 e.stopPropagation();
-                                window.openFullImageOverlay(imgElement.src); // Pass imgElement.src
+                                window.openFullImageOverlay(imgElement.src); // Kirim imgElement.src
                             };
                             imgDiv.appendChild(imgElement);
 
@@ -392,47 +399,49 @@
                         });
                     }
                 } else {
-                     // Fallback if no images (though it should exist because it's required in create)
+                     // Fallback jika tidak ada gambar (meskipun seharusnya ada karena diperlukan dalam pembuatan)
                     const noImage = document.createElement('img');
-                    noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=No+Image';
+                    noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=Tidak+Ada+Gambar';
                     noImage.alt = 'Tidak Ada Gambar';
-                    noImage.onclick = (e) => { // Click placeholder to open full image overlay
+                    noImage.onclick = (e) => { // Klik placeholder untuk membuka overlay gambar penuh
                         e.stopPropagation();
-                        window.openFullImageOverlay(noImage.src); // Pass noImage.src
+                        window.openFullImageOverlay(noImage.src); // Kirim noImage.src
                     };
                     pinDetailImageMainContainer.appendChild(noImage);
                 }
 
                 updatePinDetailImageSaveButton(pinData);
 
-                // Manage categories (same as before)
+                // Mengelola kategori (sama seperti sebelumnya), sekarang bisa lebih dari satu
                 pinDetailCategories.innerHTML = '';
-                if (pinData.category) { // Change: pinData.categories becomes pinData.category
-                    const span = document.createElement('span');
-                    span.classList.add('pin-category-tag');
-                    const categoryPermalink = pinData.category.trim().toLowerCase().replace(/ /g, '-');
-                    span.innerHTML = `<a href="tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${pinData.category.trim()}</a>`;
-                    pinDetailCategories.appendChild(span);
+                if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
+                    pinData.categories.forEach(categoryName => {
+                        const span = document.createElement('span');
+                        span.classList.add('pin-category-tag');
+                        const categoryPermalink = categoryName.trim().toLowerCase().replace(/ /g, '-');
+                        span.innerHTML = `<a href="tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${categoryName.trim()}</a>`;
+                        pinDetailCategories.appendChild(span);
+                    });
                     pinDetailCategories.style.display = 'flex';
                 } else {
                     pinDetailCategories.style.display = 'none';
                 }
 
 
-                // Share button logic
+                // Logika tombol Bagikan
                 if (navigator.share) {
                     pinDetailShareButton.style.display = 'flex';
                     pinDetailShareButton.onclick = async (e) => {
                         e.stopPropagation();
                         try {
                             await navigator.share({
-                                title: pinData.title || 'Spicette Pin',
-                                text: pinData.description || pinData.title || 'Check out this pin!',
+                                title: pinData.title || 'Pin Spicette',
+                                text: pinData.description || pinData.title || 'Lihat pin ini!',
                                 url: window.location.href
                             });
                             showMessage('Pin berhasil dibagikan!', 'success');
                         } catch (error) {
-                            console.error('Error sharing:', error);
+                            console.error('Kesalahan berbagi:', error);
                             showMessage('Gagal membagikan pin.', 'error');
                         }
                     };
@@ -441,7 +450,8 @@
                 }
 
                 pinDetailOverlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+                // Tambahkan kelas 'no-scroll' ke body untuk mencegah scrolling
+                document.body.classList.add('no-scroll');
 
                 const newUrl = new URL(window.location.href);
                 newUrl.searchParams.set('pin', pinData.id);
@@ -463,24 +473,25 @@
                 }
             };
 
-            // --- Slider Functions (Previous button/dot based functions are now obsolete) ---
-            // Removed initializeSlider, moveSlide, currentSlide, showSlides as they are not needed for swipe gallery.
-            // The swipe behavior will be handled by CSS overflow-x: auto and native browser gestures.
+            // --- Fungsi Slider (tombol/dot sebelumnya sekarang usang) ---
+            // initializeSlider, moveSlide, currentSlide, showSlides dihapus karena tidak diperlukan untuk galeri geser.
+            // Perilaku geser akan ditangani oleh CSS overflow-x: auto dan gerakan browser native.
 
 
-            // --- NEW: Full Image Overlay Functions ---
+            // --- BARU: Fungsi Overlay Gambar Penuh ---
             const fullImageOverlay = document.getElementById('fullImageOverlay');
             const fullImageDisplay = document.getElementById('fullImageDisplay');
             const fullImageDownloadButton = document.getElementById('fullImageDownloadButton');
 
-            window.openFullImageOverlay = function(imageUrl) { // Made global
+            window.openFullImageOverlay = function(imageUrl) { // Dibuat global
                 fullImageDisplay.src = imageUrl;
-                fullImageDisplay.onerror = function() { // Add onerror for full image
+                fullImageDisplay.onerror = function() { // Tambahkan onerror untuk gambar penuh
                     this.onerror=null; 
                     this.src='https://placehold.co/1000x1200/cccccc/000000?text=Image+Load+Error';
                 };
                 fullImageOverlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+                // Tambahkan kelas 'no-scroll' ke body untuk mencegah scrolling
+                document.body.classList.add('no-scroll');
 
                 fullImageDownloadButton.onclick = (e) => {
                     e.stopPropagation();
@@ -488,13 +499,14 @@
                 };
             };
 
-            window.closeFullImageOverlay = function() { // Made global
+            window.closeFullImageOverlay = function() { // Dibuat global
                 fullImageOverlay.style.display = 'none';
-                document.body.style.overflow = '';
+                // Hapus kelas 'no-scroll' dari body
+                document.body.classList.remove('no-scroll');
             };
 
 
-            // --- Notification Overlay Logic ---
+            // --- Logika Overlay Notifikasi ---
             const notificationOverlay = document.getElementById('notificationOverlay');
             const closeNotificationButton = document.getElementById('closeNotificationButton');
             const notificationListContainer = document.getElementById('notificationListContainer');
@@ -520,17 +532,17 @@
                 }
 
                 notificationOverlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+                document.body.classList.add('no-scroll'); // Tambahkan no-scroll
             }
 
             function closeNotificationPage() {
                 notificationOverlay.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.classList.remove('no-scroll'); // Hapus no-scroll
             }
 
             closeNotificationButton.addEventListener('click', closeNotificationPage);
 
-            // --- Loading Pins & Categories ---
+            // --- Memuat Pin & Kategori ---
             const mainElement = document.querySelector('main');
             const pinGrid = document.getElementById('pinGrid');
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -562,10 +574,10 @@
                 saveButton.classList.add('pin-save-button');
                 
                 if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
-                    saveButton.textContent = 'Saved';
+                    saveButton.textContent = 'Disimpan';
                     saveButton.style.backgroundColor = '#767676';
                 } else {
-                    saveButton.textContent = 'Save';
+                    saveButton.textContent = 'Simpan';
                     saveButton.style.backgroundColor = '#e60023';
                 }
                 
@@ -581,10 +593,10 @@
                         const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
                         if (response.success) {
                             showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
-                            saveButton.textContent = 'Save';
+                            saveButton.textContent = 'Simpan';
                             saveButton.style.backgroundColor = '#e60023';
                             currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
-                            if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Saved') {
+                            if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Disimpan') {
                                 updatePinDetailImageSaveButton(pinData);
                             }
                             const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
@@ -599,14 +611,14 @@
                         const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
                         if (response.success) {
                             showMessage('Pin berhasil disimpan!', 'success');
-                            saveButton.textContent = 'Saved';
+                            saveButton.textContent = 'Disimpan';
                             saveButton.style.backgroundColor = '#767676';
                             if (currentUser.savedPins) {
                                 currentUser.savedPins.push(pinData.id);
                             } else {
                                 currentUser.savedPins = [pinData.id];
                             }
-                            if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Save') {
+                            if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Simpan') {
                                 updatePinDetailImageSaveButton(pinData);
                             }
                         } else {
@@ -616,7 +628,7 @@
                 };
                 overlayTop.appendChild(saveButton);
 
-                // NEW: Image count overlay for pins with multiple images
+                // BARU: Overlay jumlah gambar untuk pin dengan banyak gambar
                 if (pinData.images && pinData.images.length > 1) {
                     const imageCountOverlay = document.createElement('div');
                     imageCountOverlay.className = 'pin-image-count-overlay';
@@ -641,12 +653,12 @@
 
                 const infoDiv = document.createElement('div'); 
                 infoDiv.classList.add('pin-info');
-                // Menggunakan category di pinData langsung
-                if (pinData.category) {
+                // Menggunakan categories di pinData langsung (sekarang array)
+                if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
                      const link = document.createElement('a');
-                     link.href = `tag/${encodeURIComponent(pinData.category.trim().toLowerCase().replace(/ /g, '-'))}`;
+                     link.href = `tag/${encodeURIComponent(pinData.categories[0].trim().toLowerCase().replace(/ /g, '-'))}`; // Gunakan kategori pertama untuk tautan tag
                      link.target = '_blank';
-                     link.textContent = pinData.category;
+                     link.textContent = pinData.categories[0]; // Tampilkan kategori pertama
                      link.onclick = (e) => e.stopPropagation(); 
                      infoDiv.appendChild(link);
                 } else {
@@ -658,7 +670,7 @@
                 const downloadButton = document.createElement('button');
                 downloadButton.classList.add('pin-action-icon');
                 downloadButton.innerHTML = `<i class="fas fa-download"></i>`;
-                downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(firstImageUrl); }; // Download thumbnail image
+                downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(firstImageUrl); }; // Unduh gambar thumbnail
                 
                 bottomActions.appendChild(downloadButton);
                 overlayBottom.appendChild(bottomActions); 
@@ -675,7 +687,7 @@
             }
 
             async function loadPins(count, append = true) {
-                console.log(`loadPins called. count: ${count}, append: ${append}, currentSearchQuery: "${currentSearchQuery}"`);
+                console.log(`loadPins dipanggil. jumlah: ${count}, tambahkan: ${append}, currentSearchQuery: "${currentSearchQuery}"`);
                 loadingIndicator.style.display = 'block';
                 const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
                 let endpoint = '';
@@ -745,7 +757,7 @@
                 console.log("Gaya yang dihitung setelah loadPins:", window.getComputedStyle(pinGrid).display);
             }
 
-            // --- Search History functions ---
+            // --- Fungsi Riwayat Pencarian ---
             function loadSearchHistory() {
                 const historyJson = localStorage.getItem(SEARCH_HISTORY_LS_KEY);
                 if (historyJson) {
@@ -795,7 +807,7 @@
                     const desktopLi = document.createElement('li');
                     desktopLi.textContent = historyItem;
                     desktopLi.addEventListener('click', () => {
-                        // Redirect to search.php
+                        // Redirect ke search.php
                         window.location.href = `search.php?query=${encodeURIComponent(historyItem)}`;
                     });
                     desktopSearchHistoryList.appendChild(desktopLi);
@@ -803,14 +815,14 @@
                     const mobileLi = document.createElement('li');
                     mobileLi.textContent = historyItem;
                     mobileLi.addEventListener('click', () => {
-                        // Redirect to search.php
+                        // Redirect ke search.php
                         window.location.href = `search.php?query=${encodeURIComponent(historyItem)}`;
                     });
                     mobileSearchHistoryList.appendChild(mobileLi);
                 });
             }
 
-            // --- Search Suggestions Logic ---
+            // --- Logika Saran Pencarian ---
             const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
             const desktopSearchInput = document.getElementById('desktopSearchInput');
             const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
@@ -839,10 +851,11 @@
 
                 const filteredSuggestions = allPinsData.filter(pin => 
                     (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
-                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) || // Check pin description
-                    (pin.category && pin.category.toLowerCase().includes(query.toLowerCase())) || // Check single category
-                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) // Check image descriptions
-                ).map(pin => pin.title || pin.category).filter(Boolean).slice(0, 5); // Take title or category
+                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) || // Periksa deskripsi pin
+                    // Periksa kategori (sekarang array)
+                    (pin.categories && Array.isArray(pin.categories) && pin.categories.some(cat => cat.toLowerCase().includes(query.toLowerCase()))) ||
+                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) // Periksa deskripsi gambar
+                ).map(pin => pin.title || (pin.categories && pin.categories.length > 0 ? pin.categories[0] : '')).filter(Boolean).slice(0, 5); // Ambil judul atau kategori pertama
 
                 const uniqueSuggestions = [...new Set(filteredSuggestions)];
 
@@ -851,7 +864,7 @@
                         const listItem = document.createElement('li');
                         listItem.textContent = suggestion;
                         listItem.addEventListener('click', () => {
-                            // Redirect to search.php on suggestion click
+                            // Redirect ke search.php saat klik saran
                             window.location.href = `search.php?query=${encodeURIComponent(suggestion)}`;
                         });
                         suggestionsList.appendChild(listItem);
@@ -866,12 +879,12 @@
                 }
             }
 
-            // This performSearch is for index.html. It now redirects.
+            // performSearch ini untuk index.html. Sekarang mengarahkan.
             async function performSearch(query) {
                 window.location.href = `search.php?query=${encodeURIComponent(query)}`;
             }
 
-            // Mobile search input listener (within the overlay on index.html)
+            // Pendengar input pencarian mobile (dalam overlay di index.html)
             mobileSearchInputOverlay.addEventListener('input', (e) => {
                 clearTimeout(searchTimeout);
                 const query = e.target.value.trim();
@@ -885,13 +898,13 @@
                     e.preventDefault(); 
                     const query = mobileSearchInputOverlay.value.trim();
                     if (query) {
-                        performSearch(query); // Calls performSearch which now redirects
-                        closeSearch(); // Close the mobile search overlay
+                        performSearch(query); // Memanggil performSearch yang sekarang mengarahkan
+                        closeSearch(); // Tutup overlay pencarian mobile
                     }
                 }
             });
 
-            // Desktop search input listener (on the header of index.html)
+            // Pendengar input pencarian desktop (pada header index.html)
             desktopSearchInput.addEventListener('focus', () => {
                 mainElement.classList.add('desktop-search-active');
                 pinGrid.style.display = 'none'; 
@@ -929,12 +942,12 @@
                     const query = desktopSearchInput.value.trim();
                     if (query) {
                         addSearchToHistory(query);
-                        window.location.href = `search.php?query=${encodeURIComponent(query)}`; // Redirect to search.php
+                        window.location.href = `search.php?query=${encodeURIComponent(query)}`; // Redirect ke search.php
                     }
                 }
             });
             
-            // Helper function to reset view to home page
+            // Fungsi pembantu untuk mengatur ulang tampilan ke halaman beranda
             async function resetMainContentToHome() {
                 desktopSearchInput.value = ''; 
                 currentSearchQuery = ''; 
@@ -949,7 +962,7 @@
                 await loadPins(pinsPerPage, false); 
             }
 
-            // Handle clicks outside search elements to close them and revert to home page view
+            // Tangani klik di luar elemen pencarian untuk menutupnya dan kembali ke tampilan halaman beranda
             document.addEventListener('click', (event) => {
                 const headerSearchContainer = document.querySelector('header .search-container');
                 const isClickInsideDesktopSearchUI = headerSearchContainer.contains(event.target) ||
@@ -960,7 +973,7 @@
                     resetMainContentToHome();
                 }
 
-                // If clicking outside mobile search overlay, close it
+                // Jika mengklik di luar overlay pencarian mobile, tutup
                 const isClickInsideMobileSearchOverlay = searchOverlay.contains(event.target);
                 const mobileSearchTriggerButton = document.querySelector('.mobile-nav-item[data-action="search"]'); 
                 const isMobileSearchTriggerButtonClick = mobileSearchTriggerButton && mobileSearchTriggerButton.contains(event.target);
@@ -981,7 +994,7 @@
                     const response = await makeApiRequest('categories.php?action=fetch_all');
                     if (response.success && response.categories) {
                         const categories = response.categories; 
-                        // Filter out empty category names
+                        // Filter nama kategori kosong
                         const filteredCategories = categories.filter(cat => cat.name && cat.name.trim() !== '');
 
                         categoryContainers.forEach(container => {
@@ -993,7 +1006,7 @@
                                 const catItem = document.createElement('div');
                                 catItem.className = 'category-item';
                                 
-                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`; 
+                                const imageUrl = cat.imageUrl || `https://placehold.co/200x200/cccccc/000000?text=Kategori`; 
                                 catItem.style.backgroundImage = `url('${imageUrl}')`;
 
                                 const catTitle = document.createElement('span');
@@ -1002,7 +1015,7 @@
                                 catItem.appendChild(catTitle);
                                 
                                 catItem.onclick = function() {
-                                    // Categories now redirect to the tag.php page
+                                    // Kategori sekarang mengarahkan ke halaman tag.php
                                     const categoryPermalink = cat.name.trim().toLowerCase().replace(/ /g, '-');
                                     window.location.href = `tag/${encodeURIComponent(categoryPermalink)}`;
                                 };
@@ -1011,14 +1024,14 @@
                             container.appendChild(fragment);
                         });
                     } else {
-                        console.error('Failed to load categories:', response.message);
+                        console.error('Gagal memuat kategori:', response.message);
                         categoryContainers.forEach(container => {
                             if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Gagal memuat kategori.</p>';
                         });
                     }
                 }
                 catch (error) {
-                    console.error('Error fetching categories:', error);
+                    console.error('Kesalahan mengambil kategori:', error);
                     categoryContainers.forEach(container => {
                         if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Kesalahan jaringan saat memuat kategori.</p>';
                     });
@@ -1027,17 +1040,17 @@
             
             loadCategories();
 
-            // --- Infinite Scroll ---
+            // --- Scroll Tak Terbatas ---
             window.addEventListener('scroll', () => {
                 if (loadingIndicator.style.display === 'none' && 
                     searchOverlay.style.display === 'none' && 
                     mobileProfileDropdown.style.display === 'none' &&
                     pinDetailOverlay.style.display === 'none' && 
-                    fullImageOverlay.style.display === 'none' && // Also check for full image overlay
+                    fullImageOverlay.style.display === 'none' && // Juga periksa overlay gambar penuh
                     notificationOverlay.style.display === 'none' 
                 ) {
                     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
-                        // Load more pins only if not currently searching (which redirects now)
+                        // Muat lebih banyak pin hanya jika tidak sedang mencari (yang sekarang mengarahkan)
                         if (!currentSearchQuery) { 
                             loadPins(pinsPerPage, true);
                         }
@@ -1045,17 +1058,19 @@
                 }
             });
 
-            // --- Desktop Search/Category Interaction ---
-            // mainElement.classList.add('desktop-search-active') and similar toggles handled by focus/blur listeners.
+            // --- Interaksi Pencarian/Kategori Desktop ---
+            // mainElement.classList.add('desktop-search-active') dan toggles serupa ditangani oleh pendengar fokus/blur.
             
-            // --- Header Button Logic ---
+            // --- Logika Tombol Header ---
             const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
             const desktopCreateButton = document.getElementById('desktopCreateButton');
 
-            desktopCreateButton.addEventListener('click', (e) => {
+            desktopCreateButton.addEventListener('click', async (e) => {
                 e.preventDefault();
                 if (!currentUser) {
                     window.location.href = 'login.html'; 
+                } else if (!currentUser.canUpload) { // Periksa izin upload
+                    showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
                 } else {
                     window.location.href = 'create.html';
                 }
@@ -1095,13 +1110,13 @@
             });
 
 
-            // --- Mobile Search Overlay Logic ---
+            // --- Logika Overlay Pencarian Mobile ---
             const searchOverlay = document.getElementById('searchOverlay');
             const closeSearchBtn = document.getElementById('closeSearchOverlay');
             
             const openSearch = () => {
                 searchOverlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+                document.body.classList.add('no-scroll'); // Tambahkan no-scroll
                 mobileSearchInputOverlay.value = '';
                 searchSuggestionsListMobile.innerHTML = '';
                 searchSuggestionsListMobile.style.display = 'none';
@@ -1112,27 +1127,30 @@
             
             const closeSearch = () => {
                 searchOverlay.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.classList.remove('no-scroll'); // Hapus no-scroll
             };
 
             closeSearchBtn.onclick = closeSearch;
             
-            // --- Mobile Navigation Logic ---
+            // --- Logika Navigasi Mobile ---
             const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
             mobileNavItems.forEach(item => {
                 item.addEventListener('click', async function() {
                     const action = this.dataset.action;
 
-                    window.closePinDetail(); // Use global function
+                    window.closePinDetail(); // Gunakan fungsi global
                     closeNotificationPage();
                     closeSearch(); 
-                    window.closeFullImageOverlay(); // Close full image overlay too
+                    window.closeFullImageOverlay(); // Tutup juga overlay gambar penuh
                     
                     if (action === 'search') {
                         openSearch();
                     } else if (action === 'create-pin') { 
                          if (!currentUser) {
                             window.location.href = 'login.html';
+                            return;
+                        } else if (!currentUser.canUpload) { // Periksa izin upload
+                            showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
                             return;
                         }
                         window.location.href = 'create.html'; 
@@ -1181,7 +1199,7 @@
                 });
             });
 
-            // --- Login/Register Overlay Logic ---
+            // --- Logika Overlay Login/Daftar ---
             const profileButton = document.getElementById('profileButton');
             const profileIconLetter = document.getElementById('profileIconLetter');
 
@@ -1197,7 +1215,7 @@
                 }
             });
 
-            // --- User Profile Display & Header Dropdown ---
+            // --- Tampilan Profil Pengguna & Dropdown Header ---
             function updateProfileDisplay() {
                 const mobileProfileIcon = document.querySelector('.mobile-nav-item[data-action="profile"] .profile-icon');
                 if (currentUser) {
@@ -1266,8 +1284,8 @@
             mobileNotificationButton.addEventListener('click', openNotificationPage);
 
 
-            // --- Pin Functions (Download) ---
-            window.downloadPin = function(imageUrl) { // Made global
+            // --- Fungsi Pin (Unduh) ---
+            window.downloadPin = function(imageUrl) { // Dibuat global
                 const link = document.createElement('a');
                 link.href = imageUrl;
                 const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'pin_image.jpg';
@@ -1278,7 +1296,7 @@
                 showMessage(`Mengunduh pin.`);
             };
 
-            // --- Desktop More Accounts Dropdown ---
+            // --- Dropdown Akun Lainnya Desktop ---
             const moreAccountsButton = document.getElementById('moreAccountsButton');
             const moreAccountsDropdown = document.getElementById('moreAccountsDropdown');
             const dropdownUsernameDisplay = document.getElementById('dropdownUsernameDisplay');
@@ -1349,7 +1367,7 @@
                 mobileAccountsDropdown.style.display = 'none';
             });
 
-            // Mobile Profile Options (for mobile bottom nav profile icon)
+            // Opsi Profil Mobile (untuk ikon profil nav bawah mobile)
             const mobileProfileDropdown = document.getElementById('mobileProfileDropdown');
             const mobileDropdownUsernameDisplay = document.getElementById('mobileDropdownUsernameDisplay');
             const mobileDropdownMyProfile = document.getElementById('mobileDropdownMyProfile');
@@ -1365,10 +1383,10 @@
                 mobileDropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
                 
                 mobileProfileDropdown.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+                document.body.classList.add('no-scroll'); // Tambahkan no-scroll
             }
 
-            // Event listener for mobile profile icon to show dropdown
+            // Pendengar peristiwa untuk ikon profil mobile untuk menampilkan dropdown
             document.querySelector('.mobile-nav-item[data-action="profile"]').addEventListener('click', () => {
                 if (currentUser) {
                     showMobileProfileOptions();
@@ -1382,7 +1400,7 @@
                     window.location.href = 'user.php';
                 }
                 mobileProfileDropdown.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.classList.remove('no-scroll'); // Hapus no-scroll
             });
 
             mobileDropdownAdminPanel.addEventListener('click', () => {
@@ -1392,7 +1410,7 @@
                     showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
                 }
                 mobileProfileDropdown.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.classList.remove('no-scroll'); // Hapus no-scroll
             });
 
             mobileDropdownLogout.addEventListener('click', async () => {
@@ -1413,15 +1431,15 @@
                     showMessage('Logout gagal: ' + response.message, 'Error');
                 }
                 mobileProfileDropdown.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.classList.remove('no-scroll'); // Hapus no-scroll
             });
 
             mobileDropdownClose.addEventListener('click', () => {
                 mobileProfileDropdown.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.classList.remove('no-scroll'); // Hapus no-scroll
             });
 
-            // --- Check Initial Session and Load ---
+            // --- Periksa Sesi Awal dan Muat ---
             async function initializeApp() {
                 loadSearchHistory(); 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1429,6 +1447,10 @@
                 const response = await makeApiRequest('auth.php?action=check_session');
                 if (response.success && response.user) {
                     currentUser = response.user;
+                    // Pastikan canUpload diinisialisasi jika tidak ada di data pengguna
+                    if (typeof currentUser.canUpload === 'undefined') {
+                        currentUser.canUpload = false; 
+                    }
                     const savedResponse = await makeApiRequest(`pins.php?action=fetch_saved`);
                     if (savedResponse.success) {
                         currentUser.savedPins = savedResponse.pins.map(pin => pin.id);
