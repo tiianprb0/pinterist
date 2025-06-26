@@ -158,7 +158,7 @@ $adminUsername = $_SESSION['username'];
             font-size: 16px;
         }
 
-        /* Main Dashboard Layout */
+        /* Tata Letak Dashboard Utama */
         main.admin-dashboard-layout {
             display: flex;
             flex: 1;
@@ -166,7 +166,7 @@ $adminUsername = $_SESSION['username'];
             gap: 25px;
         }
 
-        /* Sidebar Navigation */
+        /* Navigasi Sidebar */
         .admin-sidebar {
             width: 250px;
             background-color: var(--card);
@@ -213,7 +213,7 @@ $adminUsername = $_SESSION['username'];
             transition: all 0.2s ease;
         }
         .admin-sidebar-nav button:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.05); /* Sedikit latar belakang saat hover */
             color: var(--text);
             transform: translateX(5px);
         }
@@ -237,7 +237,7 @@ $adminUsername = $_SESSION['username'];
             color: var(--text);
         }
 
-        /* Content Area */
+        /* Area Konten */
         .admin-content-area {
             flex-grow: 1;
             padding: 0;
@@ -283,7 +283,7 @@ $adminUsername = $_SESSION['username'];
             transform: translateY(-1px);
         }
 
-        /* Message Display */
+        /* Tampilan Pesan */
         #message {
             padding: 12px 20px;
             border-radius: 8px;
@@ -314,7 +314,7 @@ $adminUsername = $_SESSION['username'];
         }
 
 
-        /* Tab Content Sections */
+        /* Bagian Konten Tab */
         .admin-tab-content {
             display: none;
             animation: fadeIn 0.6s ease-out;
@@ -356,7 +356,7 @@ $adminUsername = $_SESSION['username'];
             font-weight: 500;
         }
 
-        /* Forms */
+        /* Formulir */
         .admin-form label {
             display: block;
             margin-bottom: 8px;
@@ -413,7 +413,7 @@ $adminUsername = $_SESSION['username'];
             /* box-shadow: none; */ /* Hapus bayangan */
         }
 
-        /* List Items */
+        /* Daftar Item */
         .admin-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -511,6 +511,75 @@ $adminUsername = $_SESSION['username'];
             opacity: 0.7;
         }
 
+        /* Switch Toggle untuk canUpload */
+        .can-upload-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .can-upload-toggle label {
+            margin: 0; /* Override default label margin */
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 24px; /* Rounded slider */
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%; /* Rounded circle */
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary);
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+        }
+
         /* Hamburger Menu Icon (untuk mobile) */
         .hamburger-menu-icon {
             display: none; /* Default tersembunyi */
@@ -544,7 +613,7 @@ $adminUsername = $_SESSION['username'];
         .hamburger-menu-icon.active span:nth-child(3) { top: 9px; transform: rotate(-135deg); background: var(--primary); }
 
 
-        /* Custom Confirmation Modal */
+        /* Modal Konfirmasi Kustom */
         #customConfirmationModal {
             position: fixed;
             top: 0;
@@ -617,15 +686,15 @@ $adminUsername = $_SESSION['username'];
             transform: translateY(-1px);
         }
 
-        /* Mobile specific styles (disesuaikan untuk layout baru) */
-        @media (max-width: 992px) { /* Tablet dan mobile besar */
+        /* Gaya khusus seluler (disesuaikan untuk tata letak baru) */
+        @media (max-width: 992px) { /* Tablet dan seluler besar */
             header {
                 padding: 14px 20px;
             }
             .header-nav-links, .search-container {
                 display: none;
             }
-            /* Hamburger icon hanya muncul di mobile */
+            /* Ikon hamburger hanya muncul di seluler */
             .hamburger-menu-icon {
                 display: block;
                 margin-left: auto;
@@ -647,7 +716,7 @@ $adminUsername = $_SESSION['username'];
                 padding-top: 20px;
                 overflow-y: auto;
                 border-radius: 0 12px 12px 0;
-                border-right: 1px solid var(--border); /* Tetap ada border kanan saat terbuka */
+                border-right: 1px solid var(--border); /* Tetap ada batas kanan saat terbuka */
             }
             .admin-sidebar.active {
                 transform: translateX(0%); /* Tampilkan sidebar saat aktif */
@@ -673,7 +742,7 @@ $adminUsername = $_SESSION['username'];
                 padding-bottom: 12px;
             }
             .admin-page-header h1 {
-                font-size: 24px; /* Ukuran font judul halaman mobile */
+                font-size: 24px; /* Ukuran font judul halaman seluler */
             }
             .admin-page-header .admin-logout-btn {
                 margin-top: 15px;
@@ -687,12 +756,12 @@ $adminUsername = $_SESSION['username'];
                 margin-bottom: 20px;
             }
             .admin-section h2 {
-                font-size: 20px; /* Ukuran font judul bagian mobile */
+                font-size: 20px; /* Ukuran font judul bagian seluler */
                 margin-bottom: 15px;
                 padding-bottom: 10px;
             }
             .admin-section h3 {
-                font-size: 18px; /* Ukuran font sub-judul bagian mobile */
+                font-size: 18px; /* Ukuran font sub-judul bagian seluler */
                 margin-top: 25px;
                 margin-bottom: 15px;
             }
@@ -710,7 +779,7 @@ $adminUsername = $_SESSION['username'];
                 font-size: 15px;
             }
             .admin-list {
-                grid-template-columns: 1fr; /* Satu kolom di mobile */
+                grid-template-columns: 1fr; /* Satu kolom di seluler */
             }
             .list-item {
                 padding: 18px;
@@ -725,7 +794,7 @@ $adminUsername = $_SESSION['username'];
                 font-size: 13px;
             }
             .list-item-actions {
-                opacity: 1; /* Selalu tampilkan aksi di mobile */
+                opacity: 1; /* Selalu tampilkan aksi di seluler */
                 justify-content: center;
                 padding-top: 10px;
             }
@@ -749,7 +818,7 @@ $adminUsername = $_SESSION['username'];
             }
         }
 
-        @media (max-width: 576px) { /* Mobile yang lebih kecil */
+        @media (max-width: 576px) { /* Seluler yang lebih kecil */
             header {
                 padding: 10px 15px;
             }
@@ -853,7 +922,7 @@ $adminUsername = $_SESSION['username'];
             <button class="icon-button" aria-label="Keluar Admin" id="adminLogoutBtnHeader">
                 <i class="fa-solid fa-right-from-bracket"></i>
             </button>
-            <!-- Hamburger Menu Icon hanya untuk mobile -->
+            <!-- Ikon Hamburger Menu hanya untuk seluler -->
             <button class="hamburger-menu-icon" aria-label="Menu" id="hamburgerMenuButton">
                 <span></span>
                 <span></span>
@@ -958,7 +1027,7 @@ $adminUsername = $_SESSION['username'];
         </section>
     </main>
 
-    <!-- Custom Confirmation Modal -->
+    <!-- Modal Konfirmasi Kustom -->
     <div id="customConfirmationModal">
         <div>
             <p id="modalMessage"></p>
@@ -971,7 +1040,7 @@ $adminUsername = $_SESSION['username'];
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elements
+            // Elemen
             const adminTabButtons = document.querySelectorAll('.admin-tab-button');
             const adminTabContents = document.querySelectorAll('.admin-tab-content');
             const hamburgerMenuButton = document.getElementById('hamburgerMenuButton');
@@ -980,7 +1049,7 @@ $adminUsername = $_SESSION['username'];
             const adminLogoutBtnHeader = document.getElementById('adminLogoutBtnHeader');
             const adminLogoutBtnContent = document.getElementById('adminLogoutBtnContent');
 
-            // Form elements
+            // Elemen formulir
             const addNotificationForm = document.getElementById('addNotificationForm');
             const newNotificationText = document.getElementById('newNotificationText');
             const notificationList = document.getElementById('notificationList');
@@ -993,7 +1062,7 @@ $adminUsername = $_SESSION['username'];
             const userList = document.getElementById('userList');
             const pinList = document.getElementById('pinList');
 
-            // Modal elements
+            // Elemen modal
             const customConfirmationModal = document.getElementById('customConfirmationModal');
             const modalMessage = document.getElementById('modalMessage');
             const confirmYesButton = document.getElementById('confirmYes');
@@ -1001,10 +1070,10 @@ $adminUsername = $_SESSION['username'];
 
             const adminUsername = '<?php echo $adminUsername; ?>';
 
-            // --- API Base URL ---
+            // --- URL Dasar API ---
             const API_BASE_URL = 'api/';
 
-            // --- Helper Function for API Requests ---
+            // --- Fungsi Pembantu untuk Permintaan API ---
             async function makeApiRequest(endpoint, method = 'GET', data = null) {
                 try {
                     const options = { method };
@@ -1012,7 +1081,7 @@ $adminUsername = $_SESSION['username'];
                         options.headers = { 'Content-Type': 'application/json' };
                         options.body = JSON.stringify(data);
                     } else if (method === 'POST' && (data === null || typeof data === 'undefined')) {
-                        // No need to remove options.headers; just leave it if there's no body.
+                        // Tidak perlu menghapus options.headers; biarkan saja jika tidak ada body.
                     }
 
                     const response = await fetch(API_BASE_URL + endpoint, options);
@@ -1038,20 +1107,20 @@ $adminUsername = $_SESSION['username'];
                 }
             }
 
-            // --- Function to Display Messages ---
+            // --- Fungsi untuk Menampilkan Pesan ---
             function showMessage(msg, isError = false) {
                 messageDiv.textContent = msg;
-                messageDiv.className = isError ? 'error' : ''; // class 'error' or empty
+                messageDiv.className = isError ? 'error' : ''; // class 'error' atau kosong
                 messageDiv.style.display = 'block';
-                // Reset and re-add class to restart animation if message comes quickly
+                // Reset dan tambahkan kembali kelas untuk memulai ulang animasi jika pesan datang dengan cepat
                 messageDiv.classList.remove('fadeInOut');
-                void messageDiv.offsetWidth; // Trigger reflow
+                void messageDiv.offsetWidth; // Memicu reflow
                 messageDiv.classList.add('fadeInOut');
 
-                // The animation handles hiding, so no need for setTimeout here unless for non-animated fallback
+                // Animasi menangani penyembunyian, jadi tidak perlu setTimeout di sini kecuali untuk fallback non-animasi
             }
 
-            // --- Custom Confirmation Modal ---
+            // --- Modal Konfirmasi Kustom ---
             function showCustomConfirmation(message, onConfirmCallback) {
                 modalMessage.textContent = message;
                 customConfirmationModal.classList.add('show');
@@ -1059,14 +1128,14 @@ $adminUsername = $_SESSION['username'];
                 const handleConfirm = () => {
                     customConfirmationModal.classList.remove('show');
                     onConfirmCallback();
-                    // Clear event listeners to prevent multiple calls
+                    // Hapus event listener untuk mencegah panggilan ganda
                     confirmYesButton.removeEventListener('click', handleConfirm);
                     confirmNoButton.removeEventListener('click', handleCancel);
                 };
 
                 const handleCancel = () => {
                     customConfirmationModal.classList.remove('show');
-                    // Clear event listeners
+                    // Hapus event listener
                     confirmYesButton.removeEventListener('click', handleConfirm);
                     confirmNoButton.removeEventListener('click', handleCancel);
                 };
@@ -1075,7 +1144,7 @@ $adminUsername = $_SESSION['username'];
                 confirmNoButton.addEventListener('click', handleCancel);
             }
 
-            // --- Admin Logout Functionality ---
+            // --- Fungsionalitas Logout Admin ---
             async function handleAdminLogout() {
                 showCustomConfirmation('Apakah Anda yakin ingin keluar?', async () => {
                     try {
@@ -1093,26 +1162,26 @@ $adminUsername = $_SESSION['username'];
             adminLogoutBtnHeader.addEventListener('click', handleAdminLogout);
             adminLogoutBtnContent.addEventListener('click', handleAdminLogout);
 
-            // --- Admin Tab Functionality ---
+            // --- Fungsionalitas Tab Admin ---
             adminTabButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const targetTab = this.dataset.tab;
 
-                    // Remove active class from all buttons and contents
+                    // Hapus kelas aktif dari semua tombol dan konten
                     adminTabButtons.forEach(btn => btn.classList.remove('active'));
                     adminTabContents.forEach(content => content.classList.remove('active'));
 
-                    // Add active class to clicked button and corresponding content
+                    // Tambahkan kelas aktif ke tombol yang diklik dan konten yang sesuai
                     this.classList.add('active');
                     document.getElementById(targetTab + 'TabContent').classList.add('active');
 
-                    // Hide sidebar on mobile after selection
+                    // Sembunyikan sidebar di seluler setelah seleksi
                     if (window.innerWidth <= 992) {
                         adminSidebar.classList.remove('active');
                         hamburgerMenuButton.classList.remove('active');
                     }
 
-                    // Reload data for the selected tab
+                    // Muat ulang data untuk tab yang dipilih
                     switch(targetTab) {
                         case 'notifications':
                             fetchNotifications();
@@ -1130,13 +1199,13 @@ $adminUsername = $_SESSION['username'];
                 });
             });
 
-            // Hamburger menu toggle for mobile
+            // Toggle menu hamburger untuk seluler
             hamburgerMenuButton.addEventListener('click', () => {
                 adminSidebar.classList.toggle('active');
                 hamburgerMenuButton.classList.toggle('active');
             });
 
-            // Close sidebar if clicked outside (on mobile)
+            // Tutup sidebar jika diklik di luar (di seluler)
             document.addEventListener('click', (event) => {
                 const isClickInsideSidebar = adminSidebar.contains(event.target);
                 const isClickOnHamburger = hamburgerMenuButton.contains(event.target);
@@ -1147,7 +1216,7 @@ $adminUsername = $_SESSION['username'];
                 }
             });
 
-            // --- Notification Management ---
+            // --- Manajemen Notifikasi ---
             async function fetchNotifications() {
                 notificationList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Memuat notifikasi...</p>';
                 try {
@@ -1231,7 +1300,7 @@ $adminUsername = $_SESSION['username'];
                 });
             }
 
-            // --- Category Management ---
+            // --- Manajemen Kategori ---
             async function fetchCategoriesAdmin() {
                 categoryList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Memuat daftar kategori...</p>';
                 try {
@@ -1314,11 +1383,12 @@ $adminUsername = $_SESSION['username'];
                 });
             }
 
-            // --- User Management ---
+            // --- Manajemen Pengguna ---
             async function fetchUsers() {
                 userList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Memuat daftar pengguna...</p>';
                 try {
-                    const response = await makeApiRequest('pins.php?action=fetch_all_users');
+                    // Menggunakan endpoint pins.php karena memiliki akses ke users.json
+                    const response = await makeApiRequest('pins.php?action=fetch_all_users'); 
                     if (response.success) {
                         renderUserList(response.users);
                     } else {
@@ -1351,22 +1421,61 @@ $adminUsername = $_SESSION['username'];
                         deleteButtonHtml = `<button class="delete-btn" data-username="${user.username}"><i class="fa-solid fa-trash-can"></i> Hapus</button>`;
                     }
 
+                    // Tambahkan toggle canUpload
+                    const canUploadChecked = user.canUpload ? 'checked' : '';
+                    const canUploadDisabled = user.isAdmin || user.username === adminUsername ? 'disabled' : ''; // Admin tidak dapat mengubah izin unggah dirinya sendiri atau admin lain
+                    
                     userItem.innerHTML = `
                         <div class="list-item-content">
                             <strong class="list-item-title">${user.username}</strong>
                             <span class="list-item-detail">Status: ${user.isAdmin ? 'Administrator' : 'Pengguna Biasa'}</span>
+                            <div class="can-upload-toggle">
+                                <label for="canUpload_${user.username}">Dapat Mengunggah:</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="canUpload_${user.username}" data-username="${user.username}" ${canUploadChecked} ${canUploadDisabled}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                         </div>
                         <div class="list-item-actions">
                             ${deleteButtonHtml}
                         </div>
                     `;
-                    const deleteBtn = userItem.querySelector('.delete-btn:not(:disabled)'); // Select only if not disabled
+                    const deleteBtn = userItem.querySelector('.delete-btn:not(:disabled)'); // Pilih hanya jika tidak dinonaktifkan
                     if (deleteBtn) {
                          deleteBtn.onclick = () => deleteUser(user.username);
                     }
+
+                    // Tambahkan event listener untuk toggle canUpload
+                    const canUploadToggle = userItem.querySelector(`#canUpload_${user.username}`);
+                    if (canUploadToggle && !canUploadToggle.disabled) {
+                        canUploadToggle.addEventListener('change', (e) => {
+                            toggleUserUploadPermission(user.username, e.target.checked);
+                        });
+                    }
+
                     userList.appendChild(userItem);
                 });
             }
+
+            async function toggleUserUploadPermission(username, canUpload) {
+                showCustomConfirmation(`Apakah Anda yakin ingin ${canUpload ? 'memberikan' : 'mencabut'} izin unggah untuk pengguna ${username}?`, async () => {
+                    try {
+                        const response = await makeApiRequest('auth.php?action=update_user_permission', 'POST', { username: username, canUpload: canUpload });
+                        if (response.success) {
+                            showMessage(`Izin unggah untuk ${username} berhasil diperbarui!`, false);
+                            fetchUsers(); // Muat ulang daftar pengguna
+                        } else {
+                            showMessage('Gagal memperbarui izin unggah: ' + response.message, true);
+                            fetchUsers(); // Muat ulang daftar pengguna untuk menyinkronkan status
+                        }
+                    } catch (error) {
+                        showMessage('Kesalahan memperbarui izin unggah: ' + error.message, true);
+                        fetchUsers(); // Muat ulang daftar pengguna untuk menyinkronkan status
+                    }
+                });
+            }
+
 
             async function deleteUser(username) {
                 showCustomConfirmation(`Apakah Anda yakin ingin menghapus pengguna ${username} dan semua pin yang disimpan?`, async () => {
@@ -1384,7 +1493,7 @@ $adminUsername = $_SESSION['username'];
                 });
             }
 
-            // --- Pin Management (Delete only for admin here) ---
+            // --- Manajemen Pin (Hanya hapus untuk admin di sini) ---
             async function fetchPinsForAdmin() {
                 pinList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Memuat daftar pin...</p>';
                 try {
@@ -1410,7 +1519,7 @@ $adminUsername = $_SESSION['username'];
 
                 pins.forEach(pin => {
                     // --- Ambil URL Gambar ---
-                    let imageUrl = 'https://placehold.co/700x400/e0e0e0/767676?text=Tidak+Ada+Gambar+Pin'; // Default placeholder
+                    let imageUrl = 'https://placehold.co/700x400/e0e0e0/767676?text=Tidak+Ada+Gambar+Pin'; // Placeholder default
                     if (Array.isArray(pin.images) && pin.images.length > 0) { // Struktur baru: 'images' array
                         imageUrl = pin.images[0].url;
                     } else if (typeof pin.img === 'string' && pin.img) { // Struktur lama: 'img' string
@@ -1420,12 +1529,12 @@ $adminUsername = $_SESSION['username'];
                     // --- Ambil Deskripsi/Konten ---
                     const pinDescription = pin.description || pin.content || 'N/A'; // Baru: 'description', Lama: 'content'
 
-                    // --- Ambil Kategori ---
+                    // --- Ambil Kategori (sekarang array) ---
                     let categoriesText = 'N/A';
-                    if (typeof pin.category === 'string' && pin.category) { // Struktur baru: 'category' string tunggal
-                        categoriesText = pin.category;
-                    } else if (Array.isArray(pin.categories) && pin.categories.length > 0) { // Struktur lama: 'categories' array
+                    if (Array.isArray(pin.categories) && pin.categories.length > 0) { // Struktur baru: 'categories' array
                         categoriesText = pin.categories.join(', ');
+                    } else if (typeof pin.category === 'string' && pin.category) { // Struktur lama: 'category' string tunggal
+                        categoriesText = pin.category;
                     }
 
                     // --- Ambil Tipe Tampilan (opsional) ---
@@ -1472,7 +1581,7 @@ $adminUsername = $_SESSION['username'];
                 });
             }
 
-            // Initial load for admin panel (load default tab)
+            // Muatan awal untuk panel admin (muat tab default)
             fetchNotifications();
         });
     </script>
