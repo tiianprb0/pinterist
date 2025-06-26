@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Pin - Spicette</title>
-    <!-- Font Awesome for icons -->
+    <title>Buat Pin Baru - Spicette</title>
+    <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Base styles from style.css */
+        /* Gaya dasar dari style.css */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f9f9f9;
@@ -16,7 +16,7 @@
             margin: 0;
         }
 
-        /* Main content */
+        /* Konten utama */
         main {
             max-width: 800px;
             margin: 40px auto;
@@ -26,7 +26,7 @@
             flex-direction: column;
         }
 
-        /* Back button container, inspired by search.php .search-pin-action-icon */
+        /* Container tombol kembali, terinspirasi dari search.php .search-pin-action-icon */
         .back-button-container {
             margin-bottom: 20px;
             align-self: flex-start;
@@ -55,7 +55,7 @@
             color: #111;
         }
 
-        /* Form styling */
+        /* Gaya formulir */
         .create-pin-form {
             width: 100%;
             display: flex;
@@ -86,8 +86,7 @@
         }
 
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             padding: 12px;
             border: 1px solid #ddd;
             background-color: #f8f8f8;
@@ -97,6 +96,36 @@
             box-sizing: border-box;
             color: #333;
             transition: border-color 0.2s ease;
+        }
+        
+        .form-group select { /* Gaya untuk select tunggal dan multiple */
+            padding: 12px;
+            border: 1px solid #ddd;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            color: #333;
+            transition: border-color 0.2s ease;
+            /* Hapus background-image dan appearance untuk multiple select */
+            appearance: none; /* Reset default browser styles */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        /* Gaya untuk select tunggal (jika masih ada) */
+        .form-group select:not([multiple]) {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 24 24" fill="%23767676"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 30px;
+        }
+
+        .form-group select[multiple] {
+            min-height: 120px; /* Tinggi minimum untuk multiple select */
+            overflow-y: auto; /* Aktifkan scroll jika banyak opsi */
+            padding: 5px; /* Sesuaikan padding untuk item yang dapat dipilih */
         }
 
         .form-group input:focus,
@@ -111,15 +140,7 @@
             resize: vertical;
         }
 
-        .form-group.select {
-            appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 24 24" fill="%23767676"><path d="M7 10l5 5 5-5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 30px;
-        }
-
-        /* Upload button styling */
+        /* Gaya tombol Unggah */
         .create-pin-form button {
             background-color: #e60023;
             color: white;
@@ -145,7 +166,7 @@
             transform: none;
         }
 
-        /* Loading spinner */
+        /* Spinner loading */
         .loading-spinner {
             display: none;
             border: 3px solid #fff;
@@ -169,7 +190,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Radio button styling */
+        /* Gaya tombol radio */
         .radio-group {
             display: flex;
             align-items: center;
@@ -238,7 +259,7 @@
             font-size: 14px;
         }
 
-        /* Custom alert */
+        /* Peringatan Kustom */
         .custom-alert {
             position: fixed;
             bottom: 80px;
@@ -270,7 +291,7 @@
             background-color: #dc3545;
         }
 
-        /* Responsive adjustments */
+        /* Penyesuaian Responsif */
         @media (max-width: 768px) {
             main {
                 margin: 20px 10px;
@@ -324,226 +345,301 @@
                 height: 8px;
             }
         }
+
+        /* Gaya untuk pesan akses ditolak */
+        .access-denied-message {
+            text-align: center;
+            font-size: 18px;
+            color: #e60023;
+            margin-top: 50px;
+            display: none; /* Sembunyikan secara default */
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <main>
         <div class="back-button-container">
-            <button class="back-button" onclick="window.location.href='index.html'" aria-label="Back">
+            <button class="back-button" onclick="window.location.href='index.html'" aria-label="Kembali">
                 <i class="fas fa-arrow-left"></i>
             </button>
         </div>
         <form id="createPinForm" class="create-pin-form" enctype="multipart/form-data">
-            <h2>Create New Pin</h2>
+            <h2>Buat Pin Baru</h2>
             <div id="createMessage" class="custom-alert"></div>
             <div class="form-group">
-                <label for="title">Pin Title:</label>
-                <input type="text" id="title" name="title" placeholder="Enter pin title" required>
+                <label for="title">Judul Pin:</label>
+                <input type="text" id="title" name="title" placeholder="Masukkan judul pin" required>
             </div>
             <div class="form-group">
-                <label for="description">Pin Description (optional):</label>
-                <textarea id="description" name="description" placeholder="Describe your pin"></textarea>
+                <label for="description">Deskripsi Pin (opsional):</label>
+                <textarea id="description" name="description" placeholder="Jelaskan pin Anda"></textarea>
             </div>
             <div class="form-group">
-                <label for="images">Select Images (multiple allowed):</label>
+                <label for="images">Pilih Gambar (multiple diperbolehkan):</label>
                 <input type="file" id="images" name="images[]" accept="image/*" multiple required>
             </div>
             <div class="form-group">
-                <label>Pin Display Type:</label>
+                <label>Tipe Tampilan Pin:</label>
                 <div class="radio-group">
                     <input type="radio" id="displayStacked" name="display_type" value="stacked" checked>
-                    <label for="displayStacked">Stacked Images!</label>
+                    <label for="displayStacked">Gambar Bertumpuk!</label>
                 </div>
                 <div class="radio-group">
                     <input type="radio" id="displaySlider" name="display_type" value="slider">
-                    <label for="displaySlider">Image Slider!</label>
+                    <label for="displaySlider">Slider Gambar!</label>
                 </div>
             </div>
             <div id="imageDescriptionsContainer" class="form-group"></div>
             <div class="form-group">
-                <label for="category">Main Category:</label>
-                <select id="category" name="category" required>
-                    <!-- Categories loaded from API -->
+                <label for="category">Pilih Kategori (bisa lebih dari satu):</label>
+                <!-- DIUBAH: Menjadi select multiple dan nama diubah menjadi categories[] -->
+                <select id="category" name="categories[]" multiple required> 
+                    <!-- Kategori dimuat dari API -->
                 </select>
             </div>
-            <button type="submit" id="uploadButton">Upload Pin <span class="loading-spinner"></span></button>
+            <button type="submit" id="uploadButton">Unggah Pin <span class="loading-spinner"></span></button>
         </form>
+        <div id="accessDenied" class="access-denied-message">
+            Anda tidak memiliki izin untuk mengunggah pin. Harap hubungi administrator.
+        </div>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCategories();
-            setupImageInputListener();
-            setupDisplayTypeListener();
-        });
-
-        const createMessageDiv = document.getElementById('createMessage');
-        const uploadButton = document.getElementById('uploadButton');
-
-        // Show message with custom alert
-        function showMessage(msg, type = 'info') {
-            createMessageDiv.textContent = msg;
-            createMessageDiv.className = `custom-alert ${type} show`;
-            setTimeout(() => {
-                createMessageDiv.classList.remove('show');
-            }, 3000);
-        }
-
-        // Load categories from API
-        async function loadCategories() {
+        // --- Fungsi Pembantu untuk Permintaan API (Duplikasi dari index.html, bisa dipindahkan ke file terpisah jika diinginkan) ---
+        async function makeApiRequest(endpoint, method = 'GET', data = null) {
             try {
-                const response = await fetch('./api/categories.php?action=fetch_all');
-                const result = await response.json();
-                const categorySelect = document.getElementById('category');
-                
-                if (result.success && result.categories) {
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.textContent = 'Select Category';
-                    defaultOption.disabled = true;
-                    defaultOption.selected = true;
-                    categorySelect.appendChild(defaultOption);
-
-                    result.categories.forEach(cat => {
-                        const option = document.createElement('option');
-                        option.value = cat.name;
-                        option.textContent = cat.name;
-                        categorySelect.appendChild(option);
-                    });
-                } else {
-                    console.error('Failed to load categories:', result.message);
-                    showMessage('Failed to load categories. Try again.', 'error');
+                const options = { method };
+                if (data !== null && typeof data !== 'undefined') {
+                    if (method === 'POST' && endpoint === 'pins.php') { // Khusus untuk unggahan pin (multipart/form-data)
+                        // Biarkan browser yang mengatur Content-Type untuk FormData
+                    } else {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
+                    }
                 }
+                
+                const response = await fetch('./api/' + endpoint, options); // Prefix with ./api/
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
+                }
+                
+                const textResponse = await response.text();
+                if (!textResponse) {
+                    return { success: true, message: 'Tidak ada konten' };
+                }
+
+                try {
+                    const jsonResponse = JSON.parse(textResponse);
+                    return jsonResponse;
+                } catch (e) {
+                    console.error('Gagal mengurai respons JSON:', textResponse);
+                    throw new Error(`Respons JSON tidak valid: ${textResponse}`);
+                }
+
             } catch (error) {
-                console.error('Error loading categories:', error);
-                showMessage('Network error while loading categories.', 'error');
+                console.error('Permintaan API Gagal:', error);
+                return { success: false, message: 'Kesalahan jaringan atau server.' };
             }
         }
 
-        // Handle image input changes
-        function setupImageInputListener() {
-            const imagesInput = document.getElementById('images');
-            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
-            const displayStackedRadio = document.getElementById('displayStacked');
 
-            imagesInput.addEventListener('change', () => {
-                imageDescriptionsContainer.innerHTML = '';
-                const files = imagesInput.files;
+        document.addEventListener('DOMContentLoaded', async () => {
+            const createPinForm = document.getElementById('createPinForm');
+            const accessDeniedMessage = document.getElementById('accessDenied');
+            const categorySelect = document.getElementById('category'); 
+            const imagesInput = document.getElementById('images'); // Dipindahkan ke atas
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer'); // Dipindahkan ke atas
+            const displayStackedRadio = document.getElementById('displayStacked'); // Dipindahkan ke atas
+            const displaySliderRadio = document.getElementById('displaySlider'); // Dipindahkan ke atas
 
-                if (displayStackedRadio.checked && files.length > 0) {
-                    const header = document.createElement('h3');
-                    header.textContent = 'Individual Image Descriptions (Optional):';
-                    header.style.fontSize = '16px';
-                    header.style.color = '#333';
-                    header.style.marginBottom = '15px';
-                    header.style.fontWeight = 'bold';
-                    imageDescriptionsContainer.appendChild(header);
 
-                    Array.from(files).forEach((file, index) => {
-                        const fileDescriptionDiv = document.createElement('div');
-                        fileDescriptionDiv.className = 'form-group-inline';
-                        fileDescriptionDiv.innerHTML = `
-                            <label for="image_desc_${index}">${file.name}:</label>
-                            <textarea id="image_desc_${index}" name="image_descriptions[]" placeholder="Describe this image (optional)"></textarea>
-                        `;
-                        imageDescriptionsContainer.appendChild(fileDescriptionDiv);
-                    });
+            // --- Logika Kontrol Akses ---
+            const userSessionResponse = await makeApiRequest('auth.php?action=check_session', 'GET');
+            if (!userSessionResponse.success || !userSessionResponse.user || !userSessionResponse.user.canUpload) {
+                createPinForm.style.display = 'none'; // Sembunyikan formulir
+                accessDeniedMessage.style.display = 'block'; // Tampilkan pesan akses ditolak
+                // Opsional: Arahkan ulang setelah beberapa detik
+                setTimeout(() => {
+                    window.location.href = 'index.html'; 
+                }, 3000); 
+                return; // Hentikan eksekusi script lebih lanjut
+            }
+
+            // Variabel-variabel untuk custom alert tetap di sini
+            const createMessageDiv = document.getElementById('createMessage');
+            const uploadButton = document.getElementById('uploadButton');
+
+            // Tampilkan pesan dengan peringatan kustom
+            function showMessage(msg, type = 'info') {
+                createMessageDiv.textContent = msg;
+                createMessageDiv.className = `custom-alert ${type} show`;
+                setTimeout(() => {
+                    createMessageDiv.classList.remove('show');
+                }, 3000);
+            }
+
+            // Muat kategori dari API
+            async function loadCategories() {
+                try {
+                    const response = await makeApiRequest('categories.php?action=fetch_all');
+                    
+                    if (response.success && response.categories) {
+                        // Hapus opsi yang sudah ada
+                        categorySelect.innerHTML = ''; 
+
+                        // Tambahkan opsi placeholder (opsional untuk multiple select)
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Pilih Kategori (opsional)'; // Ubah teks
+                        defaultOption.disabled = true;
+                        categorySelect.appendChild(defaultOption);
+
+                        response.categories.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.name; // Simpan nama kategori sebagai nilai
+                            option.textContent = cat.name;
+                            categorySelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Gagal memuat kategori:', response.message);
+                        showMessage('Gagal memuat kategori. Coba lagi.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Kesalahan memuat kategori:', error);
+                    showMessage('Kesalahan jaringan saat memuat kategori.', 'error');
                 }
-            });
-        }
+            }
 
-        // Handle display type radio buttons
-        function setupDisplayTypeListener() {
-            const displayStackedRadio = document.getElementById('displayStacked');
-            const displaySliderRadio = document.getElementById('displaySlider');
-            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
-            const imagesInput = document.getElementById('images');
-
-            const toggleDescriptions = () => {
+            // TANGANI PERUBAHAN TIPE TAMPILAN DAN INPUT GAMBAR DENGAN BENAR
+            function toggleDescriptions() {
+                imageDescriptionsContainer.innerHTML = ''; // Selalu kosongkan dulu
                 const files = imagesInput.files;
+
+                // Jika stacked dipilih DAN ada file, atau jika ada 1 file (slider disabled)
+                if (displayStackedRadio.checked || files.length === 1) {
+                    // Hanya tampilkan dan buat deskripsi jika ada file
+                    if (files.length > 0) {
+                        imageDescriptionsContainer.style.display = 'block';
+                        const header = document.createElement('h3');
+                        header.textContent = 'Deskripsi Gambar Individual (Opsional):';
+                        header.style.fontSize = '16px';
+                        header.style.color = '#333';
+                        header.style.marginBottom = '15px';
+                        header.style.fontWeight = 'bold';
+                        imageDescriptionsContainer.appendChild(header);
+
+                        Array.from(files).forEach((file, index) => {
+                            const fileDescriptionDiv = document.createElement('div');
+                            fileDescriptionDiv.className = 'form-group-inline';
+                            fileDescriptionDiv.innerHTML = `
+                                <label for="image_desc_${index}">${file.name}:</label>
+                                <textarea id="image_desc_${index}" name="image_descriptions[]" placeholder="Jelaskan gambar ini (opsional)"></textarea>
+                            `;
+                            imageDescriptionsContainer.appendChild(fileDescriptionDiv);
+                        });
+                    } else {
+                        imageDescriptionsContainer.style.display = 'none'; // Sembunyikan jika tidak ada file
+                    }
+                } else {
+                    imageDescriptionsContainer.style.display = 'none'; // Sembunyikan jika slider dipilih dan >1 file
+                }
+
+                // Logika penonaktifan slider berdasarkan jumlah file
                 if (files.length === 1) {
-                    displayStackedRadio.checked = true;
+                    displayStackedRadio.checked = true; // Otomatis pilih stacked
                     displaySliderRadio.disabled = true;
-                    imageDescriptionsContainer.style.display = 'block';
-                    imagesInput.dispatchEvent(new Event('change'));
                 } else {
                     displaySliderRadio.disabled = false;
-                    if (displayStackedRadio.checked) {
-                        imageDescriptionsContainer.style.display = 'block';
-                        imagesInput.dispatchEvent(new Event('change'));
-                    } else {
-                        imageDescriptionsContainer.style.display = 'none';
-                        imageDescriptionsContainer.innerHTML = '';
-                    }
                 }
-            };
+            }
 
+            // Panggil fungsi-fungsi inisialisasi
+            loadCategories();
+            toggleDescriptions(); // Panggil ini setelah imagesInput dan radios didefinisikan
+
+            // Atur listener untuk radio dan input file
             displayStackedRadio.addEventListener('change', toggleDescriptions);
             displaySliderRadio.addEventListener('change', toggleDescriptions);
             imagesInput.addEventListener('change', toggleDescriptions);
+            
+            // Tangani pengiriman formulir
+            document.getElementById('createPinForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                uploadButton.disabled = true; // Nonaktifkan tombol untuk menampilkan loading
 
-            toggleDescriptions();
-        }
+                const form = event.target;
+                const formData = new FormData();
 
-        // Handle form submission
-        document.getElementById('createPinForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            uploadButton.disabled = true; // Disable button to show loading
+                formData.append('title', document.getElementById('title').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
 
-            const form = event.target;
-            const formData = new FormData();
-
-            formData.append('title', document.getElementById('title').value);
-            formData.append('description', document.getElementById('description').value);
-            formData.append('category', document.getElementById('category').value);
-            formData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
-
-            const imagesInput = document.getElementById('images');
-            if (imagesInput.files.length === 0) {
-                showMessage('Please select at least one image.', 'error');
-                uploadButton.disabled = false;
-                return;
-            }
-            for (const file of imagesInput.files) {
-                formData.append('images[]', file);
-            }
-
-            if (document.getElementById('displayStacked').checked && imagesInput.files.length > 0) {
-                const imageDescriptions = [];
-                const descriptionTextareas = document.querySelectorAll('#imageDescriptionsContainer textarea[name="image_descriptions[]"]');
-                descriptionTextareas.forEach(textarea => {
-                    imageDescriptions.push(textarea.value);
-                });
-                formData.append('image_descriptions', JSON.stringify(imageDescriptions));
-            }
-
-            try {
-                const response = await fetch('./api/pins.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    showMessage('Pin created successfully!', 'success');
-                    form.reset();
-                    document.getElementById('imageDescriptionsContainer').innerHTML = '';
-                    document.getElementById('displaySlider').disabled = false;
-                    document.getElementById('displayStacked').checked = true;
-                    
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                } else {
-                    showMessage('Failed to create pin: ' + result.message + (result.errors ? '\n' + result.errors.join('\n') : ''), 'error');
+                // TANGANI PEMILIHAN KATEGORI MULTIPLE
+                const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+                if (selectedCategories.length === 0) {
+                    showMessage('Harap pilih setidaknya satu kategori.', 'error');
+                    uploadButton.disabled = false;
+                    return;
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Network error during upload.', 'error');
-            } finally {
-                uploadButton.disabled = false; // Re-enable button
-            }
+                // Kirim kategori sebagai array JSON stringified
+                formData.append('categories', JSON.stringify(selectedCategories));
+
+
+                const imagesInput = document.getElementById('images');
+                if (imagesInput.files.length === 0) {
+                    showMessage('Harap pilih setidaknya satu gambar.', 'error');
+                    uploadButton.disabled = false;
+                    return;
+                }
+                for (const file of imagesInput.files) {
+                    formData.append('images[]', file);
+                }
+
+                if (document.getElementById('displayStacked').checked && imagesInput.files.length > 0) {
+                    const imageDescriptions = [];
+                    const descriptionTextareas = document.querySelectorAll('#imageDescriptionsContainer textarea[name="image_descriptions[]"]');
+                    descriptionTextareas.forEach(textarea => {
+                        imageDescriptions.push(textarea.value);
+                    });
+                    formData.append('image_descriptions', JSON.stringify(imageDescriptions));
+                }
+
+                try {
+                    // Endpoint sekarang hanya pins.php, PHP akan menentukan aksi berdasarkan metode dan data
+                    const response = await fetch('./api/pins.php', { 
+                        method: 'POST',
+                        body: formData // FormData tidak memerlukan 'Content-Type', browser akan mengaturnya
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        showMessage('Pin berhasil dibuat!', 'success');
+                        form.reset();
+                        document.getElementById('imageDescriptionsContainer').innerHTML = '';
+                        document.getElementById('displaySlider').disabled = false;
+                        document.getElementById('displayStacked').checked = true;
+                        // Reset kategori terpilih
+                        Array.from(categorySelect.options).forEach(option => {
+                            option.selected = false;
+                        });
+                        
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showMessage('Gagal membuat pin: ' + result.message + (result.errors ? '\n' + result.errors.join('\n') : ''), 'error');
+                    }
+                } catch (error) {
+                    console.error('Kesalahan:', error);
+                    showMessage('Kesalahan jaringan selama unggah.', 'error');
+                } finally {
+                    uploadButton.disabled = false; // Aktifkan kembali tombol
+                }
+            });
         });
     </script>
 </body>
