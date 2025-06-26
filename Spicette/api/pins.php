@@ -7,11 +7,11 @@ session_start();
 require_once 'utils.php'; // Sertakan file utilitas
 
 $pinsFile = '../data/pins.json';
-$usersFile = '../data/users.json'; // Path to users.json (for delete_user action)
+$usersFile = '../data/users.json'; // Path ke users.json (untuk delete_user action)
 $savedPinsDir = '../data/saved_pins/';
 $uploadDir = '../uploads/pins/'; // Direktori untuk menyimpan gambar yang diunggah
 
-// Helper fungsi yang menggunakan utilitas
+// Fungsi pembantu yang menggunakan utilitas
 function getAllPins() {
     global $pinsFile;
     return readJsonFile($pinsFile);
@@ -22,11 +22,19 @@ function saveAllPins($pins) {
     return writeJsonFile($pinsFile, $pins);
 }
 
-function getUsersForPinsApi() { // Used in delete_user
+// BARU: Fungsi untuk mendapatkan pengguna dengan canUpload. Ini akan memanggil getUsers dari auth.php secara efektif
+function getUsersForPinsApi() { 
     global $usersFile;
-    return readJsonFile($usersFile);
+    $users = readJsonFile($usersFile);
+    foreach ($users as &$user) { // Gunakan referensi untuk memodifikasi array asli
+        if (!isset($user['canUpload'])) {
+            $user['canUpload'] = false; // Nilai default jika tidak disetel
+        }
+    }
+    return $users;
 }
-function saveUsersForPinsApi($users) { // Used in delete_user
+
+function saveUsersForPinsApi($users) { // Digunakan di delete_user
     global $usersFile;
     return writeJsonFile($usersFile, $users);
 }
@@ -44,7 +52,7 @@ function checkAdmin() {
 
 function checkLoggedIn() {
     if (!isset($_SESSION['username'])) {
-        http_response_code(401); // Unauthorized
+        http_response_code(401); // Tidak Sah
         echo json_encode(['success' => false, 'message' => 'Login diperlukan.']);
         exit;
     }
@@ -71,12 +79,13 @@ if ($method === 'GET') {
         echo json_encode(['success' => true, 'pins' => array_values($savedPins)]);
     } elseif ($action === 'fetch_all_users') {
         checkAdmin();
-        echo json_encode(['success' => true, 'users' => getUsersForPinsApi()]);
+        // BARU: Panggil getUsersForPinsApi untuk menyertakan status canUpload
+        echo json_encode(['success' => true, 'users' => getUsersForPinsApi()]); 
     } elseif ($action === 'fetch_user_pins') {
         $username = $_GET['username'] ?? ($_SESSION['username'] ?? null);
         if (empty($username)) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Username diperlukan untuk mengambil pin pengguna.']);
+            echo json_encode(['success' => false, 'message' => 'Nama pengguna diperlukan untuk mengambil pin pengguna.']);
             exit;
         }
         $allPins = getAllPins();
@@ -89,14 +98,19 @@ if ($method === 'GET') {
         $allPins = getAllPins();
         $filteredPins = array_filter($allPins, function($pin) use ($query) {
             $queryLower = strtolower($query);
-            // Search in title, content, and categories
+            
+            // Cari dalam kategori (sekarang array)
             $inCategories = false;
-            if (isset($pin['category']) && is_string($pin['category'])) { // Changed to single 'category'
-                if (stripos($pin['category'], $queryLower) !== false) {
-                    $inCategories = true;
+            if (isset($pin['categories']) && is_array($pin['categories'])) { 
+                foreach ($pin['categories'] as $categoryName) {
+                    if (stripos($categoryName, $queryLower) !== false) {
+                        $inCategories = true;
+                        break;
+                    }
                 }
             }
-            // Check in title, description (content), and image descriptions
+            
+            // Periksa dalam judul, deskripsi, dan deskripsi gambar
             $inImageDescriptions = false;
             if (isset($pin['images']) && is_array($pin['images'])) {
                 foreach ($pin['images'] as $image) {
@@ -108,9 +122,9 @@ if ($method === 'GET') {
             }
 
             return (stripos($pin['title'] ?? '', $queryLower) !== false ||
-                    stripos($pin['description'] ?? '', $queryLower) !== false || // 'content' changed to 'description'
-                    $inCategories ||
-                    $inImageDescriptions); // New: search in image descriptions
+                    stripos($pin['description'] ?? '', $queryLower) !== false || 
+                    $inCategories || // Gunakan variabel $inCategories yang sudah dihitung
+                    $inImageDescriptions); 
         });
         echo json_encode(['success' => true, 'pins' => array_values($filteredPins)]);
     } else {
@@ -125,8 +139,14 @@ if ($method === 'GET') {
 
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
-        $category = $_POST['category'] ?? ''; // Sekarang hanya 1 kategori
-        // Ambil uploadedBy langsung dari sesi, ini lebih aman dan akurat
+        // BARU: Dapatkan kategori sebagai JSON stringified array dan decode
+        $categories_json = $_POST['categories'] ?? '[]'; 
+        $categories = json_decode($categories_json, true);
+        if (!is_array($categories)) {
+            $categories = []; // Pastikan ini array
+        }
+
+        // Dapatkan uploadedBy langsung dari sesi, ini lebih aman dan akurat
         $uploadedBy = $_SESSION['username'] ?? 'unknown'; 
         $display_type = $_POST['display_type'] ?? 'stacked'; // Default ke 'stacked'
 
@@ -160,7 +180,7 @@ if ($method === 'GET') {
                     $img_desc = $image_descriptions[$i] ?? ''; // Dapatkan deskripsi individual
                     $uploaded_image_data[] = ['url' => $web_path, 'description' => $img_desc];
                 } else {
-                    // Handle error unggah file individual
+                    // Tangani kesalahan unggah file individual
                     http_response_code(500);
                     echo json_encode(['success' => false, 'message' => 'Gagal mengunggah beberapa gambar.', 'error_file' => $file_name]);
                     exit();
@@ -173,7 +193,7 @@ if ($method === 'GET') {
         }
 
         // Validasi data
-        if (empty($title) || empty($uploaded_image_data) || empty($category) || empty($uploadedBy)) {
+        if (empty($title) || empty($uploaded_image_data) || empty($categories) || empty($uploadedBy)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Data pin tidak lengkap (judul, gambar, kategori, atau ID pengguna hilang).']);
             exit();
@@ -187,7 +207,7 @@ if ($method === 'GET') {
             'description' => $description, // Deskripsi umum pin
             'images' => $uploaded_image_data, // Simpan array objek gambar
             'display_type' => $display_type, // Simpan tipe tampilan
-            'category' => $category, // Kategori sekarang tunggal
+            'categories' => $categories, // BARU: Kategori sekarang array
             'uploadedBy' => $uploadedBy, // Menggunakan variabel $uploadedBy yang sudah diverifikasi
             'created_at' => date('Y-m-d H:i:s')
         ];
@@ -205,7 +225,7 @@ if ($method === 'GET') {
 
         if ($input === false) { // JSON tidak valid
             http_response_code(400); // Bad Request
-            echo json_encode(['success' => false, 'message' => 'Invalid JSON input format.']);
+            echo json_encode(['success' => false, 'message' => 'Format input JSON tidak valid.']);
             exit;
         }
 
@@ -215,8 +235,12 @@ if ($method === 'GET') {
             $imageUrl = $input['imageUrl'] ?? '';
             $source = $input['source'] ?? '';
             $title = $input['title'] ?? ''; 
-            $content = $input['content'] ?? ''; // This is general pin description in old structure
-            $categories = $input['categories'] ?? []; // Old categories (array)
+            $content = $input['content'] ?? ''; // Ini adalah deskripsi pin umum dalam struktur lama
+            // BARU: Categories sekarang array. Jika dari input lama, mungkin single string atau array kosong.
+            $categories_input = $input['categories'] ?? []; 
+            // Pastikan $categories_input adalah array. Jika string, ubah menjadi array dengan satu elemen.
+            $categories = is_array($categories_input) ? $categories_input : [$categories_input];
+
 
             // Jika Anda ingin mempertahankan kemampuan menambahkan pin dengan URL eksternal (single image)
             // Maka logika ini akan tetap digunakan, jika tidak, bisa dihapus atau disesuaikan.
@@ -226,10 +250,7 @@ if ($method === 'GET') {
                 echo json_encode(['success' => false, 'message' => 'URL gambar dan judul diperlukan.']);
                 exit;
             }
-
-            // Transformasi kategori ke format baru (satu kategori utama)
-            $mainCategory = !empty($categories) && is_array($categories) ? $categories[0] : 'Uncategorized';
-
+            
             $pins = getAllPins();
             $newId = 'pin_' . uniqid() . '_' . time();
 
@@ -239,7 +260,7 @@ if ($method === 'GET') {
                 'description' => $content, // Konten lama menjadi deskripsi
                 'images' => [['url' => $imageUrl, 'description' => '']], // Satu gambar, tanpa deskripsi individual
                 'display_type' => 'stacked', // Default stacked untuk single image
-                'category' => $mainCategory, // Hanya satu kategori
+                'categories' => $categories, // BARU: Simpan sebagai array
                 'uploadedBy' => $_SESSION['username'] ?? 'unknown',
                 'created_at' => date('Y-m-d H:i:s')
             ];
@@ -298,7 +319,7 @@ if ($method === 'GET') {
                  exit;
             }
 
-            $users = getUsersForPinsApi();
+            $users = getUsersForPinsApi(); // Menggunakan fungsi yang dimodifikasi
             foreach ($users as $user) {
                 $userSavedPinsFile = $savedPinsDir . $user['username'] . '.json';
                 if (file_exists($userSavedPinsFile)) { // Periksa keberadaan file sebelum membaca
@@ -319,11 +340,11 @@ if ($method === 'GET') {
 
             if (empty($usernameToDelete)) {
                 http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Username diperlukan untuk penghapusan.']);
+                echo json_encode(['success' => false, 'message' => 'Nama pengguna diperlukan untuk penghapusan.']);
                 exit;
             }
 
-            $users = getUsersForPinsApi();
+            $users = getUsersForPinsApi(); // Menggunakan fungsi yang dimodifikasi
             $initialUserCount = count($users);
             $updatedUsers = array_filter($users, function($user) use ($usernameToDelete) {
                 return $user['username'] !== $usernameToDelete;
@@ -403,7 +424,7 @@ if ($method === 'GET') {
             } else {
                 echo json_encode(['success' => false, 'message' => 'Pin sudah disimpan.']);
             }
-        } elseif ($action === 'unsave') { // NEW: Unsave action
+        } elseif ($action === 'unsave') { // BARU: Aksi Unsave
             checkLoggedIn();
             $username = $_SESSION['username'];
             $pinId = $input['pinId'] ?? null;
