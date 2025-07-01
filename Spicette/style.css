@@ -455,7 +455,7 @@ main.desktop-search-active .pin-grid {
 /* NEW: Dashed line separator sebelum kategori */
 .dashed-line {
     border-top: 1px dashed #ccc;
-    margin: 20px 0 10px 0; /* Jarak atas 20px, bawah 10px dari kategori */
+    margin: 20px 0 20px 0; /* Jarak atas 20px, bawah 10px dari kategori */
     width: 100%;
 }
 
@@ -1450,6 +1450,6 @@ body.no-scroll {
 }
 /* Gaya untuk pin grid utama */
 .pin-grid {
-    padding-left: 0px; /* Padding kiri 0px */
-    padding-right: 0px; /* Padding kanan 0px */
+    padding-left: 10px; /* Padding kiri 0px */
+    padding-right: 10px; /* Padding kanan 0px */
 }
