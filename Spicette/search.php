@@ -17,7 +17,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
@@ -62,6 +62,23 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         .back-button:hover {
             background-color: #e0e0e0;
         }
+        /* Gaya untuk pin grid di dalam overlay detail pin */
+        .pin-detail-content .pin-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            padding-left: 0px; /* Padding kiri 0px */
+            padding-right: 0px; /* Padding kanan 0px */
+        }
+        .pin-detail-content .pin-grid .pin {
+            width: 100%;
+            max-width: none;
+            margin-bottom: 10px; /* Margin bawah untuk setiap pin */
+        }
+        .pin-detail-content .pin-grid .pin img {
+            max-height: 200px;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -70,7 +87,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         <div class="pin-detail-content">
             <div class="pin-detail-back-container">
                 <button class="pin-detail-back-button" onclick="closePinDetail()">
-                    <i class="fas fa-arrow-left"></i> Back
+                    <i class="fas fa-arrow-left"></i> Kembali
                 </button>
             </div>
 
@@ -79,16 +96,25 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 <div class="uploaded-by-and-share">
                     <p class="uploaded-by-text">oleh <strong id="pinDetailUploadedBy"></strong></p>
                     <button id="pinDetailShareButton" class="secondary">
-                        <i class="fas fa-share-alt"></i> Share
+                        <i class="fas fa-share-alt"></i> Bagikan
                     </button>
                 </div>
             </div>
 
             <div class="pin-detail-img-main-container">
-                <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Save</button>
-                </div>
+                <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Simpan</button>
+            </div>
 
             <p id="pinDetailDescription" class="pin-detail-description"></p>
+            
+            <!-- pinDetailPersonTagsSection dipindahkan ke atas pinDetailCategories -->
+            <div id="pinDetailPersonTagsSection" class="pin-person-tags-section" style="display: none;">
+                <h3 class="person-in-pin-title">Orang dalam pin</h3>
+                <div id="pinDetailPersonTagsList" class="person-tags-list"></div>
+                <div id="pinDetailRelatedPins" class="pin-grid"></div>
+            </div>
+
+            <!-- dashed-line dipindahkan ke atas pinDetailCategories -->
             <div class="dashed-line"></div>
             <div id="pinDetailCategories" class="pin-categories"></div>
 
@@ -99,26 +125,26 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
     <div id="fullImageOverlay" class="full-image-overlay">
         <button class="close-full-image-button" onclick="window.closeFullImageOverlay()">&times;</button>
-        <img id="fullImageDisplay" src="" alt="Full Size Image">
+        <img id="fullImageDisplay" src="" alt="Gambar Ukuran Penuh">
         <button id="fullImageDownloadButton" class="download-button-on-image">
-            <i class="fas fa-download"></i> Download
+            <i class="fas fa-download"></i> Unduh
         </button>
     </div>
 
     <main class="tag-page-layout">
         <div class="back-button-container">
             <button class="back-button" onclick="history.back()">
-                <i class="fas fa-arrow-left"></i> Back
+                <i class="fas fa-arrow-left"></i> Kembali
             </button>
         </div>
         <section class="search-page-header">
-            <h1>Search results for "<?php echo htmlspecialchars($searchQuery); ?>"</h1>
+            <h1>Hasil pencarian untuk "<?php echo htmlspecialchars($searchQuery); ?>"</h1>
             <p id="searchResultsCount"></p>
         </section>
         <div class="pin-grid" id="pinGrid">
-            <p style="text-align: center; color: #767676;">Loading pins...</p>
+            <p style="text-align: center; color: #767676;">Memuat pin...</p>
         </div>
-        <div id="loading-indicator">Loading more pins...</div>
+        <div id="loading-indicator">Memuat lebih banyak pin...</div>
     </main>
 
     <script>
@@ -149,20 +175,20 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
                 const textResponse = await response.text();
                 if (!textResponse) {
-                    return { success: true, message: 'No content' };
+                    return { success: true, message: 'Tidak ada konten' };
                 }
 
                 try {
                     const jsonResponse = JSON.parse(textResponse);
                     return jsonResponse;
                 } catch (e) {
-                    console.error('Failed to parse JSON response:', textResponse);
-                    throw new Error(`Invalid JSON response: ${textResponse}`);
+                    console.error('Gagal mengurai respons JSON:', textResponse);
+                    throw new Error(`Respons JSON tidak valid: ${textResponse}`);
                 }
 
             } catch (error) {
-                console.error('API Request Failed:', error);
-                return { success: false, message: 'Network or server error.' };
+                console.error('Permintaan API Gagal:', error);
+                return { success: false, message: 'Kesalahan jaringan atau server.' };
             }
         }
 
@@ -193,40 +219,44 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         const pinDetailCategories = document.getElementById('pinDetailCategories');
         const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton');
         const pinDetailShareButton = document.getElementById('pinDetailShareButton');
+        const pinDetailPersonTagsSection = document.getElementById('pinDetailPersonTagsSection');
+        const pinDetailPersonTagsList = document.getElementById('pinDetailPersonTagsList');
+        const pinDetailRelatedPins = document.getElementById('pinDetailRelatedPins');
+
 
         function updatePinDetailImageSaveButton(pinData) {
             if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
-                pinDetailImageSaveButton.textContent = 'Saved';
+                pinDetailImageSaveButton.textContent = 'Disimpan';
                 pinDetailImageSaveButton.style.backgroundColor = '#767676';
                 pinDetailImageSaveButton.onclick = async (e) => {
                     e.stopPropagation();
                     const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
                     if (response.success) {
-                        showMessage('Pin successfully removed from saved list!', 'success');
+                        showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
                         currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
                         updatePinDetailImageSaveButton(pinData);
                         const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
                         if (gridSaveButton) {
-                            gridSaveButton.textContent = 'Save';
+                            gridSaveButton.textContent = 'Simpan';
                             gridSaveButton.style.backgroundColor = '#e60023';
                         }
                     } else {
-                        showMessage('Failed to remove pin from saved list: ' + response.message, 'error');
+                        showMessage('Gagal menghapus pin dari daftar simpan: ' + response.message, 'error');
                     }
                 };
             } else {
-                pinDetailImageSaveButton.textContent = 'Save';
+                pinDetailImageSaveButton.textContent = 'Simpan';
                 pinDetailImageSaveButton.style.backgroundColor = '#e60023';
                 pinDetailImageSaveButton.onclick = async (e) => {
                     e.stopPropagation();
                     if (!currentUser) {
-                        showMessage('Please login to save pins.', 'info');
+                        showMessage('Harap login untuk menyimpan pin.', 'info');
                         window.location.href = 'login.html';
                         return;
                     }
                     const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
                     if (response.success) {
-                        showMessage('Pin saved successfully!', 'success');
+                        showMessage('Pin berhasil disimpan!', 'success');
                         if (currentUser.savedPins) {
                             currentUser.savedPins.push(pinData.id);
                         } else {
@@ -235,28 +265,34 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                         updatePinDetailImageSaveButton(pinData);
                         const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
                         if (gridSaveButton) {
-                            gridSaveButton.textContent = 'Saved';
+                            gridSaveButton.textContent = 'Disimpan';
                             gridSaveButton.style.backgroundColor = '#767676';
                         }
                     } else {
-                        showMessage('Failed to save pin: ' + response.message, 'error');
+                        showMessage('Gagal menyimpan pin: ' + response.message, 'error');
                     }
                 };
             }
         }
 
         function getCorrectedImagePath(originalPath) {
+            // Asumsi search.php berada di Spicette/
+            // dan gambar ada di Spicette/uploads/pins/
+            // Jadi, jika path gambar adalah ./uploads/pins/image.jpeg atau uploads/pins/image.jpeg
+            // kita perlu mengubahnya menjadi uploads/pins/image.jpeg (relatif ke root Spicette)
+            // dan kemudian pastikan URL absolut
             if (originalPath.startsWith('./uploads/pins/')) {
-                return originalPath;
+                return originalPath; // Path sudah benar relatif ke search.php
             }
             if (originalPath.startsWith('uploads/pins/')) {
-                return './' + originalPath;
+                return './' + originalPath; // Tambahkan './' agar relatif ke search.php
             }
+            // Jika ini adalah URL absolut atau path yang tidak dikenal, kembalikan apa adanya
             return originalPath;
         }
 
-        function openPinDetail(pinData) {
-            pinDetailTitle.textContent = pinData.title || 'Untitled';
+        async function openPinDetail(pinData) {
+            pinDetailTitle.textContent = pinData.title || 'Tanpa Judul';
             pinDetailUploadedBy.textContent = ` ${pinData.uploadedBy || 'Anonim'}`;
 
             if (pinData.description) {
@@ -274,6 +310,8 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 if (pinData.display_type === 'slider' && pinData.images.length > 1) {
                     const sliderWrapper = document.createElement('div');
                     sliderWrapper.className = 'slider-wrapper';
+                    sliderWrapper.id = 'pinSlider';
+
                     const swipeInner = document.createElement('div');
                     swipeInner.className = 'swipe-inner';
 
@@ -325,7 +363,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 }
             } else {
                 const noImage = document.createElement('img');
-                noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=No+Image';
+                noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=Tidak+Ada+Gambar';
                 noImage.alt = 'Tidak Ada Gambar';
                 noImage.onclick = (e) => {
                     e.stopPropagation();
@@ -335,6 +373,64 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             }
 
             updatePinDetailImageSaveButton(pinData);
+
+            // Person Tags Section - Dipindahkan ke atas Categories
+            pinDetailPersonTagsList.innerHTML = '';
+            pinDetailRelatedPins.innerHTML = '';
+            if (pinData.personTags && pinData.personTags.length > 0) {
+                pinDetailPersonTagsSection.style.display = 'block';
+                const taggedPeople = pinData.personTags;
+                let allRelatedPins = [];
+                const maxPinsTotal = 15;
+                // Calculate max pins per person, ensuring at least 1 if there are people
+                const maxPinsPerPerson = taggedPeople.length > 0 ? Math.max(1, Math.floor(maxPinsTotal / taggedPeople.length)) : 0;
+
+                for (const person of taggedPeople) {
+                    const personTagDiv = document.createElement('div');
+                    personTagDiv.className = 'person-tag-item';
+
+                    const personNameLink = document.createElement('a');
+                    personNameLink.href = `who.php?name=${encodeURIComponent(person.trim())}`;
+                    personNameLink.textContent = person.trim();
+                    personNameLink.className = 'person-name-link';
+                    personTagDiv.appendChild(personNameLink);
+
+                    const viewAllButton = document.createElement('a');
+                    viewAllButton.href = `who.php?name=${encodeURIComponent(person.trim())}`;
+                    viewAllButton.className = 'view-all-button';
+                    viewAllButton.innerHTML = `Lihat Semua <i class="fas fa-arrow-right"></i>`;
+                    personTagDiv.appendChild(viewAllButton);
+
+                    pinDetailPersonTagsList.appendChild(personTagDiv);
+
+                    const response = await makeApiRequest(`pins.php?action=getPinsByPersonTag&name=${encodeURIComponent(person.trim())}`);
+                    if (response.success && response.pins) {
+                        const shuffledPersonPins = response.pins.sort(() => 0.5 - Math.random());
+                        const pinsForThisPerson = shuffledPersonPins.slice(0, maxPinsPerPerson);
+                        allRelatedPins.push(...pinsForThisPerson);
+                    }
+                }
+
+                const uniqueRelatedPins = Array.from(new Set(allRelatedPins.filter(p => p.id !== pinData.id).map(p => JSON.stringify(p))))
+                                            .map(s => JSON.parse(s));
+
+                const finalShuffledRelatedPins = uniqueRelatedPins.sort(() => 0.5 - Math.random()).slice(0, maxPinsTotal);
+
+
+                if (finalShuffledRelatedPins.length > 0) {
+                    finalShuffledRelatedPins.forEach(relatedPin => {
+                        const pinElement = createPinElement(relatedPin);
+                        pinDetailRelatedPins.appendChild(pinElement);
+                    });
+                } else {
+                    pinDetailRelatedPins.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 20px;">Tidak ada pin terkait lainnya.</p>';
+                    pinDetailRelatedPins.style.display = 'block';
+                }
+
+            } else {
+                pinDetailPersonTagsSection.style.display = 'none';
+            }
+
 
             pinDetailCategories.innerHTML = '';
             if (pinData.category) {
@@ -354,13 +450,13 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     e.stopPropagation();
                     try {
                         await navigator.share({
-                            title: pinData.title || 'Spicette Pin',
-                            text: pinData.description || pinData.title || 'Check out this pin!',
+                            title: pinData.title || 'Pin Spicette',
+                            text: pinData.description || pinData.title || 'Lihat pin ini!',
                             url: window.location.href
                         });
                         showMessage('Pin berhasil dibagikan!', 'success');
                     } catch (error) {
-                        console.error('Error sharing:', error);
+                        console.error('Kesalahan berbagi:', error);
                         showMessage('Gagal membagikan pin.', 'error');
                     }
                 };
@@ -482,10 +578,10 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             saveButton.classList.add('pin-save-button');
             
             if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
-                saveButton.textContent = 'Saved';
+                saveButton.textContent = 'Disimpan';
                 saveButton.style.backgroundColor = '#767676';
             } else {
-                saveButton.textContent = 'Save';
+                saveButton.textContent = 'Simpan';
                 saveButton.style.backgroundColor = '#e60023';
             }
             
@@ -501,10 +597,10 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
                     if (response.success) {
                         showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
-                        saveButton.textContent = 'Save';
+                        saveButton.textContent = 'Simpan';
                         saveButton.style.backgroundColor = '#e60023';
                         currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
-                        if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Saved') {
+                        if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Disimpan') {
                             updatePinDetailImageSaveButton(pinData);
                         }
                     } else {
@@ -514,14 +610,14 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
                     if (response.success) {
                         showMessage('Pin berhasil disimpan!', 'success');
-                        saveButton.textContent = 'Saved';
+                        saveButton.textContent = 'Disimpan';
                         saveButton.style.backgroundColor = '#767676';
                         if (currentUser.savedPins) {
                             currentUser.savedPins.push(pinData.id);
                         } else {
                             currentUser.savedPins = [pinData.id];
                         }
-                        if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Save') {
+                        if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Simpan') {
                             updatePinDetailImageSaveButton(pinData);
                         }
                     } else {
