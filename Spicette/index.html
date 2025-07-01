@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
- 
+    <!-- Gaya CSS inline telah dipindahkan ke style.css -->
 </head>
 <body>
 
@@ -740,21 +740,13 @@
 
             async function loadPins(count, append = true) {
                 loadingIndicator.style.display = 'block';
-                const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
                 let endpoint = '';
                 let params = '';
 
                 if (currentSearchQuery) { 
-                    endpoint = 'pins.php?action=search';
-                    params = `&query=${encodeURIComponent(currentSearchQuery)}`;
-                } else if (currentTab === 'saved') {
-                    if (!currentUser) {
-                        pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Harap login untuk melihat pin yang Anda simpan.</p>';
-                        loadingIndicator.style.display = 'none';
-                        return;
-                    }
-                    endpoint = 'pins.php?action=fetch_saved';
-                } else {
+                    endpoint = 'pins.php?action=getPinsByPersonTag';
+                    params = `&name=${encodeURIComponent(currentSearchQuery)}`;
+                } else { 
                     endpoint = 'pins.php?action=fetch_all';
                 }
 
@@ -762,9 +754,7 @@
                 loadingIndicator.style.display = 'none';
 
                 if (response.success) {
-                    if (!currentTab || currentTab === 'home' || currentSearchQuery === '') {
-                       allPinsData = response.pins || []; 
-                    } 
+                    allPinsData = response.pins || []; 
 
                     const pinsToDisplay = response.pins || [];
                     
@@ -833,41 +823,48 @@
             const mobileSearchHistoryContainer = document.getElementById('mobileSearchHistory');
             const mobileSearchHistoryList = document.getElementById('mobileSearchHistoryList');
 
-
             function renderSearchHistory() {
-                desktopSearchHistoryList.innerHTML = '';
-                mobileSearchHistoryList.innerHTML = '';
+                if (desktopSearchHistoryList) { 
+                    desktopSearchHistoryList.innerHTML = '';
+                }
+                if (mobileSearchHistoryList) { 
+                    mobileSearchHistoryList.innerHTML = '';
+                }
 
                 if (searchHistory.length === 0) {
-                    desktopSearchHistoryContainer.style.display = 'none';
-                    mobileSearchHistoryContainer.style.display = 'none';
+                    if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none';
+                    if (mobileSearchHistoryContainer) mobileSearchHistoryContainer.style.display = 'none';
                     return;
                 }
 
-                desktopSearchHistoryContainer.style.display = 'block';
-                mobileSearchHistoryContainer.style.display = 'block';
+                if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'block';
+                if (mobileSearchHistoryContainer) mobileSearchHistoryContainer.style.display = 'block';
 
                 searchHistory.forEach(historyItem => {
-                    const desktopLi = document.createElement('li');
-                    desktopLi.textContent = historyItem;
-                    desktopLi.addEventListener('click', () => {
-                        window.location.href = `search.php?query=${encodeURIComponent(historyItem)}`;
-                    });
-                    desktopSearchHistoryList.appendChild(desktopLi);
+                    if (desktopSearchHistoryList) {
+                        const desktopLi = document.createElement('li');
+                        desktopLi.textContent = historyItem;
+                        desktopLi.addEventListener('click', () => {
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
+                        });
+                        desktopSearchHistoryList.appendChild(desktopLi);
+                    }
 
-                    const mobileLi = document.createElement('li');
-                    mobileLi.textContent = historyItem;
-                    mobileLi.addEventListener('click', () => {
-                        window.location.href = `search.php?query=${encodeURIComponent(historyItem)}`;
-                    });
-                    mobileSearchHistoryList.appendChild(mobileLi);
+                    if (mobileSearchHistoryList) {
+                        const mobileLi = document.createElement('li');
+                        mobileLi.textContent = historyItem;
+                        mobileLi.addEventListener('click', () => {
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
+                        });
+                        mobileSearchHistoryList.appendChild(mobileLi);
+                    }
                 });
             }
 
             const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
-            const desktopSearchInput = document.getElementById('desktopSearchInput');
+            const desktopSearchInput = document.getElementById('desktopSearchInput'); 
             const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
-            const searchSuggestionsListDesktop = document.getElementById('desktopSearchSuggestions');
+            const searchSuggestionsListDesktop = document.getElementById('desktopSearchSuggestions'); 
             const categoryExploreTitle = document.getElementById('categoryExploreTitle');
             const categoryGridMobile = document.getElementById('categoryGridMobile');
 
@@ -884,19 +881,18 @@
                     return;
                 }
                 
-                if (inputElement === desktopSearchInput) {
+                if (inputElement && inputElement.id === 'desktopSearchInput' && desktopSearchHistoryContainer) { 
                     desktopSearchHistoryContainer.style.display = 'none';
-                } else {
+                } else if (mobileSearchHistoryContainer) { 
                     mobileSearchHistoryContainer.style.display = 'none';
                 }
 
                 const filteredSuggestions = allPinsData.filter(pin => 
                     (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
-                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) ||
-                    (pin.categories && Array.isArray(pin.categories) && pin.categories.some(cat => cat.toLowerCase().includes(query.toLowerCase()))) ||
-                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) ||
-                    (pin.personTags && Array.isArray(pin.personTags) && pin.personTags.some(person => person.toLowerCase().includes(query.toLowerCase())))
-                ).map(pin => pin.title || (pin.categories && pin.categories.length > 0 ? pin.categories[0] : '')).filter(Boolean).slice(0, 5);
+                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) || 
+                    (pin.category && pin.category.toLowerCase().includes(query.toLowerCase())) || 
+                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) 
+                ).map(pin => pin.title || pin.category).filter(Boolean).slice(0, 5); 
 
                 const uniqueSuggestions = [...new Set(filteredSuggestions)];
 
@@ -905,7 +901,7 @@
                         const listItem = document.createElement('li');
                         listItem.textContent = suggestion;
                         listItem.addEventListener('click', () => {
-                            window.location.href = `search.php?query=${encodeURIComponent(suggestion)}`;
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(suggestion)}`;
                         });
                         suggestionsList.appendChild(listItem);
                     });
@@ -920,7 +916,7 @@
             }
 
             async function performSearch(query) {
-                window.location.href = `search.php?query=${encodeURIComponent(query)}`;
+                window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`;
             }
 
             mobileSearchInputOverlay.addEventListener('input', (e) => {
@@ -936,59 +932,61 @@
                     e.preventDefault(); 
                     const query = mobileSearchInputOverlay.value.trim();
                     if (query) {
-                        performSearch(query);
-                        closeSearch();
+                        performSearch(query); 
+                        closeSearch(); 
                     }
                 }
             });
 
-            desktopSearchInput.addEventListener('focus', () => {
-                mainElement.classList.add('desktop-search-active');
-                pinGrid.style.display = 'none'; 
-                loadingIndicator.style.display = 'none';
-                desktopSearchInput.value = currentSearchQuery; 
-                renderSearchHistory(); 
-                searchSuggestionsListDesktop.style.display = 'none'; 
-            });
+            if (desktopSearchInput) { 
+                desktopSearchInput.addEventListener('focus', () => {
+                    mainElement.classList.add('desktop-search-active');
+                    pinGrid.style.display = 'none'; 
+                    loadingIndicator.style.display = 'none';
+                    desktopSearchInput.value = currentSearchQuery; 
+                    renderSearchHistory(); 
+                    if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none';
+                });
 
-            desktopSearchInput.addEventListener('blur', (event) => {
-                setTimeout(() => {
-                    const searchArea = document.querySelector('header .search-container');
-                    const isFocusStillInsideSearchRelatedArea = searchArea.contains(event.relatedTarget) ||
-                                                 desktopSearchHistoryContainer.contains(event.relatedTarget) ||
-                                                 searchSuggestionsListDesktop.contains(event.relatedTarget); 
-                
-                    if (!isFocusStillInsideSearchRelatedArea) {
-                        resetMainContentToHome();
+                desktopSearchInput.addEventListener('blur', (event) => {
+                    setTimeout(() => {
+                        const searchArea = document.querySelector('header .search-container');
+                        const isClickInsideDesktopSearchUI = searchArea && (searchArea.contains(event.relatedTarget) ||
+                                                     (searchSuggestionsListDesktop && searchSuggestionsListDesktop.contains(event.relatedTarget)) ||
+                                                     (desktopSearchHistoryContainer && desktopSearchHistoryContainer.contains(event.relatedTarget)));
+                        
+                        if (!isClickInsideDesktopSearchUI) {
+                            resetMainContentToHome();
+                        }
+                    }, 100); 
+                });
+
+                desktopSearchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    const query = e.target.value.trim();
+                    currentSearchQuery = query; 
+                    searchTimeout = setTimeout(() => {
+                        showSuggestions(desktopSearchInput, searchSuggestionsListDesktop, query);
+                    }, 300);
+                });
+
+                desktopSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); 
+                        const query = desktopSearchInput.value.trim();
+                        if (query) {
+                            addSearchToHistory(query);
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`; 
+                        }
                     }
-                }, 100); 
-            });
-
-            desktopSearchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                const query = e.target.value.trim();
-                currentSearchQuery = query; 
-                searchTimeout = setTimeout(() => {
-                    showSuggestions(desktopSearchInput, searchSuggestionsListDesktop, query);
-                }, 300);
-            });
-
-            desktopSearchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); 
-                    const query = desktopSearchInput.value.trim();
-                    if (query) {
-                        addSearchToHistory(query);
-                        window.location.href = `search.php?query=${encodeURIComponent(query)}`;
-                    }
-                }
-            });
+                });
+            }
             
             async function resetMainContentToHome() {
-                desktopSearchInput.value = ''; 
+                if (desktopSearchInput) desktopSearchInput.value = ''; 
                 currentSearchQuery = ''; 
-                searchSuggestionsListDesktop.style.display = 'none';
-                desktopSearchHistoryContainer.style.display = 'none';
+                if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none';
+                if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none';
                 loadedPinsCount = 0; 
                 mainElement.classList.remove('desktop-search-active'); 
                 
@@ -1000,11 +998,11 @@
 
             document.addEventListener('click', (event) => {
                 const headerSearchContainer = document.querySelector('header .search-container');
-                const isClickInsideDesktopSearchUI = headerSearchContainer.contains(event.target) ||
+                const isClickInsideDesktopSearchUI = headerSearchContainer && (headerSearchContainer.contains(event.target) ||
                                                  searchSuggestionsListDesktop.contains(event.target) ||
-                                                 desktopSearchHistoryContainer.contains(event.target);
+                                                 desktopSearchHistoryContainer.contains(event.target));
             
-                if (!desktopSearchInput.matches(':focus') && !isClickInsideDesktopSearchUI) {
+                if (desktopSearchInput && !desktopSearchInput.matches(':focus') && !isClickInsideDesktopSearchUI) {
                     resetMainContentToHome();
                 }
 
@@ -1017,11 +1015,10 @@
                 }
             });
 
-
             async function loadCategories() {
                 const categoryContainers = [
                     document.getElementById('categoryGridMobile'),
-                    document.getElementById('categoryGridDesktop')
+                    document.getElementById('categoryGridDesktop') 
                 ];
 
                 try {
@@ -1039,7 +1036,7 @@
                                 const catItem = document.createElement('div');
                                 catItem.className = 'category-item';
                                 
-                                const imageUrl = cat.imageUrl || `https://placehold.co/200x200/cccccc/000000?text=Kategori`; 
+                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`; 
                                 catItem.style.backgroundImage = `url('${imageUrl}')`;
 
                                 const catTitle = document.createElement('span');
@@ -1049,7 +1046,7 @@
                                 
                                 catItem.onclick = function() {
                                     const categoryPermalink = cat.name.trim().toLowerCase().replace(/ /g, '-');
-                                    window.location.href = `tag/${encodeURIComponent(categoryPermalink)}`;
+                                    window.location.href = `/Spicette/tag/${encodeURIComponent(categoryPermalink)}`;
                                 };
                                 fragment.appendChild(catItem);
                             });
@@ -1061,9 +1058,8 @@
                             if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Gagal memuat kategori.</p>';
                         });
                     }
-                }
-                catch (error) {
-                    console.error('Kesalahan mengambil kategori:', error);
+                } catch (error) {
+                    console.error('Error mengambil kategori:', error);
                     categoryContainers.forEach(container => {
                         if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Kesalahan jaringan saat memuat kategori.</p>';
                     });
@@ -1292,7 +1288,10 @@
             async function markAllNotificationsAsRead() {
                 try {
                     const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null); 
-                    if (response.success) {
+                    if (response) { // Periksa apakah respons tidak null/undefined
+                        if (!response.success) {
+                            console.error('Gagal menandai notifikasi sebagai sudah dibaca:', response.message);
+                        }
                         updateNotificationBadge();
                     }
                 }
