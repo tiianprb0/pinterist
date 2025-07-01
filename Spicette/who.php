@@ -45,8 +45,8 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         /* Gaya untuk pin grid utama */
         .tag-page-layout .pin-grid {
             display: column !important; /* Memastikan layout masonry */
-            padding-left: 0px; /* Padding kiri 0px */
-            padding-right: 0px; /* Padding kanan 0px */
+            padding-left: 10px; /* Padding kiri 0px */
+            padding-right: 10px; /* Padding kanan 0px */
         }
         .back-button-container {
             max-width: 1200px;
