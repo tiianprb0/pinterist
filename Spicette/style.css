@@ -1367,3 +1367,89 @@ main.desktop-search-active .pin-grid {
         padding: 5px; /* Reduce padding for smaller screens */
     }
 }
+
+body.no-scroll {
+    overflow: hidden;
+}
+/* Style for person tags section */
+.pin-person-tags-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+.person-in-pin-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #111;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+.person-tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.person-tag-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #f0f0f0;
+}
+.person-tag-item:last-child {
+    border-bottom: none;
+}
+.person-name-link {
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+.person-name-link:hover {
+    color: #e60023;
+}
+.view-all-button {
+    background-color: #f0f0f0;
+    color: #5f5f5f;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+.view-all-button:hover {
+    background-color: #e0e0e0;
+}
+.view-all-button .fas {
+    font-size: 12px;
+}
+/* Ensure pin-grid within overlay is responsive */
+.pin-detail-content .pin-grid {
+    /* display: grid; Hapus ini sesuai permintaan */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Tetap pertahankan ini untuk responsivitas jika display:grid diaktifkan di tempat lain */
+    gap: 10px; /* Reduced gap */
+    margin-top: 15px;
+    padding-left: 0px; /* Padding kiri 0px */
+    padding-right: 0px; /* Padding kanan 0px */
+}
+.pin-detail-content .pin-grid .pin {
+    width: 100%; /* Make pins fill grid column */
+    max-width: none; /* Remove max-width constraint */
+    margin-bottom: 10px; /* Added margin-bottom */
+}
+.pin-detail-content .pin-grid .pin img {
+    max-height: 200px; /* Limit image height in related pins */
+    object-fit: cover;
+}
+/* Gaya untuk pin grid utama */
+.pin-grid {
+    padding-left: 0px; /* Padding kiri 0px */
+    padding-right: 0px; /* Padding kanan 0px */
+}
