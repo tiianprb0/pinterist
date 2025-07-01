@@ -8,13 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* Gaya untuk mencegah scrolling pada body */
-        body.no-scroll {
-            overflow: hidden;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ 
 </head>
 <body>
 
@@ -37,23 +32,28 @@
             </div>
 
             <div class="pin-detail-img-main-container">
-                <!-- Gambar Pin akan dimuat di sini, bisa bertumpuk atau galeri geser -->
-                <!-- Ini adalah container utama untuk gambar dan tombol simpan -->
                 <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Simpan</button>
             </div>
 
             <p id="pinDetailDescription" class="pin-detail-description"></p>
+            
+            <!-- pinDetailPersonTagsSection dipindahkan ke atas pinDetailCategories -->
+            <div id="pinDetailPersonTagsSection" class="pin-person-tags-section" style="display: none;">
+                <h3 class="person-in-pin-title">Orang dalam pin</h3>
+                <div id="pinDetailPersonTagsList" class="person-tags-list"></div>
+                <!-- Menghapus inline style="display: grid;" -->
+                <div id="pinDetailRelatedPins" class="pin-grid"></div>
+            </div>
+
+            <!-- dashed-line dipindahkan ke atas pinDetailCategories -->
             <div class="dashed-line"></div>
             <div id="pinDetailCategories" class="pin-categories"></div>
 
-            <!-- Removed Share and Download buttons from here as they are moved -->
             <div class="pin-detail-actions" style="display: none;">
-                <!-- Ini adalah div kosong, disembunyikan agar tidak mengganggu tata letak -->
             </div>
         </div>
     </div>
 
-    <!-- BARU: Overlay Gambar Penuh -->
     <div id="fullImageOverlay" class="full-image-overlay">
         <button class="close-full-image-button" onclick="window.closeFullImageOverlay()">&times;</button>
         <img id="fullImageDisplay" src="" alt="Gambar Ukuran Penuh">
@@ -163,32 +163,29 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- Global State ---
             let currentUser = null;
             let currentSearchQuery = ''; 
-            let allPinsData = []; // Menyimpan semua data pin untuk akses langsung berdasarkan ID
+            let allPinsData = [];
             const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
-            let searchSuggestionsData = []; // Untuk menyimpan data saran
-            let selectedSuggestionIndex = -1; // Untuk navigasi keyboard dalam saran
+            let searchSuggestionsData = [];
+            let selectedSuggestionIndex = -1;
 
-            // BARU: Variabel Riwayat Pencarian
             const SEARCH_HISTORY_LS_KEY = 'spicette_search_history';
             const MAX_SEARCH_HISTORY = 5;
             let searchHistory = [];
 
-            // --- Titik Akhir API ---
-            const API_BASE_URL = 'api/';
+            // Mengubah API_BASE_URL menjadi path absolut dari root domain
+            const API_BASE_URL = '/Spicette/api/'; 
 
-            // --- Fungsi Pembantu untuk Permintaan API ---
             async function makeApiRequest(endpoint, method = 'GET', data = null) {
                 try {
                     const options = { method };
                     if (data !== null && typeof data !== 'undefined') {
-                        options.headers = { 'Content-Type': 'application/json' };
-                        options.body = JSON.stringify(data);
-                    } else if (method === 'POST') {
-                        // Untuk FormData, JANGAN atur header Content-Type; browser melakukannya secara otomatis
-                        delete options.headers; 
+                        if (method === 'POST' && endpoint === 'pins.php') {
+                        } else {
+                            options.headers = { 'Content-Type': 'application/json' };
+                            options.body = JSON.stringify(data);
+                        }
                     }
                     
                     const response = await fetch(API_BASE_URL + endpoint, options);
@@ -217,16 +214,14 @@
                 }
             }
 
-            // --- Fungsi untuk Menampilkan Pesan (untuk kesalahan/sukses umum, bukan untuk perubahan tab/notifikasi sekarang) ---
             const customAlert = document.getElementById('customAlert');
             let alertTimeout;
 
             function showMessage(msg, type = 'info') {
-                // Hapus timeout yang ada untuk mencegah notifikasi tumpang tindih secara cepat
                 clearTimeout(alertTimeout);
 
                 customAlert.textContent = msg;
-                customAlert.className = 'custom-alert'; // Atur ulang kelas
+                customAlert.className = 'custom-alert';
                 if (type === 'error') {
                     customAlert.classList.add('error');
                 } else if (type === 'success') {
@@ -234,23 +229,41 @@
                 }
                 customAlert.classList.add('show');
 
-                // Sembunyikan setelah 3 detik
                 alertTimeout = setTimeout(() => {
                     customAlert.classList.remove('show');
                 }, 3000);
             }
             
-            // --- Logika Overlay Detail Pin ---
             const pinDetailOverlay = document.getElementById('pinDetailOverlay');
-            const pinDetailImageMainContainer = document.querySelector('.pin-detail-img-main-container'); // Container utama gambar
+            const pinDetailImageMainContainer = document.querySelector('.pin-detail-img-main-container');
             const pinDetailTitle = document.getElementById('pinDetailTitle');
             const pinDetailUploadedBy = document.getElementById('pinDetailUploadedBy');
             const pinDetailDescription = document.getElementById('pinDetailDescription'); 
             const pinDetailCategories = document.getElementById('pinDetailCategories');
             const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton');
             const pinDetailShareButton = document.getElementById('pinDetailShareButton');
+            const pinDetailPersonTagsSection = document.getElementById('pinDetailPersonTagsSection');
+            const pinDetailPersonTagsList = document.getElementById('pinDetailPersonTagsList');
+            const pinDetailRelatedPins = document.getElementById('pinDetailRelatedPins');
 
-            // Fungsi untuk memperbarui status tombol simpan di detail overlay
+            // Fungsi helper untuk memperbaiki path gambar agar sesuai dengan struktur folder
+            function getCorrectedImagePath(originalPath) {
+                // Asumsi index.html berada di Spicette/
+                // dan gambar ada di Spicette/uploads/pins/
+                // Jadi, jika path gambar adalah ./uploads/pins/image.jpeg atau uploads/pins/image.jpeg
+                // kita perlu mengubahnya menjadi uploads/pins/image.jpeg (relatif ke root Spicette)
+                // dan kemudian pastikan URL absolut
+                if (originalPath.startsWith('./uploads/pins/')) {
+                    return originalPath.substring(2); // Hapus './'
+                }
+                // Jika path sudah dimulai dengan 'uploads/pins/', biarkan saja
+                if (originalPath.startsWith('uploads/pins/')) {
+                    return originalPath;
+                }
+                // Jika ini adalah URL absolut atau path yang tidak dikenal, kembalikan apa adanya
+                return originalPath; 
+            }
+
             function updatePinDetailImageSaveButton(pinData) {
                 if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
                     pinDetailImageSaveButton.textContent = 'Disimpan';
@@ -261,8 +274,7 @@
                         if (response.success) {
                             showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
                             currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
-                            updatePinDetailImageSaveButton(pinData); // Render ulang tombol
-                            // Perbarui juga tombol yang sesuai di grid jika terlihat
+                            updatePinDetailImageSaveButton(pinData);
                             const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
                             if (gridSaveButton) {
                                 gridSaveButton.textContent = 'Simpan';
@@ -295,8 +307,7 @@
                             } else {
                                 currentUser.savedPins = [pinData.id];
                             }
-                            updatePinDetailImageSaveButton(pinData); // Render ulang tombol
-                            // Perbarui juga tombol yang sesuai di grid jika terlihat
+                            updatePinDetailImageSaveButton(pinData);
                             const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
                             if (gridSaveButton) {
                                 gridSaveButton.textContent = 'Disimpan';
@@ -309,10 +320,8 @@
                 }
             }
 
-            // Fungsi global untuk menutup detail pin (dapat diakses melalui window)
             window.closePinDetail = function() {
                 pinDetailOverlay.style.display = 'none';
-                // Hapus kelas 'no-scroll' dari body
                 document.body.classList.remove('no-scroll');
 
                 const currentUrl = new URL(window.location.href);
@@ -323,11 +332,10 @@
             };
 
 
-            function openPinDetail(pinData) {
+            async function openPinDetail(pinData) {
                 pinDetailTitle.textContent = pinData.title || 'Tanpa Judul';
                 pinDetailUploadedBy.textContent = `${pinData.uploadedBy || 'Anonim'}`; 
 
-                // Mengelola deskripsi umum pin
                 if (pinData.description) {
                     pinDetailDescription.textContent = pinData.description;
                     pinDetailDescription.style.display = 'block';
@@ -336,56 +344,51 @@
                     pinDetailDescription.style.display = 'none';
                 }
                 
-                // Mengosongkan dan mengisi container gambar utama
                 pinDetailImageMainContainer.innerHTML = '';
-                pinDetailImageMainContainer.appendChild(pinDetailImageSaveButton); // Pastikan tombol save selalu ada
+                pinDetailImageMainContainer.appendChild(pinDetailImageSaveButton);
 
-                // Menentukan tampilan gambar berdasarkan display_type
                 if (pinData.images && pinData.images.length > 0) {
                     if (pinData.display_type === 'slider' && pinData.images.length > 1) {
-                        // Tampilan Swipe Gallery (menggunakan kelas slider-wrapper dan slider-slide)
                         const sliderWrapper = document.createElement('div');
-                        sliderWrapper.className = 'slider-wrapper'; // Kelas untuk gulir horizontal
+                        sliderWrapper.className = 'slider-wrapper';
                         
-                        // Buat wadah internal untuk item gambar agar bisa digulir
                         const swipeInner = document.createElement('div');
-                        swipeInner.className = 'swipe-inner'; // Meniru .swipe-inner dari test.html
+                        swipeInner.className = 'swipe-inner';
 
                         pinData.images.forEach((image, index) => {
                             const slide = document.createElement('div');
-                            slide.className = 'slider-slide'; // Kelas untuk setiap item gambar
+                            slide.className = 'slider-slide';
                             const imgElement = document.createElement('img');
-                            imgElement.src = image.url;
+                            imgElement.src = getCorrectedImagePath(image.url);
                             imgElement.alt = `${pinData.title} - ${index + 1}`;
                             imgElement.onerror = function() { 
                                 this.onerror=null; 
                                 this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
                             };
-                            imgElement.onclick = (e) => { // Klik gambar dalam slider untuk membuka overlay gambar penuh
+                            imgElement.onclick = (e) => {
                                 e.stopPropagation();
-                                window.openFullImageOverlay(imgElement.src); // Kirim imgElement.src
+                                window.openFullImageOverlay(imgElement.src);
                             };
                             slide.appendChild(imgElement);
-                            swipeInner.appendChild(slide); // Tambahkan slide ke swipeInner
+                            swipeInner.appendChild(slide);
                         });
-                        sliderWrapper.appendChild(swipeInner); // Tambahkan swipeInner ke sliderWrapper
+                        sliderWrapper.appendChild(swipeInner);
                         pinDetailImageMainContainer.appendChild(sliderWrapper);
 
                     } else {
-                        // Tampilan Berjejer ke Bawah (Stacked) atau jika hanya 1 gambar
                         pinData.images.forEach(image => {
                             const imgDiv = document.createElement('div');
                             imgDiv.className = 'stacked-image-item';
                             const imgElement = document.createElement('img');
-                            imgElement.src = image.url;
+                            imgElement.src = getCorrectedImagePath(image.url);
                             imgElement.alt = pinData.title;
                             imgElement.onerror = function() { 
                                 this.onerror=null; 
                                 this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
                             };
-                            imgElement.onclick = (e) => { // Klik gambar dalam tampilan bertumpuk untuk membuka overlay gambar penuh
+                            imgElement.onclick = (e) => {
                                 e.stopPropagation();
-                                window.openFullImageOverlay(imgElement.src); // Kirim imgElement.src
+                                window.openFullImageOverlay(imgElement.src);
                             };
                             imgDiv.appendChild(imgElement);
 
@@ -399,27 +402,87 @@
                         });
                     }
                 } else {
-                     // Fallback jika tidak ada gambar (meskipun seharusnya ada karena diperlukan dalam pembuatan)
                     const noImage = document.createElement('img');
                     noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=Tidak+Ada+Gambar';
                     noImage.alt = 'Tidak Ada Gambar';
-                    noImage.onclick = (e) => { // Klik placeholder untuk membuka overlay gambar penuh
+                    noImage.onclick = (e) => {
                         e.stopPropagation();
-                        window.openFullImageOverlay(noImage.src); // Kirim noImage.src
+                        window.openFullImageOverlay(noImage.src);
                     };
                     pinDetailImageMainContainer.appendChild(noImage);
                 }
 
                 updatePinDetailImageSaveButton(pinData);
 
-                // Mengelola kategori (sama seperti sebelumnya), sekarang bisa lebih dari satu
+                // Person Tags Section
+                pinDetailPersonTagsList.innerHTML = '';
+                pinDetailRelatedPins.innerHTML = '';
+                if (pinData.personTags && pinData.personTags.length > 0) {
+                    pinDetailPersonTagsSection.style.display = 'block';
+                    const taggedPeople = pinData.personTags;
+                    let allRelatedPins = [];
+                    const maxPinsTotal = 15;
+                    // Calculate max pins per person, ensuring at least 1 if there are people
+                    const maxPinsPerPerson = taggedPeople.length > 0 ? Math.max(1, Math.floor(maxPinsTotal / taggedPeople.length)) : 0;
+
+                    for (const person of taggedPeople) {
+                        const personTagDiv = document.createElement('div');
+                        personTagDiv.className = 'person-tag-item';
+
+                        const personNameLink = document.createElement('a');
+                        personNameLink.href = `${window.location.origin}/Spicette/who.php?name=${encodeURIComponent(person.trim())}`;
+                        personNameLink.textContent = person.trim();
+                        personNameLink.className = 'person-name-link';
+                        personTagDiv.appendChild(personNameLink);
+
+                        const viewAllButton = document.createElement('a');
+                        viewAllButton.href = `${window.location.origin}/Spicette/who.php?name=${encodeURIComponent(person.trim())}`;
+                        viewAllButton.className = 'view-all-button';
+                        viewAllButton.innerHTML = `Lihat Semua <i class="fas fa-arrow-right"></i>`;
+                        personTagDiv.appendChild(viewAllButton);
+
+                        pinDetailPersonTagsList.appendChild(personTagDiv);
+
+                        const response = await makeApiRequest(`pins.php?action=getPinsByPersonTag&name=${encodeURIComponent(person.trim())}`);
+                        if (response.success && response.pins) {
+                            // Ambil sejumlah pin acak dari setiap orang
+                            const shuffledPersonPins = response.pins.sort(() => 0.5 - Math.random());
+                            const pinsForThisPerson = shuffledPersonPins.slice(0, maxPinsPerPerson);
+                            allRelatedPins.push(...pinsForThisPerson);
+                        }
+                    }
+
+                    // Pastikan keunikan dan batasi total pin
+                    const uniqueRelatedPins = Array.from(new Set(allRelatedPins.filter(p => p.id !== pinData.id).map(p => JSON.stringify(p))))
+                                                .map(s => JSON.parse(s));
+
+                    // Acak lagi dan batasi hingga maksimal 15 pin
+                    const finalShuffledRelatedPins = uniqueRelatedPins.sort(() => 0.5 - Math.random()).slice(0, maxPinsTotal);
+
+
+                    if (finalShuffledRelatedPins.length > 0) {
+                        finalShuffledRelatedPins.forEach(relatedPin => {
+                            const pinElement = createPinElement(relatedPin);
+                            pinDetailRelatedPins.appendChild(pinElement);
+                        });
+                        // Tidak perlu mengatur style.display: grid; di sini karena sudah dihapus dari CSS
+                    } else {
+                        pinDetailRelatedPins.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 20px;">Tidak ada pin terkait lainnya.</p>';
+                        pinDetailRelatedPins.style.display = 'block';
+                    }
+
+                } else {
+                    pinDetailPersonTagsSection.style.display = 'none';
+                }
+
+                // Mengelola kategori
                 pinDetailCategories.innerHTML = '';
                 if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
                     pinData.categories.forEach(categoryName => {
                         const span = document.createElement('span');
                         span.classList.add('pin-category-tag');
                         const categoryPermalink = categoryName.trim().toLowerCase().replace(/ /g, '-');
-                        span.innerHTML = `<a href="tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${categoryName.trim()}</a>`;
+                        span.innerHTML = `<a href="${window.location.origin}/Spicette/tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${categoryName.trim()}</a>`;
                         pinDetailCategories.appendChild(span);
                     });
                     pinDetailCategories.style.display = 'flex';
@@ -428,7 +491,6 @@
                 }
 
 
-                // Logika tombol Bagikan
                 if (navigator.share) {
                     pinDetailShareButton.style.display = 'flex';
                     pinDetailShareButton.onclick = async (e) => {
@@ -450,7 +512,6 @@
                 }
 
                 pinDetailOverlay.style.display = 'flex';
-                // Tambahkan kelas 'no-scroll' ke body untuk mencegah scrolling
                 document.body.classList.add('no-scroll');
 
                 const newUrl = new URL(window.location.href);
@@ -473,40 +534,38 @@
                 }
             };
 
-            // --- Fungsi Slider (tombol/dot sebelumnya sekarang usang) ---
-            // initializeSlider, moveSlide, currentSlide, showSlides dihapus karena tidak diperlukan untuk galeri geser.
-            // Perilaku geser akan ditangani oleh CSS overflow-x: auto dan gerakan browser native.
-
-
-            // --- BARU: Fungsi Overlay Gambar Penuh ---
             const fullImageOverlay = document.getElementById('fullImageOverlay');
             const fullImageDisplay = document.getElementById('fullImageDisplay');
             const fullImageDownloadButton = document.getElementById('fullImageDownloadButton');
 
-            window.openFullImageOverlay = function(imageUrl) { // Dibuat global
-                fullImageDisplay.src = imageUrl;
-                fullImageDisplay.onerror = function() { // Tambahkan onerror untuk gambar penuh
-                    this.onerror=null; 
-                    this.src='https://placehold.co/1000x1200/cccccc/000000?text=Image+Load+Error';
-                };
-                fullImageOverlay.style.display = 'flex';
-                // Tambahkan kelas 'no-scroll' ke body untuk mencegah scrolling
-                document.body.classList.add('no-scroll');
+            window.openFullImageOverlay = function(imageUrl) { 
+                if (fullImageDisplay) { 
+                    fullImageDisplay.src = imageUrl;
+                    fullImageDisplay.onerror = function() { 
+                        this.onerror=null; 
+                        this.src='https://placehold.co/1000x1200/cccccc/000000?text=Image+Load+Error';
+                    };
+                }
+                if (fullImageOverlay) { 
+                    fullImageOverlay.style.display = 'flex';
+                }
+                document.body.style.overflow = 'hidden';
 
-                fullImageDownloadButton.onclick = (e) => {
-                    e.stopPropagation();
-                    downloadPin(imageUrl);
-                };
+                if (fullImageDownloadButton) { 
+                    fullImageDownloadButton.onclick = (e) => {
+                        e.stopPropagation();
+                        downloadPin(imageUrl);
+                    };
+                }
             };
 
-            window.closeFullImageOverlay = function() { // Dibuat global
-                fullImageOverlay.style.display = 'none';
-                // Hapus kelas 'no-scroll' dari body
-                document.body.classList.remove('no-scroll');
+            window.closeFullImageOverlay = function() { 
+                if (fullImageOverlay) { 
+                    fullImageOverlay.style.display = 'none';
+                }
+                document.body.style.overflow = '';
             };
 
-
-            // --- Logika Overlay Notifikasi ---
             const notificationOverlay = document.getElementById('notificationOverlay');
             const closeNotificationButton = document.getElementById('closeNotificationButton');
             const notificationListContainer = document.getElementById('notificationListContainer');
@@ -532,17 +591,16 @@
                 }
 
                 notificationOverlay.style.display = 'flex';
-                document.body.classList.add('no-scroll'); // Tambahkan no-scroll
+                document.body.style.overflow = 'hidden';
             }
 
             function closeNotificationPage() {
                 notificationOverlay.style.display = 'none';
-                document.body.classList.remove('no-scroll'); // Hapus no-scroll
+                document.body.style.overflow = '';
             }
 
             closeNotificationButton.addEventListener('click', closeNotificationPage);
 
-            // --- Memuat Pin & Kategori ---
             const mainElement = document.querySelector('main');
             const pinGrid = document.getElementById('pinGrid');
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -554,7 +612,8 @@
                 pinDiv.classList.add('pin');
                 pinDiv.dataset.id = pinData.id;
 
-                const firstImageUrl = pinData.images && pinData.images.length > 0 ? pinData.images[0].url : 'https://placehold.co/250x350/cccccc/000000?text=No+Image';
+                // Gunakan getCorrectedImagePath untuk gambar utama di grid
+                const firstImageUrl = getCorrectedImagePath(pinData.images && pinData.images.length > 0 ? pinData.images[0].url : 'https://placehold.co/250x350/cccccc/000000?text=No+Image');
 
                 const img = document.createElement('img');
                 img.src = firstImageUrl;
@@ -585,7 +644,7 @@
                     e.stopPropagation(); 
                     if (!currentUser) {
                         showMessage('Harap login untuk menyimpan pin.', 'info');
-                        window.location.href = 'login.html';
+                        window.location.href = '/Spicette/login.html';
                         return;
                     }
 
@@ -628,7 +687,6 @@
                 };
                 overlayTop.appendChild(saveButton);
 
-                // BARU: Overlay jumlah gambar untuk pin dengan banyak gambar
                 if (pinData.images && pinData.images.length > 1) {
                     const imageCountOverlay = document.createElement('div');
                     imageCountOverlay.className = 'pin-image-count-overlay';
@@ -653,12 +711,12 @@
 
                 const infoDiv = document.createElement('div'); 
                 infoDiv.classList.add('pin-info');
-                // Menggunakan categories di pinData langsung (sekarang array)
                 if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
                      const link = document.createElement('a');
-                     link.href = `tag/${encodeURIComponent(pinData.categories[0].trim().toLowerCase().replace(/ /g, '-'))}`; // Gunakan kategori pertama untuk tautan tag
+                     // Gunakan window.location.origin untuk path absolut yang benar
+                     link.href = `${window.location.origin}/Spicette/tag/${encodeURIComponent(pinData.categories[0].trim().toLowerCase().replace(/ /g, '-'))}`;
                      link.target = '_blank';
-                     link.textContent = pinData.categories[0]; // Tampilkan kategori pertama
+                     link.textContent = pinData.categories[0];
                      link.onclick = (e) => e.stopPropagation(); 
                      infoDiv.appendChild(link);
                 } else {
@@ -667,12 +725,6 @@
                 }
                 bottomActions.appendChild(infoDiv);
 
-                const downloadButton = document.createElement('button');
-                downloadButton.classList.add('pin-action-icon');
-                downloadButton.innerHTML = `<i class="fas fa-download"></i>`;
-                downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(firstImageUrl); }; // Unduh gambar thumbnail
-                
-                bottomActions.appendChild(downloadButton);
                 overlayBottom.appendChild(bottomActions); 
                 
                 overlayDiv.appendChild(overlayTop);
@@ -687,7 +739,6 @@
             }
 
             async function loadPins(count, append = true) {
-                console.log(`loadPins dipanggil. jumlah: ${count}, tambahkan: ${append}, currentSearchQuery: "${currentSearchQuery}"`);
                 loadingIndicator.style.display = 'block';
                 const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
                 let endpoint = '';
@@ -711,10 +762,9 @@
                 loadingIndicator.style.display = 'none';
 
                 if (response.success) {
-                    if (!currentTab || currentTab === 'home' || currentSearchQuery === '') { // Hanya perbarui allPinsData untuk home/pencarian kosong
+                    if (!currentTab || currentTab === 'home' || currentSearchQuery === '') {
                        allPinsData = response.pins || []; 
                     } 
-                    console.log("Pins berhasil diambil. Total pin dari API:", response.pins ? response.pins.length : 0);
 
                     const pinsToDisplay = response.pins || [];
                     
@@ -724,7 +774,6 @@
                     if (!append) {
                         pinGrid.innerHTML = '';
                         loadedPinsCount = 0;
-                        console.log("Grid pin dikosongkan untuk pemuatan non-append.");
                     }
 
                     const fragment = document.createDocumentFragment();
@@ -738,9 +787,7 @@
                     if (slicedPinsToDisplay.length > 0 || currentSearchQuery === '') {
                         pinGrid.style.removeProperty('display');
                         pinGrid.style.display = 'column';
-                        console.log("pinGrid.style.display diatur ke 'column' karena pin dimuat atau ini tampilan beranda.");
                     }
-
 
                     if (slicedPinsToDisplay.length === 0 && loadedPinsCount === 0) {
                         if (currentSearchQuery) {
@@ -753,11 +800,8 @@
                     showMessage('Gagal memuat pin: ' + response.message, 'error');
                     pinGrid.innerHTML = '<p style="text-align: center; color: #e60023; margin-top: 50px;">Error memuat pin. Silakan coba lagi nanti.</p>';
                 }
-                console.log("loadPins selesai. pinGrid.style.display:", pinGrid.style.display);
-                console.log("Gaya yang dihitung setelah loadPins:", window.getComputedStyle(pinGrid).display);
             }
 
-            // --- Fungsi Riwayat Pencarian ---
             function loadSearchHistory() {
                 const historyJson = localStorage.getItem(SEARCH_HISTORY_LS_KEY);
                 if (historyJson) {
@@ -807,7 +851,6 @@
                     const desktopLi = document.createElement('li');
                     desktopLi.textContent = historyItem;
                     desktopLi.addEventListener('click', () => {
-                        // Redirect ke search.php
                         window.location.href = `search.php?query=${encodeURIComponent(historyItem)}`;
                     });
                     desktopSearchHistoryList.appendChild(desktopLi);
@@ -815,14 +858,12 @@
                     const mobileLi = document.createElement('li');
                     mobileLi.textContent = historyItem;
                     mobileLi.addEventListener('click', () => {
-                        // Redirect ke search.php
                         window.location.href = `search.php?query=${encodeURIComponent(historyItem)}`;
                     });
                     mobileSearchHistoryList.appendChild(mobileLi);
                 });
             }
 
-            // --- Logika Saran Pencarian ---
             const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
             const desktopSearchInput = document.getElementById('desktopSearchInput');
             const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
@@ -851,11 +892,11 @@
 
                 const filteredSuggestions = allPinsData.filter(pin => 
                     (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
-                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) || // Periksa deskripsi pin
-                    // Periksa kategori (sekarang array)
+                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) ||
                     (pin.categories && Array.isArray(pin.categories) && pin.categories.some(cat => cat.toLowerCase().includes(query.toLowerCase()))) ||
-                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) // Periksa deskripsi gambar
-                ).map(pin => pin.title || (pin.categories && pin.categories.length > 0 ? pin.categories[0] : '')).filter(Boolean).slice(0, 5); // Ambil judul atau kategori pertama
+                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) ||
+                    (pin.personTags && Array.isArray(pin.personTags) && pin.personTags.some(person => person.toLowerCase().includes(query.toLowerCase())))
+                ).map(pin => pin.title || (pin.categories && pin.categories.length > 0 ? pin.categories[0] : '')).filter(Boolean).slice(0, 5);
 
                 const uniqueSuggestions = [...new Set(filteredSuggestions)];
 
@@ -864,7 +905,6 @@
                         const listItem = document.createElement('li');
                         listItem.textContent = suggestion;
                         listItem.addEventListener('click', () => {
-                            // Redirect ke search.php saat klik saran
                             window.location.href = `search.php?query=${encodeURIComponent(suggestion)}`;
                         });
                         suggestionsList.appendChild(listItem);
@@ -879,12 +919,10 @@
                 }
             }
 
-            // performSearch ini untuk index.html. Sekarang mengarahkan.
             async function performSearch(query) {
                 window.location.href = `search.php?query=${encodeURIComponent(query)}`;
             }
 
-            // Pendengar input pencarian mobile (dalam overlay di index.html)
             mobileSearchInputOverlay.addEventListener('input', (e) => {
                 clearTimeout(searchTimeout);
                 const query = e.target.value.trim();
@@ -898,13 +936,12 @@
                     e.preventDefault(); 
                     const query = mobileSearchInputOverlay.value.trim();
                     if (query) {
-                        performSearch(query); // Memanggil performSearch yang sekarang mengarahkan
-                        closeSearch(); // Tutup overlay pencarian mobile
+                        performSearch(query);
+                        closeSearch();
                     }
                 }
             });
 
-            // Pendengar input pencarian desktop (pada header index.html)
             desktopSearchInput.addEventListener('focus', () => {
                 mainElement.classList.add('desktop-search-active');
                 pinGrid.style.display = 'none'; 
@@ -920,7 +957,7 @@
                     const isFocusStillInsideSearchRelatedArea = searchArea.contains(event.relatedTarget) ||
                                                  desktopSearchHistoryContainer.contains(event.relatedTarget) ||
                                                  searchSuggestionsListDesktop.contains(event.relatedTarget); 
-                    
+                
                     if (!isFocusStillInsideSearchRelatedArea) {
                         resetMainContentToHome();
                     }
@@ -942,12 +979,11 @@
                     const query = desktopSearchInput.value.trim();
                     if (query) {
                         addSearchToHistory(query);
-                        window.location.href = `search.php?query=${encodeURIComponent(query)}`; // Redirect ke search.php
+                        window.location.href = `search.php?query=${encodeURIComponent(query)}`;
                     }
                 }
             });
             
-            // Fungsi pembantu untuk mengatur ulang tampilan ke halaman beranda
             async function resetMainContentToHome() {
                 desktopSearchInput.value = ''; 
                 currentSearchQuery = ''; 
@@ -962,7 +998,6 @@
                 await loadPins(pinsPerPage, false); 
             }
 
-            // Tangani klik di luar elemen pencarian untuk menutupnya dan kembali ke tampilan halaman beranda
             document.addEventListener('click', (event) => {
                 const headerSearchContainer = document.querySelector('header .search-container');
                 const isClickInsideDesktopSearchUI = headerSearchContainer.contains(event.target) ||
@@ -973,7 +1008,6 @@
                     resetMainContentToHome();
                 }
 
-                // Jika mengklik di luar overlay pencarian mobile, tutup
                 const isClickInsideMobileSearchOverlay = searchOverlay.contains(event.target);
                 const mobileSearchTriggerButton = document.querySelector('.mobile-nav-item[data-action="search"]'); 
                 const isMobileSearchTriggerButtonClick = mobileSearchTriggerButton && mobileSearchTriggerButton.contains(event.target);
@@ -994,7 +1028,6 @@
                     const response = await makeApiRequest('categories.php?action=fetch_all');
                     if (response.success && response.categories) {
                         const categories = response.categories; 
-                        // Filter nama kategori kosong
                         const filteredCategories = categories.filter(cat => cat.name && cat.name.trim() !== '');
 
                         categoryContainers.forEach(container => {
@@ -1015,7 +1048,6 @@
                                 catItem.appendChild(catTitle);
                                 
                                 catItem.onclick = function() {
-                                    // Kategori sekarang mengarahkan ke halaman tag.php
                                     const categoryPermalink = cat.name.trim().toLowerCase().replace(/ /g, '-');
                                     window.location.href = `tag/${encodeURIComponent(categoryPermalink)}`;
                                 };
@@ -1040,28 +1072,22 @@
             
             loadCategories();
 
-            // --- Scroll Tak Terbatas ---
             window.addEventListener('scroll', () => {
                 if (loadingIndicator.style.display === 'none' && 
                     searchOverlay.style.display === 'none' && 
                     mobileProfileDropdown.style.display === 'none' &&
                     pinDetailOverlay.style.display === 'none' && 
-                    fullImageOverlay.style.display === 'none' && // Juga periksa overlay gambar penuh
+                    fullImageOverlay.style.display === 'none' &&
                     notificationOverlay.style.display === 'none' 
                 ) {
                     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
-                        // Muat lebih banyak pin hanya jika tidak sedang mencari (yang sekarang mengarahkan)
                         if (!currentSearchQuery) { 
                             loadPins(pinsPerPage, true);
                         }
                     }
                 }
             });
-
-            // --- Interaksi Pencarian/Kategori Desktop ---
-            // mainElement.classList.add('desktop-search-active') dan toggles serupa ditangani oleh pendengar fokus/blur.
             
-            // --- Logika Tombol Header ---
             const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
             const desktopCreateButton = document.getElementById('desktopCreateButton');
 
@@ -1069,7 +1095,7 @@
                 e.preventDefault();
                 if (!currentUser) {
                     window.location.href = 'login.html'; 
-                } else if (!currentUser.canUpload) { // Periksa izin upload
+                } else if (!currentUser.canUpload) {
                     showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
                 } else {
                     window.location.href = 'create.html';
@@ -1109,14 +1135,12 @@
                 });
             });
 
-
-            // --- Logika Overlay Pencarian Mobile ---
             const searchOverlay = document.getElementById('searchOverlay');
             const closeSearchBtn = document.getElementById('closeSearchOverlay');
             
             const openSearch = () => {
                 searchOverlay.style.display = 'flex';
-                document.body.classList.add('no-scroll'); // Tambahkan no-scroll
+                document.body.classList.add('no-scroll');
                 mobileSearchInputOverlay.value = '';
                 searchSuggestionsListMobile.innerHTML = '';
                 searchSuggestionsListMobile.style.display = 'none';
@@ -1127,21 +1151,20 @@
             
             const closeSearch = () => {
                 searchOverlay.style.display = 'none';
-                document.body.classList.remove('no-scroll'); // Hapus no-scroll
+                document.body.classList.remove('no-scroll');
             };
 
             closeSearchBtn.onclick = closeSearch;
             
-            // --- Logika Navigasi Mobile ---
             const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
             mobileNavItems.forEach(item => {
                 item.addEventListener('click', async function() {
                     const action = this.dataset.action;
 
-                    window.closePinDetail(); // Gunakan fungsi global
+                    window.closePinDetail();
                     closeNotificationPage();
                     closeSearch(); 
-                    window.closeFullImageOverlay(); // Tutup juga overlay gambar penuh
+                    window.closeFullImageOverlay();
                     
                     if (action === 'search') {
                         openSearch();
@@ -1149,7 +1172,7 @@
                          if (!currentUser) {
                             window.location.href = 'login.html';
                             return;
-                        } else if (!currentUser.canUpload) { // Periksa izin upload
+                        } else if (!currentUser.canUpload) {
                             showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
                             return;
                         }
@@ -1199,7 +1222,6 @@
                 });
             });
 
-            // --- Logika Overlay Login/Daftar ---
             const profileButton = document.getElementById('profileButton');
             const profileIconLetter = document.getElementById('profileIconLetter');
 
@@ -1215,7 +1237,6 @@
                 }
             });
 
-            // --- Tampilan Profil Pengguna & Dropdown Header ---
             function updateProfileDisplay() {
                 const mobileProfileIcon = document.querySelector('.mobile-nav-item[data-action="profile"] .profile-icon');
                 if (currentUser) {
@@ -1283,9 +1304,7 @@
             notificationButton.addEventListener('click', openNotificationPage);
             mobileNotificationButton.addEventListener('click', openNotificationPage);
 
-
-            // --- Fungsi Pin (Unduh) ---
-            window.downloadPin = function(imageUrl) { // Dibuat global
+            window.downloadPin = function(imageUrl) {
                 const link = document.createElement('a');
                 link.href = imageUrl;
                 const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'pin_image.jpg';
@@ -1296,7 +1315,6 @@
                 showMessage(`Mengunduh pin.`);
             };
 
-            // --- Dropdown Akun Lainnya Desktop ---
             const moreAccountsButton = document.getElementById('moreAccountsButton');
             const moreAccountsDropdown = document.getElementById('moreAccountsDropdown');
             const dropdownUsernameDisplay = document.getElementById('dropdownUsernameDisplay');
@@ -1364,10 +1382,9 @@
                 } else {
                     showMessage('Logout gagal: ' + response.message, 'Error');
                 }
-                mobileAccountsDropdown.style.display = 'none';
+                moreAccountsDropdown.style.display = 'none';
             });
 
-            // Opsi Profil Mobile (untuk ikon profil nav bawah mobile)
             const mobileProfileDropdown = document.getElementById('mobileProfileDropdown');
             const mobileDropdownUsernameDisplay = document.getElementById('mobileDropdownUsernameDisplay');
             const mobileDropdownMyProfile = document.getElementById('mobileDropdownMyProfile');
@@ -1383,10 +1400,9 @@
                 mobileDropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
                 
                 mobileProfileDropdown.style.display = 'flex';
-                document.body.classList.add('no-scroll'); // Tambahkan no-scroll
+                document.body.classList.add('no-scroll');
             }
 
-            // Pendengar peristiwa untuk ikon profil mobile untuk menampilkan dropdown
             document.querySelector('.mobile-nav-item[data-action="profile"]').addEventListener('click', () => {
                 if (currentUser) {
                     showMobileProfileOptions();
@@ -1400,7 +1416,7 @@
                     window.location.href = 'user.php';
                 }
                 mobileProfileDropdown.style.display = 'none';
-                document.body.classList.remove('no-scroll'); // Hapus no-scroll
+                document.body.classList.remove('no-scroll');
             });
 
             mobileDropdownAdminPanel.addEventListener('click', () => {
@@ -1410,7 +1426,7 @@
                     showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
                 }
                 mobileProfileDropdown.style.display = 'none';
-                document.body.classList.remove('no-scroll'); // Hapus no-scroll
+                document.body.classList.remove('no-scroll');
             });
 
             mobileDropdownLogout.addEventListener('click', async () => {
@@ -1431,15 +1447,14 @@
                     showMessage('Logout gagal: ' + response.message, 'Error');
                 }
                 mobileProfileDropdown.style.display = 'none';
-                document.body.classList.remove('no-scroll'); // Hapus no-scroll
+                document.body.classList.remove('no-scroll');
             });
 
             mobileDropdownClose.addEventListener('click', () => {
                 mobileProfileDropdown.style.display = 'none';
-                document.body.classList.remove('no-scroll'); // Hapus no-scroll
+                document.body.classList.remove('no-scroll');
             });
 
-            // --- Periksa Sesi Awal dan Muat ---
             async function initializeApp() {
                 loadSearchHistory(); 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1447,7 +1462,6 @@
                 const response = await makeApiRequest('auth.php?action=check_session');
                 if (response.success && response.user) {
                     currentUser = response.user;
-                    // Pastikan canUpload diinisialisasi jika tidak ada di data pengguna
                     if (typeof currentUser.canUpload === 'undefined') {
                         currentUser.canUpload = false; 
                     }
