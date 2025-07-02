@@ -1,0 +1,209 @@
+[19-Jun-2025 16:31:20 Asia/Jakarta] PHP Fatal error:  Uncaught TypeError: array_filter(): Argument #1 ($array) must be of type array, null given in /home/daytianf/public_html/Spicette/api/pins.php:73
+Stack trace:
+#0 /home/daytianf/public_html/Spicette/api/pins.php(73): array_filter()
+#1 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/pins.php on line 73
+[19-Jun-2025 16:31:52 Asia/Jakarta] PHP Fatal error:  Uncaught TypeError: array_filter(): Argument #1 ($array) must be of type array, null given in /home/daytianf/public_html/Spicette/api/pins.php:73
+Stack trace:
+#0 /home/daytianf/public_html/Spicette/api/pins.php(73): array_filter()
+#1 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/pins.php on line 73
+[19-Jun-2025 16:32:58 Asia/Jakarta] PHP Fatal error:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /home/daytianf/public_html/Spicette/api/pins.php:94
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/pins.php on line 94
+[19-Jun-2025 16:33:03 Asia/Jakarta] PHP Fatal error:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /home/daytianf/public_html/Spicette/api/pins.php:94
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/pins.php on line 94
+[19-Jun-2025 16:55:40 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:55:40 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:55:45 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:55:45 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:55:55 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:55:55 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:02 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:02 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:09 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:09 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:19 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:19 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:23 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:56:23 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:57:41 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[19-Jun-2025 16:57:41 Asia/Jakarta] PHP Fatal error:  Cannot redeclare getUsers() (previously declared in /home/daytianf/public_html/Spicette/api/pins.php:57) in /home/daytianf/public_html/Spicette/api/pins.php on line 251
+[20-Jun-2025 09:15:01 Asia/Jakarta] PHP Warning:  Undefined variable $filePath in /home/daytianf/public_html/Spicette/api/notifications.php on line 17
+[20-Jun-2025 09:15:04 Asia/Jakarta] PHP Fatal error:  Uncaught ValueError: Path cannot be empty in /home/daytianf/public_html/Spicette/api/notifications.php:17
+Stack trace:
+#0 /home/daytianf/public_html/Spicette/api/notifications.php(17): file_get_contents()
+#1 /home/daytianf/public_html/Spicette/api/notifications.php(57): readNotifications()
+#2 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/notifications.php on line 17
+[20-Jun-2025 09:15:26 Asia/Jakarta] PHP Warning:  Undefined variable $filePath in /home/daytianf/public_html/Spicette/api/notifications.php on line 17
+[20-Jun-2025 09:15:26 Asia/Jakarta] PHP Fatal error:  Uncaught ValueError: Path cannot be empty in /home/daytianf/public_html/Spicette/api/notifications.php:17
+Stack trace:
+#0 /home/daytianf/public_html/Spicette/api/notifications.php(17): file_get_contents()
+#1 /home/daytianf/public_html/Spicette/api/notifications.php(57): readNotifications()
+#2 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/notifications.php on line 17
+[20-Jun-2025 09:20:33 Asia/Jakarta] PHP Warning:  Undefined variable $filePath in /home/daytianf/public_html/Spicette/api/notifications.php on line 17
+[20-Jun-2025 09:20:33 Asia/Jakarta] PHP Fatal error:  Uncaught ValueError: Path cannot be empty in /home/daytianf/public_html/Spicette/api/notifications.php:17
+Stack trace:
+#0 /home/daytianf/public_html/Spicette/api/notifications.php(17): file_get_contents()
+#1 /home/daytianf/public_html/Spicette/api/notifications.php(57): readNotifications()
+#2 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/notifications.php on line 17
+[28-Jun-2025 13:22:37 Asia/Jakarta] PHP Warning:  Undefined array key "CONTENT_TYPE" in /home/daytianf/public_html/Spicette/api/pins.php on line 182
+[28-Jun-2025 13:23:25 Asia/Jakarta] PHP Warning:  Undefined array key "CONTENT_TYPE" in /home/daytianf/public_html/Spicette/api/pins.php on line 182
+[01-Jul-2025 14:30:41 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:30:42 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:30:46 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 52
+[01-Jul-2025 14:30:48 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:30:49 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:31:03 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:31:04 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:31:12 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:31:29 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:31:31 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:31:34 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:32:09 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:32:12 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 52
+[01-Jul-2025 14:32:26 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:32:27 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:32:31 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:53:39 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:53:42 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:53:47 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 52
+[01-Jul-2025 14:53:49 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:53:50 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:54:34 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:54:34 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:54:38 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 52
+[01-Jul-2025 14:54:40 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:54:41 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:24 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:62
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 62
+[01-Jul-2025 14:55:24 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:26 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:30 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:32 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:37 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:45 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:47 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:50 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:55:51 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:57:53 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
+[01-Jul-2025 14:58:13 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function sendJsonResponse() in /home/daytianf/public_html/Spicette/api/search_history.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/daytianf/public_html/Spicette/api/search_history.php on line 24
