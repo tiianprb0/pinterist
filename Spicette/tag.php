@@ -70,108 +70,18 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         .back-button:hover {
             background-color: #e0e0e0;
         }
-        /* Gaya untuk pin grid di dalam overlay detail pin */
-        .pin-detail-content .pin-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-            padding-left: 0px; /* Padding kiri 0px */
-            padding-right: 0px; /* Padding kanan 0px */
-        }
-        .pin-detail-content .pin-grid .pin {
-            width: 100%;
-            max-width: none;
-            margin-bottom: 10px; /* Margin bawah untuk setiap pin */
-        }
-        .pin-detail-content .pin-grid .pin img {
-            max-height: 200px;
-            object-fit: cover;
-        }
     </style>
 </head>
 <body>
 
-    <div id="pinDetailOverlay">
-        <div class="pin-detail-content">
-            <div class="pin-detail-back-container">
-                <button class="pin-detail-back-button" onclick="closePinDetail()">
-                    <i class="fas fa-arrow-left"></i> Kembali
-                </button>
-            </div>
-
-            <div class="pin-header-info">
-                <h2 id="pinDetailTitle"></h2>
-                <div class="uploaded-by-and-share">
-                    <p class="uploaded-by-text">oleh <strong id="pinDetailUploadedBy"></strong></p>
-                    <button id="pinDetailShareButton" class="secondary">
-                        <i class="fas fa-share-alt"></i> Bagikan
-                    </button>
-                </div>
-            </div>
-
-            <div class="pin-detail-img-main-container">
-                <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Simpan</button>
-            </div>
-
-            <p id="pinDetailDescription" class="pin-detail-description"></p>
-            
-            <!-- pinDetailPersonTagsSection dipindahkan ke atas pinDetailCategories -->
-            <div id="pinDetailPersonTagsSection" class="pin-person-tags-section" style="display: none;">
-                <h3 class="person-in-pin-title">Orang dalam pin</h3>
-                <div id="pinDetailPersonTagsList" class="person-tags-list"></div>
-                <div id="pinDetailRelatedPins" class="pin-grid"></div>
-            </div>
-
-            <!-- dashed-line dipindahkan ke atas pinDetailCategories -->
-            <div class="dashed-line"></div>
-            <div id="pinDetailCategories" class="pin-categories"></div>
-
-        </div>
-    </div>
-
-    <div id="notificationOverlay">
-        <div class="overlay-header">
-            <h2>Notifikasi</h2>
-            <button class="icon-button" aria-label="Tutup Notifikasi" id="closeNotificationButton">
-                <i class="fas fa-times"></i> </button>
-        </div>
-        <div class="notification-page-container">
-            <div class="notification-list" id="notificationListContainer">
-                <p style="text-align: center; color: #767676;">Tidak ada notifikasi.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="searchOverlay">
-        <div class="overlay-header search-overlay-header">
-            <div class="search-container">
-                <div class="search-icon-wrapper">
-                    <i class="fas fa-search"></i> <input type="search" placeholder="Cari ide" id="mobileSearchInputOverlay">
-                </div>
-            </div>
-            <button id="closeSearchOverlay">Batal</button>
-        </div>
-        <div class="overlay-content search-overlay-content">
-            <div id="mobileSearchHistory"><h3>Riwayat Pencarian</h3><ul id="mobileSearchHistoryList" class="search-history-list"></ul></div>
-            <ul id="searchSuggestions"></ul>
-            <div id="searchResults" class="pin-grid" style="display: none;"></div>
-            <div id="searchLoadingIndicator" style="text-align: center; padding: 20px; font-style: italic; color: #767676; display: none;">Mencari...</div>
-            <h3 id="categoryExploreTitle">Jelajahi Kategori</h3>
-            <div class="category-grid" id="categoryGridMobile"></div>
-        </div>
-    </div>
-
-    <div id="mobileProfileDropdown">
-        <span class="username-display" id="mobileDropdownUsernameDisplay"></span>
-        <button class="secondary" id="mobileDropdownMyProfile" style="display: none;">Profil Saya</button>
-        <button class="secondary" id="mobileDropdownAdminPanel" style="display: none;">Panel Admin</button>
-        <button class="secondary" id="mobileDropdownLogout">Keluar</button>
-        <button class="secondary" id="mobileDropdownClose">Tutup</button>
+    <!-- NEW: Global Loading Overlay -->
+    <div id="globalLoadingOverlay">
+        <div class="spinner"></div>
     </div>
 
     <main class="tag-page-layout">
         <div class="back-button-container">
-            <button class="back-button" onclick="history.back()">
+            <button class="back-button" onclick="navigateBackInAppHistory()">
                 <i class="fas fa-arrow-left"></i> Kembali
             </button>
         </div>
@@ -187,30 +97,34 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
     <div id="customAlert" class="custom-alert"></div>
 
-    <div id="fullImageOverlay" class="full-image-overlay">
-        <button class="close-full-image-button" onclick="window.closeFullImageOverlay()">&times;</button>
-        <img id="fullImageDisplay" src="" alt="Gambar Ukuran Penuh">
-        <button id="fullImageDownloadButton" class="download-button-on-image">
-            <i class="fas fa-download"></i> Unduh
-        </button>
-    </div>
-
     <script>
-        // --- Global State ---
-        let currentUser = null;
+        // --- Global State (minimal for this page) ---
+        let currentUser = null; // Will be fetched, but not used for pin detail logic here
         let currentSearchQuery = '<?php echo htmlspecialchars(str_replace('-', ' ', $categoryName)); ?>';
-        let allPinsData = [];
-        const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
-        let searchSuggestionsData = [];
-        let selectedSuggestionIndex = -1;
+        let loadedPinsCount = 0;
+        let pinsPerPage = 20;
 
-        // NEW: Search History variables
-        const SEARCH_HISTORY_LS_KEY = 'spicette_search_history';
-        const MAX_SEARCH_HISTORY = 5;
-        let searchHistory = [];
+        // NEW: Global Loading Overlay Functions
+        const globalLoadingOverlay = document.getElementById('globalLoadingOverlay');
+
+        function showGlobalLoading() {
+            if (globalLoadingOverlay) {
+                globalLoadingOverlay.classList.add('show');
+                document.body.classList.add('no-scroll');
+            }
+        }
+
+        function hideGlobalLoading() {
+            if (globalLoadingOverlay) {
+                globalLoadingOverlay.classList.remove('show');
+                document.body.classList.remove('no-scroll');
+            }
+        }
 
         // --- API Endpoints ---
-        const API_BASE_URL = '../api/';
+        // Corrected API_BASE_URL to point to the correct directory
+        const API_BASE_URL = '../api/'; // Relative to tag.php, which is in a subfolder
+
 
         // --- Helper Function for API Requests ---
         async function makeApiRequest(endpoint, method = 'GET', data = null) {
@@ -269,76 +183,11 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             }, 3000);
         }
 
-        // --- Pin Detail Overlay Logic ---
-        const pinDetailOverlay = document.getElementById('pinDetailOverlay');
-        const pinDetailImageMainContainer = document.querySelector('.pin-detail-img-main-container');
-        const pinDetailTitle = document.getElementById('pinDetailTitle');
-        const pinDetailUploadedBy = document.getElementById('pinDetailUploadedBy');
-        const pinDetailDescription = document.getElementById('pinDetailDescription');
-        const pinDetailCategories = document.getElementById('pinDetailCategories');
-        const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton');
-        const pinDetailShareButton = document.getElementById('pinDetailShareButton');
-        const pinDetailPersonTagsSection = document.getElementById('pinDetailPersonTagsSection');
-        const pinDetailPersonTagsList = document.getElementById('pinDetailPersonTagsList');
-        const pinDetailRelatedPins = document.getElementById('pinDetailRelatedPins');
-
-
-        function updatePinDetailImageSaveButton(pinData) {
-            if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
-                pinDetailImageSaveButton.textContent = 'Disimpan';
-                pinDetailImageSaveButton.style.backgroundColor = '#767676';
-                pinDetailImageSaveButton.onclick = async (e) => {
-                    e.stopPropagation();
-                    const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
-                    if (response.success) {
-                        showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
-                        currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
-                        updatePinDetailImageSaveButton(pinData);
-                        const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
-                        if (gridSaveButton) {
-                            gridSaveButton.textContent = 'Simpan';
-                            gridSaveButton.style.backgroundColor = '#e60023';
-                        }
-                    } else {
-                        showMessage('Gagal menghapus pin dari daftar simpan: ' + response.message, 'error');
-                    }
-                };
-            } else {
-                pinDetailImageSaveButton.textContent = 'Simpan';
-                pinDetailImageSaveButton.style.backgroundColor = '#e60023';
-                pinDetailImageSaveButton.onclick = async (e) => {
-                    e.stopPropagation();
-                    if (!currentUser) {
-                        showMessage('Harap login untuk menyimpan pin.', 'info');
-                        window.location.href = '/Spicette/login.html';
-                        return;
-                    }
-                    const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
-                    if (response.success) {
-                        showMessage('Pin berhasil disimpan!', 'success');
-                        if (currentUser.savedPins) {
-                            currentUser.savedPins.push(pinData.id);
-                        } else {
-                            currentUser.savedPins = [pinData.id];
-                        }
-                        updatePinDetailImageSaveButton(pinData);
-                        const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
-                        if (gridSaveButton) {
-                            gridSaveButton.textContent = 'Disimpan';
-                            gridSaveButton.style.backgroundColor = '#767676';
-                        }
-                    } else {
-                        showMessage('Gagal menyimpan pin: ' + response.message, 'error');
-                    }
-                };
-            }
-        }
-
-        // Helper function to correct image paths
+        // Helper function to correct image paths for display
         function getCorrectedImagePath(originalPath) {
-            // Check if path is like './uploads/pins/image.jpeg' or 'uploads/pins/image.jpeg'
-            // and adjust to '../uploads/pins/image.jpeg' relative to tag.php's location
-            // assuming tag.php is in Spicette/tag/ and uploads are in Spicette/uploads/
+            // Assuming tag.php is in Spicette/ and uploads are in Spicette/uploads/
+            // So, if path is './uploads/pins/image.jpeg' or 'uploads/pins/image.jpeg'
+            // it needs to be '../uploads/pins/image.jpeg' relative to tag.php's location
             if (originalPath.startsWith('./uploads/pins/')) {
                 return '../' + originalPath.substring(2); // Remove './' and prepend '../'
             }
@@ -349,336 +198,9 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             return originalPath; 
         }
 
-
-        async function openPinDetail(pinData) {
-            pinDetailTitle.textContent = pinData.title || 'Tanpa Judul';
-            pinDetailUploadedBy.textContent = ` ${pinData.uploadedBy || 'Anonim'}`;
-
-            // Mengelola deskripsi umum pin
-            if (pinData.description) {
-                pinDetailDescription.textContent = pinData.description;
-                pinDetailDescription.style.display = 'block';
-            } else {
-                pinDetailDescription.textContent = '';
-                pinDetailDescription.style.display = 'none';
-            }
-            
-            // Mengosongkan dan mengisi container gambar utama
-            pinDetailImageMainContainer.innerHTML = '';
-            pinDetailImageMainContainer.appendChild(pinDetailImageSaveButton); // Pastikan tombol save selalu ada
-
-            // Menentukan tampilan gambar berdasarkan display_type
-            if (pinData.images && pinData.images.length > 0) {
-                if (pinData.display_type === 'slider' && pinData.images.length > 1) {
-                    // Tampilan Slider
-                    const sliderWrapper = document.createElement('div');
-                    sliderWrapper.className = 'slider-wrapper';
-                    sliderWrapper.id = 'pinSlider'; // Memberikan ID untuk inisialisasi slider
-
-                    // Create swipe-inner to match style.css for flexbox and gap
-                    const swipeInner = document.createElement('div');
-                    swipeInner.className = 'swipe-inner'; 
-
-                    pinData.images.forEach((image, index) => {
-                        const slide = document.createElement('div');
-                        slide.className = 'slider-slide';
-                        const imgElement = document.createElement('img');
-                        imgElement.src = getCorrectedImagePath(image.url); // Corrected image path
-                        imgElement.alt = `${pinData.title} - ${index + 1}`;
-                        imgElement.onerror = function() { 
-                            this.onerror=null; 
-                            this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
-                        };
-                        imgElement.onclick = (e) => { // Click image in slider to open full image overlay
-                            e.stopPropagation();
-                            window.openFullImageOverlay(imgElement.src); // Pass imgElement.src
-                        };
-                        slide.appendChild(imgElement);
-                        swipeInner.appendChild(slide); // Append to swipeInner
-                    });
-                    sliderWrapper.appendChild(swipeInner); // Append swipeInner to sliderWrapper
-
-                    pinDetailImageMainContainer.appendChild(sliderWrapper);
-                    setupTouchSlider('pinSlider'); // Setup touch events for slider
-                } else {
-                    // Tampilan Berjejer ke Bawah (Stacked) atau jika hanya 1 gambar
-                    pinData.images.forEach(image => {
-                        const imgDiv = document.createElement('div');
-                        imgDiv.className = 'stacked-image-item';
-                        const imgElement = document.createElement('img');
-                        imgElement.src = getCorrectedImagePath(image.url); // Corrected image path
-                        imgElement.alt = pinData.title;
-                        imgElement.onerror = function() { 
-                            this.onerror=null; 
-                            this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
-                        };
-                        imgElement.onclick = (e) => { // Click image in stacked view to open full image overlay
-                            e.stopPropagation();
-                            window.openFullImageOverlay(imgElement.src); // Pass imgElement.src
-                        };
-                        imgDiv.appendChild(imgElement);
-
-                        if (image.description) {
-                            const descP = document.createElement('p');
-                            descP.className = 'image-individual-description';
-                            descP.textContent = image.description;
-                            imgDiv.appendChild(descP);
-                        }
-                        pinDetailImageMainContainer.appendChild(imgDiv);
-                    });
-                }
-            } else {
-                 // Fallback jika tidak ada gambar (meskipun harus ada karena required in create)
-                const noImage = document.createElement('img');
-                noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=Tidak+Ada+Gambar';
-                noImage.alt = 'Tidak Ada Gambar';
-                noImage.onclick = (e) => { // Click placeholder to open full image overlay
-                    e.stopPropagation();
-                    window.openFullImageOverlay(noImage.src); // Pass noImage.src
-                };
-                pinDetailImageMainContainer.appendChild(noImage);
-            }
-
-            updatePinDetailImageSaveButton(pinData);
-
-            // Person Tags Section - Dipindahkan ke atas Categories
-            pinDetailPersonTagsList.innerHTML = '';
-            pinDetailRelatedPins.innerHTML = '';
-            if (pinData.personTags && pinData.personTags.length > 0) {
-                pinDetailPersonTagsSection.style.display = 'block';
-                const taggedPeople = pinData.personTags;
-                let allRelatedPins = [];
-                const maxPinsTotal = 15;
-                // Calculate max pins per person, ensuring at least 1 if there are people
-                const maxPinsPerPerson = taggedPeople.length > 0 ? Math.max(1, Math.floor(maxPinsTotal / taggedPeople.length)) : 0;
-
-                for (const person of taggedPeople) {
-                    const personTagDiv = document.createElement('div');
-                    personTagDiv.className = 'person-tag-item';
-
-                    const personNameLink = document.createElement('a');
-                    personNameLink.href = `/Spicette/who.php?name=${encodeURIComponent(person.trim())}`;
-                    personNameLink.textContent = person.trim();
-                    personNameLink.className = 'person-name-link';
-                    personTagDiv.appendChild(personNameLink);
-
-                    const viewAllButton = document.createElement('a');
-                    viewAllButton.href = `/Spicette/who.php?name=${encodeURIComponent(person.trim())}`;
-                    viewAllButton.className = 'view-all-button';
-                    viewAllButton.innerHTML = `Lihat Semua <i class="fas fa-arrow-right"></i>`;
-                    personTagDiv.appendChild(viewAllButton);
-
-                    pinDetailPersonTagsList.appendChild(personTagDiv);
-
-                    const response = await makeApiRequest(`pins.php?action=getPinsByPersonTag&name=${encodeURIComponent(person.trim())}`);
-                    if (response.success && response.pins) {
-                        const shuffledPersonPins = response.pins.sort(() => 0.5 - Math.random());
-                        const pinsForThisPerson = shuffledPersonPins.slice(0, maxPinsPerPerson);
-                        allRelatedPins.push(...pinsForThisPerson);
-                    }
-                }
-
-                const uniqueRelatedPins = Array.from(new Set(allRelatedPins.filter(p => p.id !== pinData.id).map(p => JSON.stringify(p))))
-                                            .map(s => JSON.parse(s));
-
-                const finalShuffledRelatedPins = uniqueRelatedPins.sort(() => 0.5 - Math.random()).slice(0, maxPinsTotal);
-
-
-                if (finalShuffledRelatedPins.length > 0) {
-                    finalShuffledRelatedPins.forEach(relatedPin => {
-                        const pinElement = createPinElement(relatedPin);
-                        pinDetailRelatedPins.appendChild(pinElement);
-                    });
-                } else {
-                    pinDetailRelatedPins.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 20px;">Tidak ada pin terkait lainnya.</p>';
-                    pinDetailRelatedPins.style.display = 'block';
-                }
-
-            } else {
-                pinDetailPersonTagsSection.style.display = 'none';
-            }
-
-            // Mengelola kategori
-            pinDetailCategories.innerHTML = '';
-            if (pinData.category) {
-                const span = document.createElement('span');
-                span.classList.add('pin-category-tag');
-                const categoryPermalink = pinData.category.trim().toLowerCase().replace(/ /g, '-');
-                span.innerHTML = `<a href="/Spicette/tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${pinData.category.trim()}</a>`;
-                pinDetailCategories.appendChild(span);
-                pinDetailCategories.style.display = 'flex';
-            } else {
-                pinDetailCategories.style.display = 'none';
-            }
-
-            // Share button logic
-            if (navigator.share) {
-                pinDetailShareButton.style.display = 'flex';
-                pinDetailShareButton.onclick = async (e) => {
-                    e.stopPropagation();
-                    try {
-                        await navigator.share({
-                            title: pinData.title || 'Pin Spicette',
-                            text: pinData.description || pinData.title || 'Lihat pin ini!',
-                            url: window.location.href
-                        });
-                        showMessage('Pin berhasil dibagikan!', 'success');
-                    } catch (error) {
-                        console.error('Kesalahan berbagi:', error);
-                        showMessage('Gagal membagikan pin.', 'error');
-                    }
-                };
-            } else {
-                pinDetailShareButton.style.display = 'none';
-            }
-
-            // Download button logic is now handled only by fullImageOverlay
-
-            pinDetailOverlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-
-            const newUrl = new URL(window.location.href);
-            newUrl.searchParams.set('pin', pinData.id);
-            history.pushState({ pinId: pinData.id }, '', newUrl.toString());
-        }
-
-        // --- GLOBAL FUNCTION for closePinDetail ---
-        function closePinDetail() {
-            document.getElementById('pinDetailOverlay').style.display = 'none';
-            document.body.style.overflow = '';
-
-            const currentUrl = new URL(window.location.href);
-            if (currentUrl.searchParams.has('pin')) {
-                currentUrl.searchParams.delete('pin');
-                history.pushState(null, '', currentUrl.toString());
-            }
-        }
-
-        window.onpopstate = (event) => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pinIdFromUrl = urlParams.get('pin');
-            if (pinIdFromUrl) {
-                const pinToOpen = allPinsData.find(pin => pin.id === pinIdFromUrl);
-                if (pinToOpen) {
-                    openPinDetail(pinToOpen);
-                } else {
-                    closePinDetail();
-                }
-            } else {
-                closePinDetail();
-            }
-        };
-
-        // --- Fungsi Slider (untuk penggunaan di pinDetailOverlay) ---
-        // Removed old JS-based slider functions (slideIndexes, initializeSlider, moveSlide, currentSlide, showSlides)
-        // because we are now relying on CSS scroll-snap-type.
-        
-        function setupTouchSlider(sliderId) {
-            const slider = document.getElementById(sliderId);
-            if (!slider) return;
-
-            let touchStartX = 0;
-            let touchEndX = 0;
-            let isDragging = false; 
-            const minMovementThreshold = 10; 
-
-            slider.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-                isDragging = false; 
-            }, { passive: true });
-
-            slider.addEventListener('touchmove', (e) => {
-                if (Math.abs(e.changedTouches[0].screenX - touchStartX) > minMovementThreshold) {
-                    isDragging = true;
-                }
-            }, { passive: true });
-
-            slider.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (isDragging) {
-                    // Removed e.preventDefault() as it causes "Unable to preventDefault inside passive event listener" error
-                    e.stopPropagation(); 
-                }
-            }, { passive: true }); 
-        }
-
-
-        // --- NEW: Full Image Overlay Functions ---
-        const fullImageOverlay = document.getElementById('fullImageOverlay');
-        const fullImageDisplay = document.getElementById('fullImageDisplay');
-        const fullImageDownloadButton = document.getElementById('fullImageDownloadButton');
-
-        window.openFullImageOverlay = function(imageUrl) { 
-            if (fullImageDisplay) { 
-                fullImageDisplay.src = imageUrl;
-                fullImageDisplay.onerror = function() { 
-                    this.onerror=null; 
-                    this.src='https://placehold.co/1000x1200/cccccc/000000?text=Image+Load+Error';
-                };
-            }
-            if (fullImageOverlay) { 
-                fullImageOverlay.style.display = 'flex';
-            }
-            document.body.style.overflow = 'hidden';
-
-            if (fullImageDownloadButton) { 
-                fullImageDownloadButton.onclick = (e) => {
-                    e.stopPropagation();
-                    downloadPin(imageUrl);
-                };
-            }
-        };
-
-        window.closeFullImageOverlay = function() { 
-            if (fullImageOverlay) { 
-                fullImageOverlay.style.display = 'none';
-            }
-            document.body.style.overflow = '';
-        };
-
-
-        // --- Notification Overlay Logic ---
-        const notificationOverlay = document.getElementById('notificationOverlay');
-        const closeNotificationButton = document.getElementById('closeNotificationButton');
-        const notificationListContainer = document.getElementById('notificationListContainer');
-
-        async function openNotificationPage() {
-            notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Memuat notifikasi...</p>';
-            const response = await makeApiRequest('notifications.php?action=fetch_all');
-            
-            if (response.success && response.notifications.length > 0) {
-                notificationListContainer.innerHTML = '';
-                response.notifications.forEach(notif => {
-                    const notifItem = document.createElement('div');
-                    notifItem.classList.add('notification-item');
-                    if (notif.read) {
-                        notifItem.classList.add('read');
-                    }
-                    notifItem.innerHTML = `${notif.text} <span style="font-size:0.8em; color:#999; display:block; margin-top:5px;">(${notif.timestamp || 'Tanggal tidak diketahui'})</span>`;
-                    notificationListContainer.appendChild(notifItem);
-                });
-                markAllNotificationsAsRead();
-            } else {
-                notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Tidak ada notifikasi baru.</p>';
-            }
-
-            notificationOverlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeNotificationPage() {
-            notificationOverlay.style.display = 'none';
-            document.body.style.overflow = '';
-        }
-
-        closeNotificationButton.addEventListener('click', closeNotificationPage);
-
-        // --- Loading Pins & Categories ---
-        const mainElement = document.querySelector('main');
+        // --- Loading Pins ---
         const pinGrid = document.getElementById('pinGrid');
         const loadingIndicator = document.getElementById('loading-indicator');
-        let pinsPerPage = 20; 
-        let loadedPinsCount = 0; 
 
         function createPinElement(pinData) {
             const pinDiv = document.createElement('div');
@@ -704,6 +226,8 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             const saveButton = document.createElement('button');
             saveButton.classList.add('pin-save-button');
             
+            // This button's actual save/unsave logic will be handled by index.html
+            // For this page, it's just a visual placeholder or a redirect trigger
             if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
                 saveButton.textContent = 'Disimpan';
                 saveButton.style.backgroundColor = '#767676';
@@ -711,55 +235,16 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 saveButton.textContent = 'Simpan';
                 saveButton.style.backgroundColor = '#e60023';
             }
-            
-            saveButton.onclick = async (e) => { 
-                e.stopPropagation(); 
-                if (!currentUser) {
-                    showMessage('Harap login untuk menyimpan pin.', 'info');
-                    window.location.href = '/Spicette/login.html';
-                    return;
-                }
-
-                if (currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
-                    const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
-                    if (response.success) {
-                        showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
-                        saveButton.textContent = 'Simpan';
-                        saveButton.style.backgroundColor = '#e60023';
-                        currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
-                        if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Disimpan') {
-                            updatePinDetailImageSaveButton(pinData);
-                        }
-                        const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
-                        if (currentTab === 'saved') {
-                            loadedPinsCount = 0;
-                            await loadPins(pinsPerPage, false);
-                        }
-                    } else {
-                        showMessage('Gagal menghapus pin dari daftar simpan: ' + response.message, 'error');
-                    }
-                } else {
-                    const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
-                    if (response.success) {
-                        showMessage('Pin berhasil disimpan!', 'success');
-                        saveButton.textContent = 'Disimpan';
-                        saveButton.style.backgroundColor = '#767676';
-                        if (currentUser.savedPins) {
-                            currentUser.savedPins.push(pinData.id);
-                        } else {
-                            currentUser.savedPins = [pinData.id];
-                        }
-                        if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Simpan') {
-                            updatePinDetailImageSaveButton(pinData);
-                        }
-                    } else {
-                        showMessage('Gagal menyimpan pin: ' + response.message, 'error');
-                    }
-                }
+            saveButton.onclick = (e) => {
+                e.stopPropagation(); // Prevent pin click
+                showMessage('Fungsi simpan ditangani di halaman utama.', 'info');
+                // Could also redirect to index.html with pin ID
+                showGlobalLoading();
+                window.location.href = `../index.html?pin=${pinData.id}`;
             };
             overlayTop.appendChild(saveButton);
 
-            // NEW: Image count overlay for pins with multiple images
+            // Image count overlay for pins with multiple images
             if (pinData.images && pinData.images.length > 1) {
                 const imageCountOverlay = document.createElement('div');
                 imageCountOverlay.className = 'pin-image-count-overlay';
@@ -787,24 +272,21 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             // Menggunakan category di pinData langsung
             if (pinData.category) {
                  const link = document.createElement('a');
-                 link.href = `/Spicette/tag/${encodeURIComponent(pinData.category.trim().toLowerCase().replace(/ /g, '-'))}`;
-                 link.target = '_blank';
+                 // This link will also redirect to index.html
+                 link.href = `../index.html?category=${encodeURIComponent(pinData.category.trim().toLowerCase().replace(/ /g, '-'))}`;
+                 link.target = '_self'; // Open in same tab
                  link.textContent = pinData.category;
-                 link.onclick = (e) => e.stopPropagation(); 
+                 link.onclick = (e) => {
+                    e.stopPropagation(); // Prevent pin click
+                    showGlobalLoading(); // Show loading overlay
+                 }; 
                  infoDiv.appendChild(link);
             } else {
                 infoDiv.textContent = 'Tanpa Kategori';
                 infoDiv.style.opacity = '0.7'; 
             }
             bottomActions.appendChild(infoDiv);
-
-            // Removed download button from here, it's now inside pin-detail-img-main-container
-            // const downloadButton = document.createElement('button');
-            // downloadButton.classList.add('pin-action-icon');
-            // downloadButton.innerHTML = `<i class="fas fa-download"></i>`;
-            // downloadButton.onclick = (e) => { e.stopPropagation(); downloadPin(firstImageUrl); }; 
-            // bottomActions.appendChild(downloadButton);
-
+            
             overlayBottom.appendChild(bottomActions); 
             
             overlayDiv.appendChild(overlayTop);
@@ -813,31 +295,22 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             pinDiv.appendChild(img);
             pinDiv.appendChild(overlayDiv);
             
-            pinDiv.onclick = () => openPinDetail(pinData);
+            // Modified: Redirect to index.html with pin ID on click
+            pinDiv.onclick = () => {
+                showGlobalLoading(); // Show loading overlay
+                window.location.href = `../index.html?pin=${pinData.id}`;
+            };
             
             return pinDiv;
         }
 
         async function loadPins(count, append = true) {
             loadingIndicator.style.display = 'block';
-            const currentTab = document.querySelector('.nav-button.active')?.dataset.nav;
-            let endpoint = '';
-            let params = '';
-
-            if (currentSearchQuery) { 
-                endpoint = 'pins.php?action=search';
-                params = `&query=${encodeURIComponent(currentSearchQuery)}`;
-            } else { 
-                endpoint = 'pins.php?action=fetch_all';
-            }
-
-            const response = await makeApiRequest(`${endpoint}${params}`);
+            // Fetch pins based on category name
+            const response = await makeApiRequest(`pins.php?action=search&query=${encodeURIComponent(currentSearchQuery)}`);
             loadingIndicator.style.display = 'none';
 
             if (response.success) {
-                if (!currentTab || currentTab === 'home' || currentSearchQuery === '') { 
-                   allPinsData = response.pins || []; 
-                } 
                 const pinsToDisplay = response.pins || [];
                 
                 const startIndex = append ? loadedPinsCount : 0;
@@ -863,11 +336,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
 
                 if (slicedPinsToDisplay.length === 0 && loadedPinsCount === 0) {
-                    if (currentSearchQuery) {
-                        pinGrid.innerHTML = `<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin ditemukan untuk "${currentSearchQuery}".</p>`;
-                    } else {
-                        pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin untuk ditampilkan.</p>';
-                    }
+                    pinGrid.innerHTML = `<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin ditemukan untuk kategori "${currentSearchQuery}".</p>`;
                 }
             } else {
                 showMessage('Gagal memuat pin: ' + response.message, 'error');
@@ -875,717 +344,91 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             }
         }
 
-        // --- Search History functions ---
-        function loadSearchHistory() {
-            const historyJson = localStorage.getItem(SEARCH_HISTORY_LS_KEY);
-            if (historyJson) {
-                searchHistory = JSON.parse(historyJson);
-            } else {
-                searchHistory = [];
+        // NEW: Global Page History Management
+        const PAGE_HISTORY_KEY = 'spicette_page_history';
+        const MAX_HISTORY_SIZE = 5; // Keep last 5 visited main pages
+        let pageHistory = [];
+
+        function loadPageHistory() {
+            try {
+                const historyJson = sessionStorage.getItem(PAGE_HISTORY_KEY);
+                pageHistory = historyJson ? JSON.parse(historyJson) : [];
+            } catch (e) {
+                console.error("Error loading page history:", e);
+                pageHistory = [];
             }
         }
 
-        function saveSearchHistory() {
-            localStorage.setItem(SEARCH_HISTORY_LS_KEY, JSON.stringify(searchHistory));
+        function savePageHistory() {
+            try {
+                sessionStorage.setItem(PAGE_HISTORY_KEY, JSON.stringify(pageHistory));
+            } catch (e) {
+                console.error("Error saving page history:", e);
+            }
         }
 
-        function addSearchToHistory(query) {
-            query = query.toLowerCase().trim();
-            if (!query) return;
+        function pushCurrentPageToHistory() {
+            const currentUrl = new URL(window.location.href);
+            // Remove specific parameters to track only main page navigation
+            currentUrl.searchParams.delete('pin');
+            currentUrl.searchParams.delete('category');
+            currentUrl.searchParams.delete('query');
+            const urlToStore = currentUrl.origin + currentUrl.pathname;
 
-            searchHistory = searchHistory.filter(item => item !== query);
-            searchHistory.unshift(query);
-            if (searchHistory.length > MAX_SEARCH_HISTORY) {
-                searchHistory = searchHistory.slice(0, MAX_SEARCH_HISTORY);
-            }
-            saveSearchHistory();
-            renderSearchHistory();
-        }
-
-        const desktopSearchHistoryContainer = document.getElementById('desktopSearchHistory');
-        const desktopSearchHistoryList = document.getElementById('desktopSearchHistoryList');
-        const mobileSearchHistoryContainer = document.getElementById('mobileSearchHistory');
-        const mobileSearchHistoryList = document.getElementById('mobileSearchHistoryList');
-
-
-        function renderSearchHistory() {
-            if (desktopSearchHistoryList) { 
-                desktopSearchHistoryList.innerHTML = '';
-            }
-            if (mobileSearchHistoryList) { 
-                mobileSearchHistoryList.innerHTML = '';
-            }
-
-            if (searchHistory.length === 0) {
-                if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none';
-                if (mobileSearchHistoryContainer) mobileSearchHistoryContainer.style.display = 'none';
+            // Prevent pushing the same base URL consecutively
+            if (pageHistory.length > 0 && pageHistory[pageHistory.length - 1] === urlToStore) {
                 return;
             }
 
-            if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'block';
-            if (mobileSearchHistoryContainer) mobileSearchHistoryContainer.style.display = 'block';
-
-            searchHistory.forEach(historyItem => {
-                if (desktopSearchHistoryList) {
-                    const desktopLi = document.createElement('li');
-                    desktopLi.textContent = historyItem;
-                    desktopLi.addEventListener('click', () => {
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
-                    });
-                    desktopSearchHistoryList.appendChild(desktopLi);
-                }
-
-                if (mobileSearchHistoryList) {
-                    const mobileLi = document.createElement('li');
-                    mobileLi.textContent = historyItem;
-                    mobileLi.addEventListener('click', () => {
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
-                    });
-                    mobileSearchHistoryList.appendChild(mobileLi);
-                }
-            });
+            pageHistory.push(urlToStore);
+            if (pageHistory.length > MAX_HISTORY_SIZE) {
+                pageHistory.shift(); // Remove the oldest entry
+            }
+            savePageHistory();
         }
 
-        // --- Search Suggestions Logic ---
-        const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
-        const desktopSearchInput = document.getElementById('desktopSearchInput'); 
-        const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
-        const searchSuggestionsListDesktop = document.getElementById('desktopSearchSuggestions'); 
-        const categoryExploreTitle = document.getElementById('categoryExploreTitle');
-        const categoryGridMobile = document.getElementById('categoryGridMobile');
-
-        let searchTimeout;
-
-        function showSuggestions(inputElement, suggestionsList, query) {
-            suggestionsList.innerHTML = '';
-            suggestionsList.style.display = 'none'; 
-
-            if (query.length < 2) { 
-                categoryExploreTitle.style.display = 'block';
-                categoryGridMobile.style.display = 'grid';
-                renderSearchHistory(); 
-                return;
-            }
+        function navigateBackInAppHistory() {
+            // First, close any open overlays
+            // window.closePinDetail(); // This will be handled by the browser's popstate or the history navigation itself
+            // The closePinDetail function will only be called by onpopstate or if the user clicks the browser's back button.
+            // The custom back button should just navigate.
             
-            if (inputElement && inputElement.id === 'desktopSearchInput' && desktopSearchHistoryContainer) { 
-                desktopSearchHistoryContainer.style.display = 'none';
-            } else if (mobileSearchHistoryContainer) { 
-                mobileSearchHistoryContainer.style.display = 'none';
+            // Ensure all other overlays are closed
+            // Note: closeNotificationPage, closeSearch, closeFullImageOverlay are not defined in tag.php or search.php
+            // They are only defined in index.html. So these calls need to be conditional or removed here.
+            // For tag.php and search.php, there are no other overlays to close, so these lines can be removed.
+
+            loadPageHistory(); // Ensure history is up-to-date
+
+            // If the current page is the last one in history, pop it first
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete('pin');
+            currentUrl.searchParams.delete('category');
+            currentUrl.searchParams.delete('query');
+            const currentUrlToMatch = currentUrl.origin + currentUrl.pathname;
+
+            if (pageHistory.length > 0 && pageHistory[pageHistory.length - 1] === currentUrlToMatch) {
+                pageHistory.pop(); // Remove the current page from the stack
+                savePageHistory();
             }
 
-            const filteredSuggestions = allPinsData.filter(pin => 
-                (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
-                (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) || 
-                (pin.category && pin.category.toLowerCase().includes(query.toLowerCase())) || 
-                (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) 
-            ).map(pin => pin.title || pin.category).filter(Boolean).slice(0, 5); 
-
-            const uniqueSuggestions = [...new Set(filteredSuggestions)];
-
-            if (uniqueSuggestions.length > 0) {
-                uniqueSuggestions.forEach(suggestion => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = suggestion;
-                    listItem.addEventListener('click', () => {
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(suggestion)}`;
-                    });
-                    suggestionsList.appendChild(listItem);
-                });
-                suggestionsList.style.display = 'block';
-                categoryExploreTitle.style.display = 'none';
-                categoryGridMobile.style.display = 'none';
+            if (pageHistory.length > 0) {
+                const previousUrl = pageHistory.pop(); // Get the URL to navigate to
+                savePageHistory();
+                showGlobalLoading();
+                window.location.href = previousUrl;
             } else {
-                suggestionsList.style.display = 'none';
-                categoryExploreTitle.style.display = 'block'; 
-                categoryGridMobile.style.display = 'grid';
+                // Fallback to browser history if custom history is empty
+                history.back();
             }
         }
-
-        async function performSearch(query) {
-            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`;
-        }
-
-        mobileSearchInputOverlay.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            const query = e.target.value.trim();
-            searchTimeout = setTimeout(() => {
-                showSuggestions(mobileSearchInputOverlay, searchSuggestionsListMobile, query);
-            }, 300);
-        });
-
-        mobileSearchInputOverlay.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); 
-                const query = mobileSearchInputOverlay.value.trim();
-                if (query) {
-                    performSearch(query); 
-                    closeSearch(); 
-                }
-            }
-        });
-
-        if (desktopSearchInput) { 
-            desktopSearchInput.addEventListener('focus', () => {
-                mainElement.classList.add('desktop-search-active');
-                pinGrid.style.display = 'none'; 
-                loadingIndicator.style.display = 'none';
-                desktopSearchInput.value = currentSearchQuery; 
-                renderSearchHistory(); 
-                if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none';
-            });
-
-            desktopSearchInput.addEventListener('blur', (event) => {
-                setTimeout(() => {
-                    const searchArea = document.querySelector('header .search-container');
-                    const isClickInsideDesktopSearchUI = searchArea && (searchArea.contains(event.relatedTarget) ||
-                                                 (searchSuggestionsListDesktop && searchSuggestionsListDesktop.contains(event.relatedTarget)) ||
-                                                 (desktopSearchHistoryContainer && desktopSearchHistoryContainer.contains(event.relatedTarget)));
-                    
-                    if (!isClickInsideDesktopSearchUI) {
-                        resetMainContentToHome();
-                    }
-                }, 100); 
-            });
-
-            desktopSearchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                const query = e.target.value.trim();
-                currentSearchQuery = query; 
-                searchTimeout = setTimeout(() => {
-                    showSuggestions(desktopSearchInput, searchSuggestionsListDesktop, query);
-                }, 300);
-            });
-
-            desktopSearchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); 
-                    const query = desktopSearchInput.value.trim();
-                    if (query) {
-                        addSearchToHistory(query);
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`; 
-                    }
-                }
-            });
-        }
-        
-        async function resetMainContentToHome() {
-            if (desktopSearchInput) desktopSearchInput.value = ''; 
-            currentSearchQuery = ''; 
-            if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none';
-            if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none';
-            loadedPinsCount = 0; 
-            mainElement.classList.remove('desktop-search-active'); 
-            
-            pinGrid.style.removeProperty('display'); 
-            pinGrid.style.display = 'column'; 
-            
-            await loadPins(pinsPerPage, false); 
-        }
-
-        document.addEventListener('click', (event) => {
-            const headerSearchContainer = document.querySelector('header .search-container');
-            const isClickInsideDesktopSearchUI = headerSearchContainer && (headerSearchContainer.contains(event.target) ||
-                                             (searchSuggestionsListDesktop && searchSuggestionsListDesktop.contains(event.target)) ||
-                                             (desktopSearchHistoryContainer && desktopSearchHistoryContainer.contains(event.target)));
-        
-            if (desktopSearchInput && !desktopSearchInput.matches(':focus') && !isClickInsideDesktopSearchUI) {
-                resetMainContentToHome();
-            }
-
-            const isClickInsideMobileSearchOverlay = searchOverlay.contains(event.target);
-            const mobileSearchTriggerButton = document.querySelector('.mobile-nav-item[data-action="search"]'); 
-            const isMobileSearchTriggerButtonClick = mobileSearchTriggerButton && mobileSearchTriggerButton.contains(event.target);
-            
-            if (searchOverlay.style.display === 'flex' && !isClickInsideMobileSearchOverlay && !isMobileSearchTriggerButtonClick) {
-                closeSearch();
-            }
-        });
-
-
-        async function loadCategories() {
-            const categoryContainers = [
-                document.getElementById('categoryGridMobile'),
-                document.getElementById('categoryGridDesktop') 
-            ];
-
-            try {
-                const response = await makeApiRequest('categories.php?action=fetch_all');
-                if (response.success && response.categories) {
-                    const categories = response.categories; 
-                    const filteredCategories = categories.filter(cat => cat.name && cat.name.trim() !== '');
-
-                    categoryContainers.forEach(container => {
-                        if (!container) return; 
-                        container.innerHTML = ''; 
-                        const fragment = document.createDocumentFragment();
-
-                        filteredCategories.forEach((cat) => {
-                            const catItem = document.createElement('div');
-                            catItem.className = 'category-item';
-                            
-                            const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`; 
-                            catItem.style.backgroundImage = `url('${imageUrl}')`;
-
-                            const catTitle = document.createElement('span');
-                            catTitle.textContent = cat.name; 
-                            
-                            catItem.appendChild(catTitle);
-                            
-                            catItem.onclick = function() {
-                                const categoryPermalink = cat.name.trim().toLowerCase().replace(/ /g, '-');
-                                window.location.href = `/Spicette/tag/${encodeURIComponent(categoryPermalink)}`;
-                            };
-                            fragment.appendChild(catItem);
-                        });
-                        container.appendChild(fragment);
-                    });
-                } else {
-                    console.error('Gagal memuat kategori:', response.message);
-                    categoryContainers.forEach(container => {
-                        if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Gagal memuat kategori.</p>';
-                    });
-                }
-            } catch (error) {
-                console.error('Error mengambil kategori:', error);
-                categoryContainers.forEach(container => {
-                    if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Kesalahan jaringan saat memuat kategori.</p>';
-                });
-            }
-        }
-        
-        loadCategories();
-
-        // --- Infinite Scroll ---
-        window.addEventListener('scroll', () => {
-            if (loadingIndicator.style.display === 'none' && 
-                searchOverlay.style.display === 'none' && 
-                mobileProfileDropdown.style.display === 'none' &&
-                pinDetailOverlay.style.display === 'none' && 
-                fullImageOverlay.style.display === 'none' && 
-                notificationOverlay.style.display === 'none' 
-            ) {
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
-                    if (!currentSearchQuery) { 
-                        loadPins(pinsPerPage, true);
-                    }
-                }
-            }
-        });
-
-        // --- Desktop Search/Category Interaction ---
-        
-        // --- Header Button Logic ---
-        const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
-        const desktopCreateButton = document.getElementById('desktopCreateButton');
-
-        if (desktopCreateButton) { 
-            desktopCreateButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (!currentUser) {
-                    window.location.href = '/Spicette/login.html'; 
-                } else {
-                    window.location.href = '/Spicette/create.html'; 
-                }
-            });
-        }
-
-        headerNavButtons.forEach(button => {
-            if (button.id === 'desktopCreateButton') return; 
-
-            button.addEventListener('click', async function() {
-                headerNavButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                const navAction = this.dataset.nav;
-                currentSearchQuery = ''; 
-
-                desktopSearchHistoryContainer.style.display = 'none';
-                searchSuggestionsListDesktop.style.display = 'none';
-                mainElement.classList.remove('desktop-search-active'); 
-
-                pinGrid.style.display = 'column'; 
-
-
-                if (navAction === 'home') {
-                    loadedPinsCount = 0;
-                    await loadPins(pinsPerPage, false);
-                } else if (navAction === 'saved') {
-                    if (!currentUser) {
-                        showMessage('Harap login untuk melihat pin yang Anda simpan.', 'error');
-                        headerNavButtons.forEach(btn => btn.classList.remove('active'));
-                        document.querySelector('.nav-button[data-nav="home"]').classList.add('active');
-                        window.location.href = '/Spicette/login.html'; 
-                        return;
-                    }
-                    loadedPinsCount = 0;
-                    await loadPins(pinsPerPage, false);
-                }
-            });
-        });
-
-
-        // --- Mobile Search Overlay Logic ---
-        const searchOverlay = document.getElementById('searchOverlay');
-        const closeSearchBtn = document.getElementById('closeSearchOverlay');
-        
-        const openSearch = () => {
-            searchOverlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            mobileSearchInputOverlay.value = '';
-            searchSuggestionsListMobile.innerHTML = '';
-            searchSuggestionsListMobile.style.display = 'none';
-            categoryExploreTitle.style.display = 'block';
-            categoryGridMobile.style.display = 'grid';
-            renderSearchHistory(); 
-        };
-        
-        const closeSearch = () => {
-            searchOverlay.style.display = 'none';
-            document.body.style.overflow = '';
-        };
-
-        closeSearchBtn.addEventListener('click', closeSearch);
-
-        // --- Mobile Navigation Logic ---
-        const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
-        mobileNavItems.forEach(item => {
-            item.addEventListener('click', async function() {
-                const action = this.dataset.action;
-
-                closePinDetail();
-                closeNotificationPage();
-                closeSearch(); 
-                window.closeFullImageOverlay(); 
-                
-                if (action === 'search') {
-                    openSearch();
-                } else if (action === 'create-pin') { 
-                     if (!currentUser) {
-                        window.location.href = '/Spicette/login.html'; 
-                        return;
-                    } else if (!currentUser.canUpload) {
-                        showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
-                        return;
-                    }
-                    window.location.href = '/Spicette/create.html'; 
-                }
-                else if (action === 'profile') { 
-                    if (!currentUser) {
-                        window.location.href = '/Spicette/login.html'; 
-                        return;
-                    }
-                    if (currentUser.isAdmin) {
-                        window.location.href = '/Spicette/admin.php'; 
-                    } else {
-                        window.location.href = '/Spicette/user.php'; 
-                    }
-                }
-                else { 
-                    mobileNavItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    if (action === 'home' || action === 'saved') { 
-                        const desktopButton = document.querySelector(`.header-nav-links .nav-button[data-nav="${action}"]`);
-                        if (desktopButton) {
-                            headerNavButtons.forEach(btn => btn.classList.remove('active'));
-                            desktopButton.classList.add('active');
-                        }
-                    }
-                    currentSearchQuery = ''; 
-                    
-                    mainElement.classList.remove('desktop-search-active');
-                    pinGrid.style.display = 'column';
-
-
-                    if (action === 'home') {
-                        loadedPinsCount = 0;
-                        await loadPins(pinsPerPage, false);
-                    } else if (action === 'saved') { 
-                        if (!currentUser) {
-                            window.location.href = '/Spicette/login.html'; 
-                            mobileNavItems.forEach(i => i.classList.remove('active'));
-                            document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
-                            return;
-                        }
-                        loadedPinsCount = 0;
-                        await loadPins(pinsPerPage, false);
-                    }
-                }
-            });
-        });
-
-        // --- Login/Register Overlay Logic ---
-        const profileButton = document.getElementById('profileButton');
-        const profileIconLetter = document.getElementById('profileIconLetter');
-
-        if (profileButton) { 
-            profileButton.addEventListener('click', () => {
-                if (!currentUser) {
-                    window.location.href = '/Spicette/login.html'; 
-                } else {
-                    if (currentUser.isAdmin) {
-                        window.location.href = '/Spicette/admin.php'; 
-                    } else {
-                        window.location.href = '/Spicette/user.php'; 
-                    }
-                }
-            });
-        }
-
-        // --- User Profile Display & Header Dropdown ---
-        function updateProfileDisplay() {
-            const mobileProfileIcon = document.querySelector('.mobile-nav-item[data-action="profile"] .profile-icon');
-            if (currentUser) {
-                if (profileIconLetter) { 
-                    profileIconLetter.textContent = currentUser.username.charAt(0).toUpperCase();
-                    profileIconLetter.style.backgroundColor = '#e60023';
-                    profileIconLetter.style.color = 'white';
-                }
-
-                if (mobileProfileIcon) {
-                    mobileProfileIcon.textContent = currentUser.username.charAt(0).toUpperCase();
-                    mobileProfileIcon.style.backgroundColor = '#fff';
-                    mobileProfileIcon.style.color = '#111';
-                }
-            } else {
-                if (profileIconLetter) { 
-                    profileIconLetter.textContent = 'G';
-                    profileIconLetter.style.backgroundColor = '#ddd';
-                    profileIconLetter.style.color = '#767676';
-                }
-
-                if (mobileProfileIcon) {
-                    mobileProfileIcon.textContent = 'G';
-                    mobileProfileIcon.style.backgroundColor = '#e0e0e0';
-                    mobileProfileIcon.style.color = '#333';
-                }
-            }
-        }
-
-        const notificationButton = document.getElementById('notificationButton');
-        const mobileNotificationButton = document.getElementById('mobileNotificationButton');
-        const notificationBadge = document.getElementById('notificationBadge');
-        const mobileNotificationBadge = document.getElementById('mobileNotificationBadge');
-
-        async function updateNotificationBadge() {
-            try {
-                const response = await makeApiRequest('notifications.php?action=fetch_all');
-                if (response.success) {
-                    const notifications = response.notifications || [];
-                    const unreadCount = notifications.filter(notif => !notif.read).length; 
-                    
-                    if (unreadCount > 0) {
-                        if (notificationBadge) { notificationBadge.textContent = unreadCount; notificationBadge.style.display = 'flex'; }
-                        if (mobileNotificationBadge) { mobileNotificationBadge.textContent = unreadCount; mobileNotificationBadge.style.display = 'flex'; }
-                    } else {
-                        if (notificationBadge) notificationBadge.style.display = 'none';
-                        if (mobileNotificationBadge) mobileNotificationBadge.style.display = 'none';
-                    }
-                }
-            } catch (error) {
-                console.error('Gagal memperbarui lencana notifikasi:', error);
-            }
-        }
-
-        async function markAllNotificationsAsRead() {
-            try {
-                const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null); 
-                if (response.success) {
-                    updateNotificationBadge();
-                }
-            }
-            catch (error) {
-                console.error('Gagal menandai notifikasi sebagai sudah dibaca:', error);
-            }
-        }
-
-        if (notificationButton) { 
-            notificationButton.addEventListener('click', openNotificationPage);
-        }
-        if (mobileNotificationButton) { 
-            mobileNotificationButton.addEventListener('click', openNotificationPage);
-        }
-
-
-        // --- Pin Functions (Download) ---
-        function downloadPin(imageUrl) {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'pin_image.jpg';
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showMessage(`Mengunduh pin.`);
-        }
-
-        // --- Desktop More Accounts Dropdown ---
-        const moreAccountsButton = document.getElementById('moreAccountsButton');
-        const moreAccountsDropdown = document.getElementById('moreAccountsDropdown');
-        const dropdownUsernameDisplay = document.getElementById('dropdownUsernameDisplay');
-        const dropdownMyProfile = document.getElementById('dropdownMyProfile');
-        const dropdownAdminPanel = document.getElementById('dropdownAdminPanel');
-        const dropdownLogout = document.getElementById('dropdownLogout');
-
-        if (moreAccountsButton) { 
-            function toggleDropdown() {
-                if (moreAccountsDropdown) {
-                    updateHeaderDropdown();
-                    moreAccountsDropdown.style.display = moreAccountsDropdown.style.display === 'block' ? 'none' : 'block';
-                }
-            }
-
-            function updateHeaderDropdown() {
-                if (currentUser) {
-                    if (dropdownUsernameDisplay) dropdownUsernameDisplay.textContent = `Masuk sebagai ${currentUser.username}`;
-                    if (dropdownMyProfile) dropdownMyProfile.style.display = 'block';
-                    if (dropdownAdminPanel) dropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
-                    if (dropdownLogout) dropdownLogout.style.display = 'block';
-                } else {
-                    if (dropdownUsernameDisplay) dropdownUsernameDisplay.textContent = 'Selamat datang, Tamu!';
-                    if (dropdownMyProfile) dropdownMyProfile.style.display = 'none';
-                    if (dropdownAdminPanel) dropdownAdminPanel.style.display = 'none';
-                    if (dropdownLogout) dropdownLogout.style.display = 'none';
-                }
-            }
-
-            moreAccountsButton.addEventListener('click', toggleDropdown);
-
-            document.addEventListener('click', function(event) {
-                if (moreAccountsButton && moreAccountsDropdown && !moreAccountsButton.contains(event.target) && !moreAccountsDropdown.contains(event.target)) {
-                    moreAccountsDropdown.style.display = 'none';
-                }
-            });
-
-            if (dropdownMyProfile) { 
-                dropdownMyProfile.addEventListener('click', () => {
-                    if (currentUser) {
-                        window.location.href = '/Spicette/user.php';
-                    }
-                    if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none';
-                });
-            }
-
-            if (dropdownAdminPanel) { 
-                dropdownAdminPanel.addEventListener('click', () => {
-                    if (currentUser && currentUser.isAdmin) {
-                        window.location.href = '/Spicette/admin.php';
-                    } else {
-                        showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
-                    }
-                    if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none';
-                });
-            }
-
-            if (dropdownLogout) { 
-                dropdownLogout.addEventListener('click', async () => {
-                    const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
-                    if (response.success) {
-                        currentUser = null;
-                        updateProfileDisplay();
-                        updateHeaderDropdown();
-                        showMessage('Logout berhasil.', 'Logout');
-                        loadedPinsCount = 0;
-                        currentSearchQuery = ''; 
-                        await loadPins(pinsPerPage, false);
-                        const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
-                        mobileNavItems.forEach(i => i.classList.remove('active'));
-                        const homeMobileNav = document.querySelector('.mobile-nav-item[data-action="home"]');
-                        if (homeMobileNav) homeMobileNav.classList.add('active'); 
-                        
-                        const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
-                        headerNavButtons.forEach(btn => btn.classList.remove('active'));
-                        const homeHeaderNav = document.querySelector('.nav-button[data-nav="home"]');
-                        if (homeHeaderNav) homeHeaderNav.classList.add('active');
-                    } else {
-                        showMessage('Logout gagal: ' + response.message, 'Error');
-                    }
-                    if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none'; 
-                });
-            }
-        } // End if (moreAccountsButton)
-
-        // Mobile Profile Options (for mobile bottom nav profile icon)
-        const mobileProfileDropdown = document.getElementById('mobileProfileDropdown');
-        const mobileDropdownUsernameDisplay = document.getElementById('mobileDropdownUsernameDisplay');
-        const mobileDropdownMyProfile = document.getElementById('mobileDropdownMyProfile');
-        const mobileDropdownAdminPanel = document.getElementById('mobileDropdownAdminPanel');
-        const mobileDropdownLogout = document.getElementById('mobileDropdownLogout');
-        const mobileDropdownClose = document.getElementById('mobileDropdownClose');
-
-        if (document.querySelector('.mobile-nav-item[data-action="profile"]')) { 
-            document.querySelector('.mobile-nav-item[data-action="profile"]').addEventListener('click', () => {
-                if (currentUser) {
-                    if (mobileProfileDropdown) { 
-                        mobileDropdownUsernameDisplay.textContent = `Masuk sebagai ${currentUser.username}`;
-                        mobileDropdownMyProfile.style.display = 'block';
-                        mobileDropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none';
-                        mobileProfileDropdown.style.display = 'flex';
-                        document.body.style.overflow = 'hidden';
-                    }
-                } else {
-                    window.location.href = '/Spicette/login.html'; 
-                }
-            });
-        }
-        
-        if (mobileDropdownMyProfile) { 
-            mobileDropdownMyProfile.addEventListener('click', () => {
-                if (currentUser) {
-                    window.location.href = '/Spicette/user.php'; 
-                }
-                if (mobileProfileDropdown) { mobileProfileDropdown.style.display = 'none'; }
-                document.body.style.overflow = '';
-            });
-        }
-        if (mobileDropdownAdminPanel) { 
-            mobileDropdownAdminPanel.addEventListener('click', () => {
-                if (currentUser && currentUser.isAdmin) {
-                    window.location.href = '/Spicette/admin.php'; 
-                } else {
-                    showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
-                }
-                if (mobileProfileDropdown) { mobileProfileDropdown.style.display = 'none'; }
-                document.body.style.overflow = '';
-            });
-        }
-        if (mobileDropdownLogout) { 
-            mobileDropdownLogout.addEventListener('click', async () => {
-                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
-                if (response.success) {
-                    currentUser = null;
-                    updateProfileDisplay();
-                    updateHeaderDropdown();
-                    showMessage('Logout berhasil.', 'Logout');
-                    loadedPinsCount = 0;
-                    currentSearchQuery = ''; 
-                    await loadPins(pinsPerPage, false);
-                    const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
-                    mobileNavItems.forEach(i => i.classList.remove('active'));
-                    const homeMobileNav = document.querySelector('.mobile-nav-item[data-action="home"]');
-                    if (homeMobileNav) homeMobileNav.classList.add('active');
-                    const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
-                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
-                    const homeHeaderNav = document.querySelector('.nav-button[data-nav="home"]');
-                    if (homeHeaderNav) homeHeaderNav.classList.add('active');
-                } else {
-                    showMessage('Logout gagal: ' + response.message, 'Error');
-                }
-                if (mobileProfileDropdown) { mobileProfileDropdown.style.display = 'none'; }
-                document.body.style.overflow = '';
-            });
-        }
-        if (mobileDropdownClose) { 
-            mobileDropdownClose.addEventListener('click', () => {
-                if (mobileProfileDropdown) { mobileProfileDropdown.style.display = 'none'; }
-                document.body.style.overflow = '';
-            });
-        }
-
 
         // --- Check Initial Session and Load ---
         document.addEventListener('DOMContentLoaded', async function initializeApp() {
-            loadSearchHistory(); 
-            const urlParams = new URLSearchParams(window.location.search);
+            loadPageHistory();
+            pushCurrentPageToHistory(); // Push current tag.php URL to custom history
 
+            // Check session to determine if user is logged in (for save button visual)
             const response = await makeApiRequest('auth.php?action=check_session');
             if (response.success && response.user) {
                 currentUser = response.user;
@@ -1598,27 +441,15 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             } else {
                 currentUser = null;
             }
-            updateProfileDisplay(); 
-            updateNotificationBadge();
             
-            const allPinsResponse = await makeApiRequest('pins.php?action=fetch_all');
-            if (allPinsResponse.success) {
-                allPinsData = allPinsResponse.pins; 
-            } else {
-                console.error("Gagal memuat semua pin saat inisialisasi:", allPinsResponse.message);
-            }
-
             await loadPins(pinsPerPage, false);
+        });
 
-            const pinIdFromUrl = urlParams.get('pin');
-            if (pinIdFromUrl) {
-                const pinToOpen = allPinsData.find(pin => pin.id === pinIdFromUrl);
-                if (pinToOpen) {
-                    openPinDetail(pinToOpen);
-                } else {
-                    const currentUrl = new URL(window.location.href);
-                    currentUrl.searchParams.delete('pin');
-                    history.replaceState(null, '', currentUrl.toString());
+        // --- Infinite Scroll ---
+        window.addEventListener('scroll', () => {
+            if (loadingIndicator.style.display === 'none') {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+                    loadPins(pinsPerPage, true);
                 }
             }
         });
