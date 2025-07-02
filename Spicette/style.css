@@ -112,6 +112,8 @@ header {
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
     white-space: nowrap; /* Prevent text wrapping */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 90%; /* Menambahkan max-width agar tidak melewati lebar container */
+    box-sizing: border-box; /* Memastikan padding dan border termasuk dalam lebar */
 }
 
 .custom-alert.show {
@@ -126,6 +128,8 @@ header {
 
 .custom-alert.error {
     background-color: #dc3545; /* Red for error */
+    white-space: normal; /* Memungkinkan teks untuk wrap */
+    word-break: break-word; /* Memastikan kata panjang akan dipotong jika perlu */
 }
 
 
@@ -137,7 +141,6 @@ header {
     padding-top: 15px;
 }
 .overlay-header { display: flex; align-items: center; padding: 0 15px; margin-bottom: 15px; }
-.overlay-header .search-container { margin: 0; }
 .overlay-header button { 
     background: none; border: none; font-size: 16px; font-weight: bold; color: #111; cursor: pointer; 
     margin-left: 10px; padding: 8px; 
@@ -1452,4 +1455,80 @@ body.no-scroll {
 .pin-grid {
     padding-left: 10px; /* Padding kiri 0px */
     padding-right: 10px; /* Padding kanan 0px */
+}
+
+/* NEW: General info message styling */
+.info-message {
+    text-align: center;
+    color: #767676;
+    margin-top: 50px; /* Default margin for general info messages */
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 10px;
+}
+
+.info-message.error-message {
+    color: #e60023; /* Red color for error messages */
+}
+
+/* NEW: Specific styling for "no related pins" message */
+.no-related-pins-message {
+    text-align: center;
+    color: #767676;
+    margin-top: 20px; /* Specific margin for related pins message */
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 5px;
+    /* Menambahkan properti untuk memastikan pesan tidak terpotong di layout kolom */
+    width: 100%; /* Memastikan elemen mengambil lebar penuh */
+    display: block; /* Memastikan elemen berperilaku seperti blok */
+    column-span: all; /* Memastikan elemen membentang di semua kolom */
+    -webkit-column-span: all; /* Untuk kompatibilitas Webkit */
+}
+
+/* Skeleton Loader Styles */
+.pin-grid-skeleton {
+    column-count: 5;
+    column-gap: 15px;
+    padding: 0 20px;
+    display: none; /* Hidden by default */
+}
+
+.skeleton-pin {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    background-color: #e0e0e0; /* Light grey background */
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 5; /* Mimic pin aspect ratio */
+}
+
+/* Shimmer effect for skeleton loader */
+.skeleton-pin::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Responsive adjustments for skeleton */
+@media (max-width: 768px) {
+    .pin-grid-skeleton {
+        column-count: 2;
+        column-gap: 10px;
+        padding: 0 10px;
+    }
 }
