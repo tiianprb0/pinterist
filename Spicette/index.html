@@ -99,7 +99,7 @@
         </div>
         <div class="notification-page-container">
             <div class="notification-list" id="notificationListContainer">
-                <p style="text-align: center; color: #767676;">Tidak ada notifikasi.</p>
+                <p class="info-message">Tidak ada notifikasi.</p>
             </div>
         </div>
     </div>
@@ -164,6 +164,15 @@
                 </div>
         </section>
         <div class="pin-grid" id="pinGrid"></div>
+        <!-- Skeleton Loader for initial pin loading -->
+        <div id="skeletonLoader" class="pin-grid-skeleton">
+            <div class="skeleton-pin"></div>
+            <div class="skeleton-pin"></div>
+            <div class="skeleton-pin"></div>
+            <div class="skeleton-pin"></div>
+            <div class="skeleton-pin"></div>
+            <div class="skeleton-pin"></div>
+        </div>
         <div id="loading-indicator">Memuat lebih banyak pin...</div>
     </main>
 
@@ -487,7 +496,8 @@
                             pinDetailRelatedPins.appendChild(pinElement);
                         });
                     } else {
-                        pinDetailRelatedPins.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 20px;">Tidak ada pin terkait lainnya.</p>';
+                        // Menggunakan kelas CSS baru
+                        pinDetailRelatedPins.innerHTML = '<p class="no-related-pins-message">Tidak ada pin terkait lainnya.</p>';
                         pinDetailRelatedPins.style.display = 'block';
                     }
 
@@ -591,7 +601,7 @@
             const notificationListContainer = document.getElementById('notificationListContainer');
 
             async function openNotificationPage() {
-                notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Memuat notifikasi...</p>';
+                notificationListContainer.innerHTML = '<p class="info-message">Memuat notifikasi...</p>';
                 const response = await makeApiRequest('notifications.php?action=fetch_all');
                 
                 if (response.success && response.notifications.length > 0) {
@@ -617,7 +627,7 @@
                     });
                     markAllNotificationsAsRead();
                 } else {
-                    notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Tidak ada notifikasi baru.</p>';
+                    notificationListContainer.innerHTML = '<p class="info-message">Tidak ada notifikasi baru.</p>';
                 }
 
                 notificationOverlay.style.display = 'flex';
@@ -635,6 +645,7 @@
             const pinGrid = document.getElementById('pinGrid');
             const loadingIndicator = document.getElementById('loading-indicator');
             const desktopCategoriesSection = document.getElementById('desktopCategoriesSection');
+            const skeletonLoader = document.getElementById('skeletonLoader'); // Get skeleton loader element
 
             let pinsPerPage = 20; 
             let loadedPinsCount = 0; 
@@ -772,7 +783,15 @@
             }
 
             async function loadPins(count, append = true) {
-                loadingIndicator.style.display = 'block';
+                // Show skeleton loader only for initial load or tab switch
+                if (!append) {
+                    pinGrid.style.display = 'none';
+                    skeletonLoader.style.display = 'column'; // Show skeleton
+                    loadingIndicator.style.display = 'none'; // Hide loading indicator during skeleton display
+                } else {
+                    loadingIndicator.style.display = 'block'; // Show loading indicator for appending
+                }
+
                 let endpoint = '';
                 let params = '';
                 let pinsToProcess = [];
@@ -784,14 +803,17 @@
                     endpoint = 'pins.php?action=fetch_all';
                 } else if (currentView === 'saved') {
                     if (!currentUser) {
-                        pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Harap login untuk melihat pin yang Anda simpan.</p>';
-                        loadingIndicator.style.display = 'none';
+                        // Langsung alihkan ke login.html jika belum login
+                        window.location.href = 'login.html';
                         return;
                     }
                     endpoint = `pins.php?action=fetch_saved&username=${currentUser.username}`;
                 }
 
                 const response = await makeApiRequest(`${endpoint}${params}`);
+                
+                // Hide skeleton and loading indicator after data is fetched
+                skeletonLoader.style.display = 'none';
                 loadingIndicator.style.display = 'none';
 
                 if (response.success) {
@@ -828,16 +850,16 @@
 
                     if (pinsToProcess.length === 0) {
                         if (currentSearchQuery) {
-                            pinGrid.innerHTML = `<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin ditemukan untuk "${currentSearchQuery}".</p>`;
+                            pinGrid.innerHTML = `<p class="info-message">Tidak ada pin ditemukan untuk "${currentSearchQuery}".</p>`;
                         } else if (currentView === 'home') {
-                            pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin untuk ditampilkan.</p>';
+                            pinGrid.innerHTML = '<p class="info-message">Tidak ada pin untuk ditampilkan.</p>';
                         } else if (currentView === 'saved') {
-                            pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Anda belum menyimpan pin apa pun.</p>';
+                            pinGrid.innerHTML = '<p class="info-message">Anda belum menyimpan pin apa pun.</p>';
                         }
                     }
                 } else {
                     showMessage('Gagal memuat pin: ' + response.message, 'error');
-                    pinGrid.innerHTML = '<p style="text-align: center; color: #e60023; margin-top: 50px;">Error memuat pin. Silakan coba lagi nanti.</p>';
+                    pinGrid.innerHTML = '<p class="info-message error-message">Error memuat pin. Silakan coba lagi nanti.</p>';
                 }
             }
 
@@ -1117,13 +1139,13 @@
                     } else {
                         console.error('Gagal memuat kategori:', response.message);
                         categoryContainers.forEach(container => {
-                            if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Gagal memuat kategori.</p>';
+                            if (container) container.innerHTML = '<p class="info-message">Gagal memuat kategori.</p>';
                         });
                     }
                 } catch (error) {
                     console.error('Error mengambil kategori:', error);
                     categoryContainers.forEach(container => {
-                        if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Kesalahan jaringan saat memuat kategori.</p>';
+                        if (container) container.innerHTML = '<p class="info-message">Kesalahan jaringan saat memuat kategori.</p>';
                     });
                 }
             }
