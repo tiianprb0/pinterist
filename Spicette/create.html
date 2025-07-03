@@ -6,7 +6,9 @@
     <title>Buat Pin Baru - Spicette</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Custom styles for the body and main container */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
@@ -19,6 +21,7 @@
             align-items: center;
         }
 
+        /* Main container styling for responsiveness */
         main {
             max-width: 800px;
             margin: 40px auto;
@@ -32,13 +35,17 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 95%; /* Ensure it takes full width on small screens */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
 
+        /* Back button container styling */
         .back-button-container {
             margin-bottom: 20px;
             align-self: flex-start;
         }
 
+        /* Back button styling */
         .back-button {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -65,6 +72,7 @@
             color: #111;
         }
 
+        /* Create pin form styling */
         .create-pin-form {
             width: 100%;
             display: flex;
@@ -76,6 +84,7 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
 
         .create-pin-form h2 {
@@ -87,6 +96,7 @@
             text-align: left;
         }
 
+        /* Form group styling */
         .form-group {
             margin-bottom: 15px;
             text-align: left;
@@ -101,9 +111,9 @@
             font-weight: 600;
         }
 
+        /* Input, textarea, select styling */
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             padding: 12px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             background: rgba(255, 255, 255, 0.1);
@@ -118,22 +128,8 @@
             touch-action: manipulation;
         }
 
-        .form-group select:not([multiple]) {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 24 24" fill="%23333"><path d="M7 10l5 5 5-5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 30px;
-        }
-
-        .form-group select[multiple] {
-            min-height: 120px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             border-color: #e60023;
             background: rgba(255, 255, 255, 0.2);
             outline: none;
@@ -144,7 +140,8 @@
             resize: vertical;
         }
 
-        .create-pin-form button {
+        /* Submit button styling */
+        .create-pin-form button[type="submit"] {
             background: linear-gradient(135deg, #e60023, #ad081b);
             color: white;
             border: none;
@@ -158,19 +155,21 @@
             width: 100%;
             position: relative;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box; /* Ensure button fits within container */
         }
 
-        .create-pin-form button:hover {
+        .create-pin-form button[type="submit"]:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .create-pin-form button:disabled {
+        .create-pin-form button[type="submit"]:disabled {
             background: rgba(255, 255, 255, 0.2);
             cursor: not-allowed;
             transform: none;
         }
 
+        /* Loading spinner styling */
         .loading-spinner {
             display: none;
             border: 3px solid #fff;
@@ -185,7 +184,7 @@
             transform: translateY(-50%);
         }
 
-        .create-pin-form button:disabled .loading-spinner {
+        .create-pin-form button[type="submit"]:disabled .loading-spinner {
             display: inline-block;
         }
 
@@ -194,6 +193,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Radio group styling */
         .radio-group {
             display: flex;
             align-items: center;
@@ -252,6 +252,7 @@
             cursor: pointer;
         }
 
+        /* Inline form group styling */
         .form-group-inline {
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 10px;
@@ -271,6 +272,7 @@
             font-size: 14px;
         }
 
+        /* Recommend button styling */
         .recommend-button {
             background: linear-gradient(135deg, #ff6b6b, #e60023);
             color: white;
@@ -297,6 +299,7 @@
             transform: none;
         }
 
+        /* Title suggestions styling */
         .title-suggestions {
             display: flex;
             flex-wrap: wrap;
@@ -322,6 +325,7 @@
             transform: translateY(-2px);
         }
 
+        /* Person tag suggestions styling */
         .person-tag-suggestions {
             position: absolute;
             top: 100%;
@@ -359,6 +363,7 @@
             color: white;
         }
 
+        /* Custom alert styling */
         .custom-alert {
             position: fixed;
             bottom: 80px;
@@ -392,6 +397,85 @@
             background: rgba(220, 53, 69, 0.7);
         }
 
+        /* Access denied message styling */
+        .access-denied-message {
+            text-align: center;
+            font-size: 18px;
+            color: #e60023;
+            margin-top: 50px;
+            display: none;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Category checkbox styling */
+        .category-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .category-checkbox-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .category-checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .category-checkbox-item input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .category-checkbox-item input[type="checkbox"]:checked {
+            border-color: #e60023;
+            background: #e60023;
+        }
+
+        .category-checkbox-item input[type="checkbox"]:checked::after {
+            content: '\2713'; /* Checkmark character */
+            font-size: 14px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .category-checkbox-item label {
+            font-size: 14px;
+            color: #333;
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0; /* Override default label margin */
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             main {
                 margin: 20px 10px;
@@ -403,13 +487,12 @@
             }
 
             .form-group input,
-            .form-group textarea,
-            .form-group select {
+            .form-group textarea {
                 font-size: 16px;
                 padding: 10px;
             }
 
-            .create-pin-form button,
+            .create-pin-form button[type="submit"],
             .recommend-button {
                 font-size: 14px;
                 padding: 10px;
@@ -431,8 +514,7 @@
             }
 
             .form-group input,
-            .form-group textarea,
-            .form-group select {
+            .form-group textarea {
                 font-size: 16px;
             }
 
@@ -450,20 +532,6 @@
                 font-size: 13px;
                 padding: 6px 12px;
             }
-        }
-
-        .access-denied-message {
-            text-align: center;
-            font-size: 18px;
-            color: #e60023;
-            margin-top: 50px;
-            display: none;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
         }
     </style>
 </head>
@@ -509,15 +577,17 @@
             <div id="imageDescriptionsContainer" class="form-group"></div>
             <div class="form-group">
                 <label for="category">Pilih Kategori (bisa lebih dari satu):</label>
-                <select id="category" name="categories[]" multiple required>
-                </select>
+                <div id="categoryCheckboxes" class="category-checkbox-group">
+                    <!-- Categories will be loaded here by JavaScript -->
+                </div>
             </div>
             <div class="form-group">
                 <label for="personTags">Orang dalam Pin (pisahkan dengan koma, opsional):</label>
                 <textarea id="personTags" name="personTags" placeholder="Contoh: John Doe, Jane Smith"></textarea>
                 <ul id="personTagSuggestions" class="person-tag-suggestions"></ul>
             </div>
-            <button type="submit" id="uploadButton">Unggah Pin <span class="loading-spinner"></span></button>
+            <!-- Added margin-top to separate from personTagSuggestions -->
+            <button type="submit" id="uploadButton" class="mt-8">Unggah Pin <span class="loading-spinner"></span></button>
         </form>
         <div id="accessDenied" class="access-denied-message">
             Anda tidak memiliki izin untuk mengunggah pin. Harap hubungi administrator.
@@ -527,12 +597,20 @@
     <script>
         const API_BASE_URL = '/Spicette/api/';
 
+        /**
+         * Makes an API request to the specified endpoint.
+         * @param {string} endpoint - The API endpoint.
+         * @param {string} method - The HTTP method (GET, POST).
+         * @param {object} data - The data to send with the request (for POST).
+         * @returns {Promise<object>} - The JSON response from the API.
+         */
         async function makeApiRequest(endpoint, method = 'GET', data = null) {
             try {
                 const options = { method };
                 if (data !== null && typeof data !== 'undefined') {
-                    if (method === 'POST' && endpoint === 'pins.php') {
-                    } else {
+                    // For pins.php POST, FormData is used, so no Content-Type header is needed.
+                    // For other POST requests, assume JSON.
+                    if (method === 'POST' && endpoint !== 'pins.php') {
                         options.headers = { 'Content-Type': 'application/json' };
                         options.body = JSON.stringify(data);
                     }
@@ -563,10 +641,18 @@
             }
         }
 
+        /**
+         * Fetches title suggestions from a third-party AI API.
+         * @param {string[]} categories - Selected categories for the pin.
+         * @param {string} photoDescription - Description of the photo.
+         * @param {string[]} personTags - List of people tagged in the pin.
+         * @returns {Promise<string[]>} - An array of title suggestions.
+         */
         async function getTitleSuggestions(categories, photoDescription, personTags) {
-            const apiKey = 'sk-7ee3372f5d844af297e90551daeab578';
+            // NOTE: Replace 'YOUR_DEEPSEEK_API_KEY' with your actual DeepSeek API key.
+            const apiKey = 'sk-7ee3372f5d844af297e90551daeab578'; // This is a placeholder, use your actual key
             const endpoint = 'https://api.deepseek.com/v1/chat/completions';
-            const prompt = `You are a creative assistant tasked with generating sensual and provocative title suggestions (maximum 6 words) for a social media pin, intended for a 21+ audience for educational purposes. The titles may include bold or vulgar terms like "bitch" or "boobs" but must stay within community guidelines, avoiding explicit or overly offensive content. The pin belongs to the categories: ${categories.join(', ')}. The photo description is: "${photoDescription}". People in the pin: ${personTags.length > 0 ? personTags.join(', ') : 'None'}. Generate 3 title suggestions without using quotation marks.`;
+            const prompt = `You are a creative assistant tasked with generating sensual and provocative title suggestions (maximum 6 words) for a social media pin, intended for a 21+ audience. The titles may include bold or vulgar terms like "bitch" or "boobs" or "seduces" or something in hot way, The pin belongs to the categories: ${categories.join(', ')}. The photo description is: "${photoDescription}". People in the pin: ${personTags.length > 0 ? personTags.join(', ') : 'None'}. Generate 3 title suggestions without using quotation marks.`;
             
             try {
                 const response = await fetch(endpoint, {
@@ -602,7 +688,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const createPinForm = document.getElementById('createPinForm');
             const accessDeniedMessage = document.getElementById('accessDenied');
-            const categorySelect = document.getElementById('category');
+            const categoryCheckboxesContainer = document.getElementById('categoryCheckboxes'); // New element for custom checkboxes
             const imagesInput = document.getElementById('images');
             const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
             const displayStackedRadio = document.getElementById('displayStacked');
@@ -618,6 +704,11 @@
             let allUniquePersonTags = [];
             let selectedSuggestionIndex = -1;
 
+            /**
+             * Displays a custom alert message.
+             * @param {string} msg - The message to display.
+             * @param {string} type - The type of message (info, success, error).
+             */
             function showMessage(msg, type = 'info') {
                 createMessageDiv.textContent = msg;
                 createMessageDiv.className = `custom-alert ${type} show`;
@@ -626,6 +717,9 @@
                 }, 3000);
             }
 
+            /**
+             * Loads all unique person tags from existing pins.
+             */
             async function loadAllUniquePersonTags() {
                 const response = await makeApiRequest('pins.php?action=fetch_all');
                 if (response.success && response.pins) {
@@ -639,23 +733,23 @@
                 }
             }
 
+            /**
+             * Loads categories and populates the custom checkbox group.
+             */
             async function loadCategories() {
                 try {
                     const response = await makeApiRequest('categories.php?action=fetch_all');
                     
                     if (response.success && response.categories) {
-                        categorySelect.innerHTML = '';
-                        const defaultOption = document.createElement('option');
-                        defaultOption.value = '';
-                        defaultOption.textContent = 'Pilih Kategori (opsional)';
-                        defaultOption.disabled = true;
-                        categorySelect.appendChild(defaultOption);
-
+                        categoryCheckboxesContainer.innerHTML = ''; // Clear existing content
                         response.categories.forEach(cat => {
-                            const option = document.createElement('option');
-                            option.value = cat.name;
-                            option.textContent = cat.name;
-                            categorySelect.appendChild(option);
+                            const checkboxItem = document.createElement('div');
+                            checkboxItem.className = 'category-checkbox-item';
+                            checkboxItem.innerHTML = `
+                                <input type="checkbox" id="category_${cat.name.replace(/\s+/g, '_')}" name="categories" value="${cat.name}">
+                                <label for="category_${cat.name.replace(/\s+/g, '_')}">${cat.name}</label>
+                            `;
+                            categoryCheckboxesContainer.appendChild(checkboxItem);
                         });
                     } else {
                         console.error('Gagal memuat kategori:', response.message);
@@ -667,6 +761,9 @@
                 }
             }
 
+            /**
+             * Toggles the visibility of individual image description fields based on display type and number of images.
+             */
             function toggleDescriptions() {
                 imageDescriptionsContainer.innerHTML = '';
                 const files = imagesInput.files;
@@ -698,6 +795,7 @@
                     imageDescriptionsContainer.style.display = 'none';
                 }
 
+                // Disable slider option if only one image is selected
                 if (files.length === 1) {
                     displayStackedRadio.checked = true;
                     displaySliderRadio.disabled = true;
@@ -706,6 +804,9 @@
                 }
             }
 
+            /**
+             * Shows person tag suggestions based on user input.
+             */
             function showPersonTagSuggestions() {
                 const inputValue = personTagsInput.value;
                 const lastCommaIndex = inputValue.lastIndexOf(',');
@@ -737,29 +838,27 @@
                 }
             }
 
+            /**
+             * Adds a selected person tag suggestion to the input field.
+             * @param {string} tag - The tag to add.
+             */
             function addPersonTagFromSuggestion(tag) {
-                let inputValue = personTagsInput.value;
-                const lastCommaIndex = inputValue.lastIndexOf(',');
-                
-                if (lastCommaIndex !== -1) {
-                    const currentTags = inputValue.substring(0, lastCommaIndex + 1).split(',').map(t => t.trim()).filter(t => t !== '');
-                    if (!currentTags.includes(tag)) {
-                        inputValue = inputValue.substring(0, lastCommaIndex + 1) + ' ' + tag + ', ';
-                    } else {
-                        inputValue = inputValue.substring(0, lastCommaIndex + 1) + ' ';
-                    }
-                } else {
-                    if (!inputValue.split(',').map(t => t.trim()).filter(t => t !== '').includes(tag)) {
-                        inputValue = tag + ', ';
-                    } else {
-                        inputValue = '';
-                    }
+                let inputValue = personTagsInput.value.trim();
+                let currentTags = inputValue.split(',').map(t => t.trim()).filter(t => t !== '');
+
+                // Check if the tag is already in the list to avoid duplicates
+                if (!currentTags.includes(tag)) {
+                    currentTags.push(tag);
                 }
-                personTagsInput.value = inputValue;
+                
+                // Join them back, ensuring a trailing comma for easy continued typing
+                personTagsInput.value = currentTags.join(', ') + (currentTags.length > 0 ? ', ' : '');
+                
                 personTagsInput.focus();
                 personTagSuggestionsContainer.style.display = 'none';
             }
 
+            // Event listeners for person tags input
             personTagsInput.addEventListener('input', showPersonTagSuggestions);
 
             personTagsInput.addEventListener('keydown', (e) => {
@@ -782,6 +881,9 @@
                 }
             });
 
+            /**
+             * Updates the visual selection of person tag suggestions.
+             */
             function updateSelectedSuggestion() {
                 const items = personTagSuggestionsContainer.querySelectorAll('li');
                 items.forEach((item, index) => {
@@ -794,6 +896,7 @@
                 });
             }
 
+            // Hide person tag suggestions when input loses focus
             personTagsInput.addEventListener('blur', () => {
                 setTimeout(() => {
                     if (!personTagSuggestionsContainer.contains(document.activeElement)) {
@@ -802,12 +905,15 @@
                 }, 100);
             });
 
+            // Prevent blur event when clicking on a suggestion
             personTagSuggestionsContainer.addEventListener('mousedown', (e) => {
                 e.preventDefault();
             });
 
+            // Event listener for recommend title button
             recommendTitleButton.addEventListener('click', async () => {
-                const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+                // Get selected categories from custom checkboxes
+                const selectedCategories = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked')).map(checkbox => checkbox.value);
                 const photoDescription = photoDescriptionInput.value.trim();
                 const personTagsValue = personTagsInput.value.trim();
                 const personTagsArray = personTagsValue ? personTagsValue.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : [];
@@ -842,6 +948,7 @@
                 }
             });
 
+            // Initial loads and event listeners
             loadCategories();
             toggleDescriptions();
             loadAllUniquePersonTags();
@@ -850,6 +957,7 @@
             displaySliderRadio.addEventListener('change', toggleDescriptions);
             imagesInput.addEventListener('change', toggleDescriptions);
             
+            // Event listener for form submission
             createPinForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 uploadButton.disabled = true;
@@ -861,7 +969,8 @@
                 formData.append('description', document.getElementById('description').value);
                 formData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
 
-                const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+                // Get selected categories from custom checkboxes
+                const selectedCategories = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked')).map(checkbox => checkbox.value);
                 if (selectedCategories.length === 0) {
                     showMessage('Harap pilih setidaknya satu kategori.', 'error');
                     uploadButton.disabled = false;
@@ -908,8 +1017,9 @@
                         document.getElementById('imageDescriptionsContainer').innerHTML = '';
                         document.getElementById('displaySlider').disabled = false;
                         document.getElementById('displayStacked').checked = true;
-                        Array.from(categorySelect.options).forEach(option => {
-                            option.selected = false;
+                        // Uncheck all custom category checkboxes
+                        document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked').forEach(checkbox => {
+                            checkbox.checked = false;
                         });
                         personTagsInput.value = '';
                         titleSuggestionsDiv.innerHTML = '';
@@ -928,6 +1038,7 @@
                 }
             });
 
+            // Check user session for upload permissions
             const userSessionResponse = await makeApiRequest('auth.php?action=check_session', 'GET');
             if (!userSessionResponse.success || !userSessionResponse.user || !userSessionResponse.user.canUpload) {
                 createPinForm.style.display = 'none';
