@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spicette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Gaya CSS inline telah dipindahkan ke style.css */
+        /* NEW: Gaya untuk tombol tautan notifikasi */
+        .notification-link-button {
+            background-color: #f0f2f5; /* Latar belakang abu-abu terang */
+            color: #1a1a1a; /* Teks gelap */
+            border: 1px solid #ebebeb; /* Border tipis */
+            padding: 8px 14px;
+            border-radius: 20px; /* Lebih rounded */
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600; /* Lebih tebal */
+            margin-top: 10px;
+            display: inline-flex; /* Menggunakan flex untuk ikon dan teks */
+            align-items: center;
+            gap: 8px; /* Jarak antara ikon dan teks */
+            transition: all 0.2s ease; /* Transisi untuk hover */
+            text-decoration: none; /* Menghilangkan garis bawah default untuk tautan */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Bayangan sangat tipis */
+        }
+        .notification-link-button:hover {
+            background-color: #e0e0e0; /* Sedikit lebih gelap saat hover */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Bayangan sedikit lebih terlihat */
+            transform: translateY(-1px); /* Efek angkat sedikit */
+        }
+        .notification-link-button i {
+            color: #6a6a6a; /* Warna ikon sekunder */
+            transition: color 0.2s ease;
+        }
+        .notification-link-button:hover i {
+            color: #1a1a1a; /* Warna ikon lebih gelap saat hover */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pinDetailOverlay">
+        <div class="pin-detail-content">
+            <div class="pin-detail-back-container">
+                <button class="pin-detail-back-button" onclick="window.closePinDetail()">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </button>
+            </div>
+
+            <div class="pin-header-info">
+                <h2 id="pinDetailTitle"></h2>
+                <div class="uploaded-by-and-share">
+                    <p class="uploaded-by-text">oleh <strong id="pinDetailUploadedBy"></strong></p>
+                    <button id="pinDetailShareButton" class="secondary">
+                        <i class="fas fa-share-alt"></i> Bagikan
+                    </button>
+                </div>
+            </div>
+
+            <div class="pin-detail-img-main-container">
+                <button id="pinDetailImageSaveButton" class="pin-save-button image-overlay-button">Simpan</button>
+            </div>
+
+            <p id="pinDetailDescription" class="pin-detail-description"></p>
+            
+            <div id="pinDetailPersonTagsSection" class="pin-person-tags-section" style="display: none;">
+                <h3 class="person-in-pin-title">Orang dalam pin</h3>
+                <div id="pinDetailPersonTagsList" class="person-tags-list"></div>
+                <div id="pinDetailRelatedPins" class="pin-grid"></div>
+            </div>
+
+            <div class="dashed-line"></div>
+            <div id="pinDetailCategories" class="pin-categories"></div>
+
+            <div class="pin-detail-actions" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <div id="fullImageOverlay" class="full-image-overlay">
+        <button class="close-full-image-button" onclick="window.closeFullImageOverlay()">&times;</button>
+        <img id="fullImageDisplay" src="" alt="Gambar Ukuran Penuh">
+        <button id="fullImageDownloadButton" class="download-button-on-image">
+            <i class="fas fa-download"></i> Unduh
+        </button>
+    </div>
+
+    <div id="notificationOverlay">
+        <div class="overlay-header">
+            <h2>Notifikasi</h2>
+            <button class="icon-button" aria-label="Tutup Notifikasi" id="closeNotificationButton">
+                <i class="fas fa-times"></i> </button>
+        </div>
+        <div class="notification-page-container">
+            <div class="notification-list" id="notificationListContainer">
+                <p style="text-align: center; color: #767676;">Tidak ada notifikasi.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="searchOverlay">
+        <div class="overlay-header search-overlay-header">
+            <div class="search-container">
+                <div class="search-icon-wrapper">
+                    <i class="fas fa-search"></i> <input type="search" placeholder="Cari ide" id="mobileSearchInputOverlay">
+                </div>
+            </div>
+            <button id="closeSearchOverlay">Batal</button>
+        </div>
+        <div class="overlay-content search-overlay-content">
+            <div id="mobileSearchHistory"><h3>Riwayat Pencarian</h3><ul id="mobileSearchHistoryList" class="search-history-list"></ul></div>
+            <ul id="searchSuggestions"></ul>
+            <h3 id="categoryExploreTitle">Jelajahi Kategori</h3>
+            <div class="category-grid" id="categoryGridMobile"></div>
+        </div>
+    </div>
+
+    <!-- mobileProfileDropdown dihapus -->
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'"></div>
+        <div class="header-nav-links">
+            <button class="nav-button active" data-nav="home">Beranda</button>
+            <button class="nav-button" data-nav="create" id="desktopCreateButton">Buat</button>
+            <button class="nav-button saved" data-nav="saved">Disimpan</button>
+        </div>
+
+        <div class="search-container">
+            <div class="search-icon-wrapper">
+                <i class="fas fa-search"></i> <input type="search" placeholder="Cari" id="desktopSearchInput">
+            </div>
+            <div id="desktopSearchHistory"><h3>Riwayat Pencarian</h3><ul id="desktopSearchHistoryList" class="search-history-list"></ul></div>
+            <ul id="desktopSearchSuggestions"></ul>
+        </div>
+        <div class="header-icons">
+            <button class="icon-button" aria-label="Notifikasi" id="notificationButton">
+                <i class="fas fa-bell"></i> <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+            <button class="icon-button" aria-label="Profil" id="profileButton"><div class="profile-icon" id="profileIconLetter">G</div></button>
+            <button class="icon-button" aria-label="Akun Lainnya" id="moreAccountsButton">
+                <i class="fas fa-caret-down"></i> </button>
+            <ul class="dropdown-menu" id="moreAccountsDropdown">
+                <li class="header-item" id="dropdownUsernameDisplay">Selamat datang, Tamu!</li>
+                <li id="dropdownMyProfile" style="display: none;">Profil Saya</li>
+                <li id="dropdownAdminPanel" style="display: none;">Panel Admin</li>
+                <li id="dropdownLogout" style="display: none;">Keluar</li>
+            </ul>
+        </div>
+        <button class="icon-button mobile-notification-icon" aria-label="Notifikasi" id="mobileNotificationButton">
+               <i class="fas fa-bell"></i> <span class="notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
+        </button>
+    </header>
+    
+    <main>
+        <section class="desktop-categories" id="desktopCategoriesSection">
+            <h3>Jelajahi ide</h3>
+            <div class="category-grid" id="categoryGridDesktop">
+                </div>
+        </section>
+        <div class="pin-grid" id="pinGrid"></div>
+        <div id="loading-indicator">Memuat lebih banyak pin...</div>
+    </main>
+
+    <div class="mobile-bottom-nav-container">
+        <nav class="mobile-bottom-nav">
+            <div class="mobile-nav-item active" data-action="home">
+                <i class="fas fa-home"></i> </div>
+            <div class="mobile-nav-item" data-action="search">
+                <i class="fas fa-search"></i> </div>
+            <div class="mobile-nav-item" data-action="create-pin">
+                   <i class="fas fa-plus"></i> </div>
+            <div class="mobile-nav-item" data-action="profile">
+                <div class="profile-icon" style="width:28px; height:28px;">G</div>
+            </div>
+        </nav>
+    </div>
+
+    <div id="customAlert" class="custom-alert"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentUser = null;
+            let currentSearchQuery = ''; 
+            let allPinsData = [];
+            let savedPinsData = [];
+            let currentView = 'home'; // 'home' or 'saved'
+
+            const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
+            let searchSuggestionsData = [];
+            let selectedSuggestionIndex = -1;
+
+            const SEARCH_HISTORY_LS_KEY = 'spicette_search_history';
+            const MAX_SEARCH_HISTORY = 5;
+            let searchHistory = [];
+
+            // Mengubah API_BASE_URL menjadi path absolut dari root domain
+            const API_BASE_URL = '/Spicette/api/'; 
+
+            async function makeApiRequest(endpoint, method = 'GET', data = null) {
+                try {
+                    const options = { method };
+                    if (data !== null && typeof data !== 'undefined') {
+                        if (method === 'POST' && endpoint === 'pins.php') {
+                        } else {
+                            options.headers = { 'Content-Type': 'application/json' };
+                            options.body = JSON.stringify(data);
+                        }
+                    }
+                    
+                    const response = await fetch(API_BASE_URL + endpoint, options);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
+                    }
+                    
+                    const textResponse = await response.text();
+                    if (!textResponse) {
+                        return { success: true, message: 'Tidak ada konten' };
+                    }
+
+                    try {
+                        const jsonResponse = JSON.parse(textResponse);
+                        return jsonResponse;
+                    } catch (e) {
+                        console.error('Gagal mengurai respons JSON:', textResponse);
+                        throw new Error(`Respons JSON tidak valid: ${textResponse}`);
+                    }
+
+                } catch (error) {
+                    console.error('Permintaan API Gagal:', error);
+                    return { success: false, message: 'Kesalahan jaringan atau server.' };
+                }
+            }
+
+            const customAlert = document.getElementById('customAlert');
+            let alertTimeout;
+
+            function showMessage(msg, type = 'info') {
+                clearTimeout(alertTimeout);
+
+                customAlert.textContent = msg;
+                customAlert.className = 'custom-alert';
+                if (type === 'error') {
+                    customAlert.classList.add('error');
+                } else if (type === 'success') {
+                    customAlert.classList.add('success');
+                }
+                customAlert.classList.add('show');
+
+                alertTimeout = setTimeout(() => {
+                    customAlert.classList.remove('show');
+                }, 3000);
+            }
+            
+            const pinDetailOverlay = document.getElementById('pinDetailOverlay');
+            const pinDetailImageMainContainer = document.querySelector('.pin-detail-img-main-container');
+            const pinDetailTitle = document.getElementById('pinDetailTitle');
+            const pinDetailUploadedBy = document.getElementById('pinDetailUploadedBy');
+            const pinDetailDescription = document.getElementById('pinDetailDescription'); 
+            const pinDetailCategories = document.getElementById('pinDetailCategories');
+            const pinDetailImageSaveButton = document.getElementById('pinDetailImageSaveButton');
+            const pinDetailShareButton = document.getElementById('pinDetailShareButton');
+            const pinDetailPersonTagsSection = document.getElementById('pinDetailPersonTagsSection');
+            const pinDetailPersonTagsList = document.getElementById('pinDetailPersonTagsList');
+            const pinDetailRelatedPins = document.getElementById('pinDetailRelatedPins');
+
+            // Fungsi helper untuk memperbaiki path gambar agar sesuai dengan struktur folder
+            function getCorrectedImagePath(originalPath) {
+                if (originalPath.startsWith('./uploads/pins/')) {
+                    return originalPath.substring(2);
+                }
+                if (originalPath.startsWith('uploads/pins/')) {
+                    return originalPath;
+                }
+                return originalPath; 
+            }
+
+            function updatePinDetailImageSaveButton(pinData) {
+                if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                    pinDetailImageSaveButton.textContent = 'Disimpan';
+                    pinDetailImageSaveButton.style.backgroundColor = '#767676';
+                    pinDetailImageSaveButton.onclick = async (e) => { 
+                        e.stopPropagation(); 
+                        const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
+                        if (response.success) {
+                            showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
+                            currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
+                            updatePinDetailImageSaveButton(pinData);
+                            const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
+                            if (gridSaveButton) {
+                                gridSaveButton.textContent = 'Simpan';
+                                gridSaveButton.style.backgroundColor = '#e60023';
+                            }
+                            if (currentView === 'saved') { // Perbaikan: Gunakan currentView
+                                loadedPinsCount = 0;
+                                await loadPins(pinsPerPage, false);
+                            }
+                        } else {
+                            showMessage('Gagal menghapus pin dari daftar simpan: ' + response.message, 'error');
+                        }
+                    };
+                } else {
+                    pinDetailImageSaveButton.textContent = 'Simpan';
+                    pinDetailImageSaveButton.style.backgroundColor = '#e60023';
+                    pinDetailImageSaveButton.onclick = async (e) => { 
+                        e.stopPropagation(); 
+                        if (!currentUser) {
+                            showMessage('Harap login untuk menyimpan pin.', 'info');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
+                        if (response.success) {
+                            showMessage('Pin berhasil disimpan!', 'success');
+                            if (currentUser.savedPins) {
+                                currentUser.savedPins.push(pinData.id);
+                            } else {
+                                currentUser.savedPins = [pinData.id];
+                            }
+                            updatePinDetailImageSaveButton(pinData);
+                            const gridSaveButton = document.querySelector(`.pin[data-id="${pinData.id}"] .pin-save-button`);
+                            if (gridSaveButton) {
+                                gridSaveButton.textContent = 'Disimpan';
+                                gridSaveButton.style.backgroundColor = '#767676';
+                            }
+                            if (currentView === 'saved') { // Perbaikan: Gunakan currentView
+                                loadedPinsCount = 0;
+                                await loadPins(pinsPerPage, false);
+                            }
+                        } else {
+                            showMessage('Gagal menyimpan pin: ' + response.message, 'error');
+                        }
+                    };
+                }
+            }
+
+            window.closePinDetail = function() {
+                pinDetailOverlay.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+
+                const currentUrl = new URL(window.location.href);
+                if (currentUrl.searchParams.has('pin')) {
+                    currentUrl.searchParams.delete('pin');
+                    history.pushState(null, '', currentUrl.toString());
+                }
+            };
+
+
+            async function openPinDetail(pinData) {
+                pinDetailTitle.textContent = pinData.title || 'Tanpa Judul';
+                pinDetailUploadedBy.textContent = `${pinData.uploadedBy || 'Anonim'}`; 
+
+                if (pinData.description) {
+                    pinDetailDescription.textContent = pinData.description;
+                    pinDetailDescription.style.display = 'block';
+                } else {
+                    pinDetailDescription.textContent = '';
+                    pinDetailDescription.style.display = 'none';
+                }
+                
+                pinDetailImageMainContainer.innerHTML = '';
+                pinDetailImageMainContainer.appendChild(pinDetailImageSaveButton);
+
+                if (pinData.images && pinData.images.length > 0) {
+                    if (pinData.display_type === 'slider' && pinData.images.length > 1) {
+                        const sliderWrapper = document.createElement('div');
+                        sliderWrapper.className = 'slider-wrapper';
+                        
+                        const swipeInner = document.createElement('div');
+                        swipeInner.className = 'swipe-inner';
+
+                        pinData.images.forEach((image, index) => {
+                            const slide = document.createElement('div');
+                            slide.className = 'slider-slide';
+                            const imgElement = document.createElement('img');
+                            imgElement.src = getCorrectedImagePath(image.url);
+                            imgElement.alt = `${pinData.title} - ${index + 1}`;
+                            imgElement.onerror = function() { 
+                                this.onerror=null; 
+                                this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
+                            };
+                            imgElement.onclick = (e) => {
+                                e.stopPropagation();
+                                window.openFullImageOverlay(imgElement.src);
+                            };
+                            slide.appendChild(imgElement);
+                            swipeInner.appendChild(slide);
+                        });
+                        sliderWrapper.appendChild(swipeInner);
+                        pinDetailImageMainContainer.appendChild(sliderWrapper);
+
+                    } else {
+                        pinData.images.forEach(image => {
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = 'stacked-image-item';
+                            const imgElement = document.createElement('img');
+                            imgElement.src = getCorrectedImagePath(image.url);
+                            imgElement.alt = pinData.title;
+                            imgElement.onerror = function() { 
+                                this.onerror=null; 
+                                this.src='https://placehold.co/500x700/cccccc/000000?text=Image+Load+Error';
+                            };
+                            imgElement.onclick = (e) => {
+                                e.stopPropagation();
+                                window.openFullImageOverlay(imgElement.src);
+                            };
+                            imgDiv.appendChild(imgElement);
+
+                            if (image.description) {
+                                const descP = document.createElement('p');
+                                descP.className = 'image-individual-description';
+                                descP.textContent = image.description;
+                                imgDiv.appendChild(descP);
+                            }
+                            pinDetailImageMainContainer.appendChild(imgDiv);
+                        });
+                    }
+                } else {
+                    const noImage = document.createElement('img');
+                    noImage.src = 'https://placehold.co/500x700/cccccc/000000?text=Tidak+Ada+Gambar';
+                    noImage.alt = 'Tidak Ada Gambar';
+                    noImage.onclick = (e) => {
+                        e.stopPropagation();
+                        window.openFullImageOverlay(noImage.src);
+                    };
+                    pinDetailImageMainContainer.appendChild(noImage);
+                }
+
+                updatePinDetailImageSaveButton(pinData);
+
+                // Person Tags Section
+                pinDetailPersonTagsList.innerHTML = '';
+                pinDetailRelatedPins.innerHTML = '';
+                if (pinData.personTags && pinData.personTags.length > 0) {
+                    pinDetailPersonTagsSection.style.display = 'block';
+                    const taggedPeople = pinData.personTags;
+                    let allRelatedPins = [];
+                    const maxPinsTotal = 15;
+                    // Calculate max pins per person, ensuring at least 1 if there are people
+                    const maxPinsPerPerson = taggedPeople.length > 0 ? Math.max(1, Math.floor(maxPinsTotal / taggedPeople.length)) : 0;
+
+                    for (const person of taggedPeople) {
+                        const personTagDiv = document.createElement('div');
+                        personTagDiv.className = 'person-tag-item';
+
+                        const personNameLink = document.createElement('a');
+                        personNameLink.href = `${window.location.origin}/Spicette/who.php?name=${encodeURIComponent(person.trim())}`;
+                        personNameLink.textContent = person.trim();
+                        personNameLink.className = 'person-name-link';
+                        personTagDiv.appendChild(personNameLink);
+
+                        const viewAllButton = document.createElement('a');
+                        viewAllButton.href = `${window.location.origin}/Spicette/who.php?name=${encodeURIComponent(person.trim())}`;
+                        viewAllButton.className = 'view-all-button';
+                        viewAllButton.innerHTML = `Lihat Semua <i class="fas fa-arrow-right"></i>`;
+                        personTagDiv.appendChild(viewAllButton);
+
+                        pinDetailPersonTagsList.appendChild(personTagDiv);
+
+                        const response = await makeApiRequest(`pins.php?action=getPinsByPersonTag&name=${encodeURIComponent(person.trim())}`);
+                        if (response.success && response.pins) {
+                            // Ambil sejumlah pin acak dari setiap orang
+                            const shuffledPersonPins = response.pins.sort(() => 0.5 - Math.random());
+                            const pinsForThisPerson = shuffledPersonPins.slice(0, maxPinsPerPerson);
+                            allRelatedPins.push(...pinsForThisPerson);
+                        }
+                    }
+
+                    // Pastikan keunikan dan batasi total pin
+                    const uniqueRelatedPins = Array.from(new Set(allRelatedPins.filter(p => p.id !== pinData.id).map(p => JSON.stringify(p))))
+                                                .map(s => JSON.parse(s));
+
+                    // Acak lagi dan batasi hingga maksimal 15 pin
+                    const finalShuffledRelatedPins = uniqueRelatedPins.sort(() => 0.5 - Math.random()).slice(0, maxPinsTotal);
+
+
+                    if (finalShuffledRelatedPins.length > 0) {
+                        finalShuffledRelatedPins.forEach(relatedPin => {
+                            const pinElement = createPinElement(relatedPin);
+                            pinDetailRelatedPins.appendChild(pinElement);
+                        });
+                    } else {
+                        pinDetailRelatedPins.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 20px;">Tidak ada pin terkait lainnya.</p>';
+                        pinDetailRelatedPins.style.display = 'block';
+                    }
+
+                } else {
+                    pinDetailPersonTagsSection.style.display = 'none';
+                }
+
+                // Mengelola kategori
+                pinDetailCategories.innerHTML = '';
+                if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
+                    pinData.categories.forEach(categoryName => {
+                        const span = document.createElement('span');
+                        span.classList.add('pin-category-tag');
+                        const categoryPermalink = categoryName.trim().toLowerCase().replace(/ /g, '-');
+                        span.innerHTML = `<a href="${window.location.origin}/Spicette/tag/${encodeURIComponent(categoryPermalink)}" style="color: inherit; text-decoration: none;">#${categoryName.trim()}</a>`;
+                        pinDetailCategories.appendChild(span);
+                    });
+                    pinDetailCategories.style.display = 'flex';
+                } else {
+                    pinDetailCategories.style.display = 'none';
+                }
+
+
+                if (navigator.share) {
+                    pinDetailShareButton.style.display = 'flex';
+                    pinDetailShareButton.onclick = async (e) => {
+                        e.stopPropagation();
+                        try {
+                            await navigator.share({
+                                title: pinData.title || 'Pin Spicette',
+                                text: pinData.description || pinData.title || 'Lihat pin ini!',
+                                url: window.location.href
+                            });
+                            showMessage('Pin berhasil dibagikan!', 'success');
+                        } catch (error) {
+                            console.error('Kesalahan berbagi:', error);
+                            showMessage('Gagal membagikan pin.', 'error');
+                        }
+                    };
+                } else {
+                    pinDetailShareButton.style.display = 'none';
+                }
+
+                pinDetailOverlay.style.display = 'flex';
+                document.body.classList.add('no-scroll');
+
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('pin', pinData.id);
+                history.pushState({ pinId: pinData.id }, '', newUrl.toString());
+            }
+
+            window.onpopstate = (event) => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const pinIdFromUrl = urlParams.get('pin');
+                if (pinIdFromUrl) {
+                    const pinToOpen = (allPinsData || []).find(pin => pin.id === pinIdFromUrl) || (savedPinsData || []).find(pin => pin.id === pinIdFromUrl);
+                    if (pinToOpen) {
+                        openPinDetail(pinToOpen);
+                    } else {
+                        window.closePinDetail();
+                    }
+                } else {
+                    window.closePinDetail();
+                }
+            };
+
+            const fullImageOverlay = document.getElementById('fullImageOverlay');
+            const fullImageDisplay = document.getElementById('fullImageDisplay');
+            const fullImageDownloadButton = document.getElementById('fullImageDownloadButton');
+
+            window.openFullImageOverlay = function(imageUrl) { 
+                if (fullImageDisplay) { 
+                    fullImageDisplay.src = imageUrl;
+                    fullImageDisplay.onerror = function() { 
+                        this.onerror=null; 
+                        this.src='https://placehold.co/1000x1200/cccccc/000000?text=Image+Load+Error';
+                    };
+                }
+                if (fullImageOverlay) { 
+                    fullImageOverlay.style.display = 'flex';
+                }
+                document.body.style.overflow = 'hidden';
+
+                if (fullImageDownloadButton) { 
+                    fullImageDownloadButton.onclick = (e) => {
+                        e.stopPropagation();
+                        downloadPin(imageUrl);
+                    };
+                }
+            };
+
+            window.closeFullImageOverlay = function() { 
+                if (fullImageOverlay) { 
+                    fullImageOverlay.style.display = 'none';
+                }
+                document.body.style.overflow = '';
+            };
+
+            const notificationOverlay = document.getElementById('notificationOverlay');
+            const closeNotificationButton = document.getElementById('closeNotificationButton');
+            const notificationListContainer = document.getElementById('notificationListContainer');
+
+            async function openNotificationPage() {
+                notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Memuat notifikasi...</p>';
+                const response = await makeApiRequest('notifications.php?action=fetch_all');
+                
+                if (response.success && response.notifications.length > 0) {
+                    notificationListContainer.innerHTML = '';
+                    response.notifications.forEach(notif => {
+                        const notifItem = document.createElement('div');
+                        notifItem.classList.add('notification-item');
+                        if (notif.read) {
+                            notifItem.classList.add('read');
+                        }
+                        
+                        let linkButtonHtml = '';
+                        if (notif.link && (notif.link.startsWith('http://') || notif.link.startsWith('https://'))) {
+                            linkButtonHtml = `<a href="${notif.link}" target="_blank" class="notification-link-button"><i class="fas fa-external-link-alt"></i> Lihat</a>`;
+                        }
+
+                        notifItem.innerHTML = `
+                            ${notif.text} 
+                            <span style="font-size:0.8em; color:#999; display:block; margin-top:5px;">(${notif.timestamp || 'Tanggal tidak diketahui'})</span>
+                            ${linkButtonHtml}
+                        `;
+                        notificationListContainer.appendChild(notifItem);
+                    });
+                    markAllNotificationsAsRead();
+                } else {
+                    notificationListContainer.innerHTML = '<p style="text-align: center; color: #767676;">Tidak ada notifikasi baru.</p>';
+                }
+
+                notificationOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeNotificationPage() {
+                notificationOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            closeNotificationButton.addEventListener('click', closeNotificationPage);
+
+            const mainElement = document.querySelector('main');
+            const pinGrid = document.getElementById('pinGrid');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const desktopCategoriesSection = document.getElementById('desktopCategoriesSection');
+
+            let pinsPerPage = 20; 
+            let loadedPinsCount = 0; 
+
+            function createPinElement(pinData) {
+                const pinDiv = document.createElement('div');
+                pinDiv.classList.add('pin');
+                pinDiv.dataset.id = pinData.id;
+
+                const firstImageUrl = getCorrectedImagePath(pinData.images && pinData.images.length > 0 ? pinData.images[0].url : 'https://placehold.co/250x350/cccccc/000000?text=No+Image');
+
+                const img = document.createElement('img');
+                img.src = firstImageUrl;
+                img.alt = 'Gambar Pin';
+                img.onerror = function() { 
+                    this.onerror=null; 
+                    this.src='https://placehold.co/250x350/cccccc/000000?text=Image+Error';
+                };
+
+                const overlayDiv = document.createElement('div');
+                overlayDiv.classList.add('pin-overlay');
+                
+                const overlayTop = document.createElement('div');
+                overlayTop.classList.add('pin-overlay-top');
+                
+                const saveButton = document.createElement('button');
+                saveButton.classList.add('pin-save-button');
+                
+                if (currentUser && currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                    saveButton.textContent = 'Disimpan';
+                    saveButton.style.backgroundColor = '#767676';
+                } else {
+                    saveButton.textContent = 'Simpan';
+                    saveButton.style.backgroundColor = '#e60023';
+                }
+                
+                saveButton.onclick = async (e) => { 
+                    e.stopPropagation(); 
+                    if (!currentUser) {
+                        showMessage('Harap login untuk menyimpan pin.', 'info');
+                        window.location.href = '/Spicette/login.html';
+                        return;
+                    }
+
+                    if (currentUser.savedPins && currentUser.savedPins.includes(pinData.id)) {
+                        const response = await makeApiRequest('pins.php?action=unsave', 'POST', { pinId: pinData.id });
+                        if (response.success) {
+                            showMessage('Pin berhasil dihapus dari daftar simpan!', 'success');
+                            saveButton.textContent = 'Simpan';
+                            saveButton.style.backgroundColor = '#e60023';
+                            currentUser.savedPins = currentUser.savedPins.filter(id => id !== pinData.id);
+                            if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Disimpan') {
+                                updatePinDetailImageSaveButton(pinData);
+                            }
+                            if (currentView === 'saved') {
+                                loadedPinsCount = 0;
+                                await loadPins(pinsPerPage, false);
+                            }
+                        } else {
+                            showMessage('Gagal menghapus pin dari daftar simpan: ' + response.message, 'error');
+                        }
+                    } else {
+                        const response = await makeApiRequest('pins.php?action=save', 'POST', { pinId: pinData.id });
+                        if (response.success) {
+                            showMessage('Pin berhasil disimpan!', 'success');
+                            saveButton.textContent = 'Disimpan';
+                            saveButton.style.backgroundColor = '#767676';
+                            if (currentUser.savedPins) {
+                                currentUser.savedPins.push(pinData.id);
+                            } else {
+                                currentUser.savedPins = [pinData.id];
+                            }
+                            if (pinDetailOverlay.style.display === 'flex' && pinDetailImageSaveButton && pinDetailImageSaveButton.textContent === 'Simpan') {
+                                updatePinDetailImageSaveButton(pinData);
+                            }
+                            if (currentView === 'saved') {
+                                loadedPinsCount = 0;
+                                await loadPins(pinsPerPage, false);
+                            }
+                        } else {
+                            showMessage('Gagal menyimpan pin: ' + response.message, 'error');
+                        }
+                    }
+                };
+                overlayTop.appendChild(saveButton);
+
+                if (pinData.images && pinData.images.length > 1) {
+                    const imageCountOverlay = document.createElement('div');
+                    imageCountOverlay.className = 'pin-image-count-overlay';
+                    imageCountOverlay.innerHTML = `
+                        <i class="fas fa-camera"></i>
+                        <span>${pinData.images.length}</span>
+                    `;
+                    overlayTop.appendChild(imageCountOverlay);
+                }
+
+
+                const overlayBottom = document.createElement('div');
+                overlayBottom.classList.add('pin-overlay-bottom');
+
+                const pinTitle = document.createElement('div'); 
+                pinTitle.classList.add('pin-title');
+                pinTitle.textContent = pinData.title || 'Tanpa Judul'; 
+                overlayBottom.appendChild(pinTitle);
+
+                const bottomActions = document.createElement('div'); 
+                bottomActions.classList.add('pin-bottom-actions');
+
+                const infoDiv = document.createElement('div'); 
+                infoDiv.classList.add('pin-info');
+                if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
+                     const link = document.createElement('a');
+                     link.href = `${window.location.origin}/Spicette/tag/${encodeURIComponent(pinData.categories[0].trim().toLowerCase().replace(/ /g, '-'))}`;
+                     link.target = '_blank';
+                     link.textContent = pinData.categories[0];
+                     link.onclick = (e) => e.stopPropagation(); 
+                     infoDiv.appendChild(link);
+                } else {
+                    infoDiv.textContent = 'Tanpa Kategori';
+                    infoDiv.style.opacity = '0.7'; 
+                }
+                bottomActions.appendChild(infoDiv);
+
+                overlayBottom.appendChild(bottomActions); 
+                
+                overlayDiv.appendChild(overlayTop);
+                overlayDiv.appendChild(overlayBottom);
+
+                pinDiv.appendChild(img);
+                pinDiv.appendChild(overlayDiv);
+                
+                pinDiv.onclick = () => openPinDetail(pinData);
+                
+                return pinDiv;
+            }
+
+            async function loadPins(count, append = true) {
+                loadingIndicator.style.display = 'block';
+                let endpoint = '';
+                let params = '';
+                let pinsToProcess = [];
+
+                if (currentSearchQuery) { 
+                    endpoint = 'pins.php?action=search'; // Changed to general search action
+                    params = `&query=${encodeURIComponent(currentSearchQuery)}`;
+                } else if (currentView === 'home') {
+                    endpoint = 'pins.php?action=fetch_all';
+                } else if (currentView === 'saved') {
+                    if (!currentUser) {
+                        pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Harap login untuk melihat pin yang Anda simpan.</p>';
+                        loadingIndicator.style.display = 'none';
+                        return;
+                    }
+                    endpoint = `pins.php?action=fetch_saved&username=${currentUser.username}`;
+                }
+
+                const response = await makeApiRequest(`${endpoint}${params}`);
+                loadingIndicator.style.display = 'none';
+
+                if (response.success) {
+                    pinsToProcess = response.pins || []; 
+                    
+                    if (currentView === 'home') {
+                        allPinsData = pinsToProcess;
+                    } else if (currentView === 'saved') {
+                        savedPinsData = pinsToProcess;
+                    }
+
+                    const startIndex = append ? loadedPinsCount : 0;
+                    const slicedPinsToDisplay = pinsToProcess.slice(startIndex, startIndex + count);
+
+                    if (!append) {
+                        pinGrid.innerHTML = '';
+                        loadedPinsCount = 0;
+                    }
+
+                    const fragment = document.createDocumentFragment();
+                    slicedPinsToDisplay.forEach(pinData => {
+                        const pinElement = createPinElement(pinData);
+                        fragment.appendChild(pinElement);
+                        loadedPinsCount++;
+                    });
+                    pinGrid.appendChild(fragment);
+
+                    if (slicedPinsToDisplay.length > 0 || currentSearchQuery === '') {
+                        if (pinGrid) { // Null check for pinGrid
+                            pinGrid.style.removeProperty('display');
+                            pinGrid.style.display = 'column';
+                        }
+                    }
+
+                    if (pinsToProcess.length === 0) {
+                        if (currentSearchQuery) {
+                            pinGrid.innerHTML = `<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin ditemukan untuk "${currentSearchQuery}".</p>`;
+                        } else if (currentView === 'home') {
+                            pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Tidak ada pin untuk ditampilkan.</p>';
+                        } else if (currentView === 'saved') {
+                            pinGrid.innerHTML = '<p style="text-align: center; color: #767676; margin-top: 50px;">Anda belum menyimpan pin apa pun.</p>';
+                        }
+                    }
+                } else {
+                    showMessage('Gagal memuat pin: ' + response.message, 'error');
+                    pinGrid.innerHTML = '<p style="text-align: center; color: #e60023; margin-top: 50px;">Error memuat pin. Silakan coba lagi nanti.</p>';
+                }
+            }
+
+            function loadSearchHistory() {
+                const historyJson = localStorage.getItem(SEARCH_HISTORY_LS_KEY);
+                if (historyJson) {
+                    searchHistory = JSON.parse(historyJson);
+                } else {
+                    searchHistory = [];
+                }
+            }
+
+            function saveSearchHistory() {
+                localStorage.setItem(SEARCH_HISTORY_LS_KEY, JSON.stringify(searchHistory));
+            }
+
+            function addSearchToHistory(query) {
+                query = query.toLowerCase().trim();
+                if (!query) return;
+
+                searchHistory = searchHistory.filter(item => item !== query);
+                searchHistory.unshift(query);
+                if (searchHistory.length > MAX_SEARCH_HISTORY) {
+                    searchHistory = searchHistory.slice(0, MAX_SEARCH_HISTORY);
+                }
+                saveSearchHistory();
+                renderSearchHistory();
+            }
+
+            const desktopSearchHistoryContainer = document.getElementById('desktopSearchHistory');
+            const desktopSearchHistoryList = document.getElementById('desktopSearchHistoryList');
+            const mobileSearchHistoryContainer = document.getElementById('mobileSearchHistory');
+            const mobileSearchHistoryList = document.getElementById('mobileSearchHistoryList');
+
+            function renderSearchHistory() {
+                if (desktopSearchHistoryList) { 
+                    desktopSearchHistoryList.innerHTML = '';
+                }
+                if (mobileSearchHistoryList) { 
+                    mobileSearchHistoryList.innerHTML = '';
+                }
+
+                if (searchHistory.length === 0) {
+                    if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none';
+                    if (mobileSearchHistoryContainer) mobileSearchHistoryContainer.style.display = 'none';
+                    return;
+                }
+
+                if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'block';
+                if (mobileSearchHistoryContainer) mobileSearchHistoryContainer.style.display = 'block';
+
+                searchHistory.forEach(historyItem => {
+                    if (desktopSearchHistoryList) {
+                        const desktopLi = document.createElement('li');
+                        desktopLi.textContent = historyItem;
+                        desktopLi.addEventListener('click', () => {
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
+                        });
+                        desktopSearchHistoryList.appendChild(desktopLi);
+                    }
+
+                    if (mobileSearchHistoryList) {
+                        const mobileLi = document.createElement('li');
+                        mobileLi.textContent = historyItem;
+                        mobileLi.addEventListener('click', () => {
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
+                        });
+                        mobileSearchHistoryList.appendChild(mobileLi);
+                    }
+                });
+            }
+
+            const mobileSearchInputOverlay = document.getElementById('mobileSearchInputOverlay'); 
+            const desktopSearchInput = document.getElementById('desktopSearchInput'); 
+            const searchSuggestionsListMobile = document.getElementById('searchSuggestions');
+            const searchSuggestionsListDesktop = document.getElementById('desktopSearchSuggestions'); 
+            const categoryExploreTitle = document.getElementById('categoryExploreTitle');
+            const categoryGridMobile = document.getElementById('categoryGridMobile');
+
+            let searchTimeout;
+
+            function showSuggestions(inputElement, suggestionsList, query) {
+                suggestionsList.innerHTML = '';
+                suggestionsList.style.display = 'none'; 
+
+                if (query.length < 2) { 
+                    if (categoryExploreTitle) categoryExploreTitle.style.display = 'block'; // Null check
+                    if (categoryGridMobile) categoryGridMobile.style.display = 'grid'; // Null check
+                    renderSearchHistory(); 
+                    return;
+                }
+                
+                if (inputElement && inputElement.id === 'desktopSearchInput' && desktopSearchHistoryContainer) { 
+                    desktopSearchHistoryContainer.style.display = 'none';
+                } else if (mobileSearchHistoryContainer) { 
+                    mobileSearchHistoryContainer.style.display = 'none';
+                }
+
+                // Combine allPinsData and savedPinsData for search suggestions
+                const combinedPinsData = [...allPinsData, ...savedPinsData];
+                const filteredSuggestions = combinedPinsData.filter(pin => 
+                    (pin.title && pin.title.toLowerCase().includes(query.toLowerCase())) ||
+                    (pin.description && pin.description.toLowerCase().includes(query.toLowerCase())) || 
+                    (pin.category && pin.category.toLowerCase().includes(query.toLowerCase())) || 
+                    (pin.images && pin.images.some(img => img.description && img.description.toLowerCase().includes(query.toLowerCase()))) 
+                ).map(pin => pin.title || pin.category).filter(Boolean).slice(0, 5); 
+
+                const uniqueSuggestions = [...new Set(filteredSuggestions)];
+
+                if (uniqueSuggestions.length > 0) {
+                    uniqueSuggestions.forEach(suggestion => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = suggestion;
+                        listItem.addEventListener('click', () => {
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(suggestion)}`;
+                        });
+                        suggestionsList.appendChild(listItem);
+                    });
+                    suggestionsList.style.display = 'block';
+                    if (categoryExploreTitle) categoryExploreTitle.style.display = 'none'; // Null check
+                    if (categoryGridMobile) categoryGridMobile.style.display = 'none'; // Null check
+                } else {
+                    suggestionsList.style.display = 'none';
+                    if (categoryExploreTitle) categoryExploreTitle.style.display = 'block'; // Null check
+                    if (categoryGridMobile) categoryGridMobile.style.display = 'grid'; // Null check
+                }
+            }
+
+            async function performSearch(query) {
+                window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`;
+            }
+
+            mobileSearchInputOverlay.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                searchTimeout = setTimeout(() => {
+                    showSuggestions(mobileSearchInputOverlay, searchSuggestionsListMobile, query);
+                }, 300);
+            });
+
+            mobileSearchInputOverlay.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    const query = mobileSearchInputOverlay.value.trim();
+                    if (query) {
+                        performSearch(query); 
+                        closeSearch(); 
+                    }
+                }
+            });
+
+            if (desktopSearchInput) { 
+                desktopSearchInput.addEventListener('focus', () => {
+                    if (mainElement) mainElement.classList.add('desktop-search-active'); // Null check
+                    if (pinGrid) pinGrid.style.display = 'none'; // Null check
+                    if (loadingIndicator) loadingIndicator.style.display = 'none'; // Null check
+                    if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'none'; // Null check
+                    desktopSearchInput.value = currentSearchQuery; 
+                    renderSearchHistory(); 
+                    if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none';
+                });
+
+                desktopSearchInput.addEventListener('blur', (event) => {
+                    setTimeout(() => {
+                        const searchArea = document.querySelector('header .search-container');
+                        const isClickInsideDesktopSearchUI = searchArea && (searchArea.contains(event.relatedTarget) ||
+                                                     (searchSuggestionsListDesktop && searchSuggestionsListDesktop.contains(event.relatedTarget)) ||
+                                                     (desktopSearchHistoryContainer && desktopSearchHistoryContainer.contains(event.relatedTarget)));
+                        
+                        if (!isClickInsideDesktopSearchUI) {
+                            resetMainContent();
+                        }
+                    }, 100); 
+                });
+
+                desktopSearchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    const query = e.target.value.trim();
+                    currentSearchQuery = query; 
+                    searchTimeout = setTimeout(() => {
+                        showSuggestions(desktopSearchInput, searchSuggestionsListDesktop, query);
+                    }, 300);
+                });
+
+                desktopSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); 
+                        const query = desktopSearchInput.value.trim();
+                        if (query) {
+                            addSearchToHistory(query);
+                            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`; 
+                        }
+                    }
+                });
+            }
+            
+            async function resetMainContent() {
+                if (desktopSearchInput) desktopSearchInput.value = ''; 
+                currentSearchQuery = ''; 
+                if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none';
+                if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none';
+                
+                if (mainElement) mainElement.classList.remove('desktop-search-active'); // Null check
+                
+                // Restore categories section visibility based on currentView
+                if (currentView === 'home') {
+                    if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'block'; // Null check
+                } else {
+                    if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'none'; // Null check
+                }
+
+                if (pinGrid) { // Null check
+                    pinGrid.style.removeProperty('display'); 
+                    pinGrid.style.display = 'column'; 
+                }
+                
+                loadedPinsCount = 0; 
+                await loadPins(pinsPerPage, false); 
+            }
+
+            document.addEventListener('click', (event) => {
+                const headerSearchContainer = document.querySelector('header .search-container');
+                const isClickInsideDesktopSearchUI = headerSearchContainer && (headerSearchContainer.contains(event.target) ||
+                                                 (searchSuggestionsListDesktop && searchSuggestionsListDesktop.contains(event.target)) || // Null check
+                                                 (desktopSearchHistoryContainer && desktopSearchHistoryContainer.contains(event.target))); // Null check
+            
+                if (desktopSearchInput && !desktopSearchInput.matches(':focus') && !isClickInsideDesktopSearchUI) {
+                    resetMainContent();
+                }
+
+                const isClickInsideMobileSearchOverlay = searchOverlay.contains(event.target);
+                const mobileSearchTriggerButton = document.querySelector('.mobile-nav-item[data-action="search"]'); 
+                const isMobileSearchTriggerButtonClick = mobileSearchTriggerButton && mobileSearchTriggerButton.contains(event.target);
+                
+                if (searchOverlay.style.display === 'flex' && !isClickInsideMobileSearchOverlay && !isMobileSearchTriggerButtonClick) {
+                    closeSearch();
+                }
+            });
+
+            async function loadCategories() {
+                const categoryContainers = [
+                    document.getElementById('categoryGridMobile'),
+                    document.getElementById('categoryGridDesktop') 
+                ];
+
+                try {
+                    const response = await makeApiRequest('categories.php?action=fetch_all');
+                    if (response.success && response.categories) {
+                        const categories = response.categories; 
+                        const filteredCategories = categories.filter(cat => cat.name && cat.name.trim() !== '');
+
+                        categoryContainers.forEach(container => {
+                            if (!container) return; 
+                            container.innerHTML = ''; 
+                            const fragment = document.createDocumentFragment();
+
+                            filteredCategories.forEach((cat) => {
+                                const catItem = document.createElement('div');
+                                catItem.className = 'category-item';
+                                
+                                const imageUrl = cat.imageUrl || `https://picsum.photos/200/200?random=${Math.random()}`; 
+                                catItem.style.backgroundImage = `url('${imageUrl}')`;
+
+                                const catTitle = document.createElement('span');
+                                catTitle.textContent = cat.name; 
+                                
+                                catItem.appendChild(catTitle);
+                                
+                                catItem.onclick = function() {
+                                    const categoryPermalink = cat.name.trim().toLowerCase().replace(/ /g, '-');
+                                    window.location.href = `/Spicette/tag/${encodeURIComponent(categoryPermalink)}`;
+                                };
+                                fragment.appendChild(catItem);
+                            });
+                            container.appendChild(fragment);
+                        });
+                    } else {
+                        console.error('Gagal memuat kategori:', response.message);
+                        categoryContainers.forEach(container => {
+                            if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Gagal memuat kategori.</p>';
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error mengambil kategori:', error);
+                    categoryContainers.forEach(container => {
+                        if (container) container.innerHTML = '<p style="text-align: center; color: #767676;">Kesalahan jaringan saat memuat kategori.</p>';
+                    });
+                }
+            }
+            
+            loadCategories();
+
+            window.addEventListener('scroll', () => {
+                // Null check for loadingIndicator as it might be null if search is active
+                const currentLoadingIndicator = loadingIndicator; 
+
+                if (currentLoadingIndicator && currentLoadingIndicator.style.display === 'none' && 
+                    searchOverlay.style.display === 'none' && 
+                    // mobileProfileDropdown.style.display === 'none' && // mobileProfileDropdown dihapus
+                    pinDetailOverlay.style.display === 'none' && 
+                    fullImageOverlay.style.display === 'none' &&
+                    notificationOverlay.style.display === 'none' 
+                ) {
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+                        if (!currentSearchQuery) { 
+                            loadPins(pinsPerPage, true);
+                        }
+                    }
+                }
+            });
+            
+            const headerNavButtons = document.querySelectorAll('.header-nav-links .nav-button');
+            const desktopCreateButton = document.getElementById('desktopCreateButton');
+
+            desktopCreateButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    window.location.href = 'login.html'; 
+                } else if (!currentUser.canUpload) {
+                    showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
+                } else {
+                    window.location.href = 'create.html';
+                }
+            });
+
+            headerNavButtons.forEach(button => {
+                if (button.id === 'desktopCreateButton') return; 
+
+                button.addEventListener('click', async function() {
+                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    const navAction = this.dataset.nav;
+                    currentSearchQuery = ''; 
+                    currentView = navAction; // Update current view
+
+                    if (desktopSearchHistoryContainer) desktopSearchHistoryContainer.style.display = 'none'; // Null check
+                    if (searchSuggestionsListDesktop) searchSuggestionsListDesktop.style.display = 'none'; // Null check
+                    if (mainElement) mainElement.classList.remove('desktop-search-active'); // Null check
+
+                    if (pinGrid) pinGrid.style.display = 'column'; // Null check
+
+                    // Show/hide categories based on view
+                    if (navAction === 'home') {
+                        if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'block'; // Null check
+                    } else {
+                        if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'none'; // Null check
+                    }
+
+                    loadedPinsCount = 0;
+                    await loadPins(pinsPerPage, false);
+                });
+            });
+
+            const searchOverlay = document.getElementById('searchOverlay');
+            const closeSearchBtn = document.getElementById('closeSearchOverlay');
+            
+            const openSearch = () => {
+                if (searchOverlay) searchOverlay.style.display = 'flex'; // Null check
+                document.body.classList.add('no-scroll');
+                if (mobileSearchInputOverlay) mobileSearchInputOverlay.value = ''; // Null check
+                if (searchSuggestionsListMobile) searchSuggestionsListMobile.innerHTML = ''; // Null check
+                if (searchSuggestionsListMobile) searchSuggestionsListMobile.style.display = 'none'; // Null check
+                if (categoryExploreTitle) categoryExploreTitle.style.display = 'block'; // Null check
+                if (categoryGridMobile) categoryGridMobile.style.display = 'grid'; // Null check
+                renderSearchHistory(); 
+            };
+            
+            const closeSearch = () => {
+                if (searchOverlay) searchOverlay.style.display = 'none'; // Null check
+                document.body.classList.remove('no-scroll');
+            };
+
+            if (closeSearchBtn) closeSearchBtn.onclick = closeSearch; // Null check
+            
+            const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item');
+            mobileNavItems.forEach(item => {
+                item.addEventListener('click', async function() {
+                    const action = this.dataset.action;
+
+                    window.closePinDetail();
+                    closeNotificationPage();
+                    closeSearch(); 
+                    window.closeFullImageOverlay();
+                    
+                    if (action === 'search') {
+                        openSearch();
+                    } else if (action === 'create-pin') { 
+                         if (!currentUser) {
+                            window.location.href = 'login.html';
+                            return;
+                        } else if (!currentUser.canUpload) {
+                            showMessage('Anda tidak memiliki izin untuk membuat pin. Harap hubungi administrator.', 'error');
+                            return;
+                        }
+                        window.location.href = 'create.html'; 
+                    }
+                    else if (action === 'profile') { 
+                        if (!currentUser) {
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        if (currentUser.isAdmin) {
+                            window.location.href = 'admin.php';
+                        } else {
+                            window.location.href = 'user.php';
+                        }
+                    }
+                    else { 
+                        mobileNavItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Sync header nav buttons with mobile nav
+                        const desktopButton = document.querySelector(`.header-nav-links .nav-button[data-nav="${action}"]`);
+                        if (desktopButton) {
+                            headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                            desktopButton.classList.add('active');
+                        }
+
+                        currentSearchQuery = ''; 
+                        currentView = action; // Update current view
+
+                        if (mainElement) mainElement.classList.remove('desktop-search-active'); // Null check
+                        if (pinGrid) pinGrid.style.display = 'column'; // Null check
+
+                        // Show/hide categories based on view
+                        if (action === 'home') {
+                            if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'block'; // Null check
+                        } else {
+                            if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'none'; // Null check
+                        }
+
+                        loadedPinsCount = 0;
+                        await loadPins(pinsPerPage, false);
+                    }
+                });
+            });
+
+            const profileButton = document.getElementById('profileButton');
+            const profileIconLetter = document.getElementById('profileIconLetter');
+
+            profileButton.addEventListener('click', () => {
+                if (!currentUser) {
+                    window.location.href = 'login.html'; 
+                } else {
+                    if (currentUser.isAdmin) {
+                        window.location.href = 'admin.php';
+                    } else {
+                        window.location.href = 'user.php';
+                    }
+                }
+            });
+
+            function updateProfileDisplay() {
+                const mobileProfileIcon = document.querySelector('.mobile-nav-item[data-action="profile"] .profile-icon');
+                if (currentUser) {
+                    profileIconLetter.textContent = currentUser.username.charAt(0).toUpperCase();
+                    profileIconLetter.style.backgroundColor = '#e60023';
+                    profileIconLetter.style.color = 'white';
+
+                    if (mobileProfileIcon) {
+                        mobileProfileIcon.textContent = currentUser.username.charAt(0).toUpperCase();
+                        mobileProfileIcon.style.backgroundColor = '#fff';
+                        mobileProfileIcon.style.color = '#111';
+                    }
+                } else {
+                    profileIconLetter.textContent = 'G';
+                    profileIconLetter.style.backgroundColor = '#ddd';
+                    profileIconLetter.style.color = '#767676';
+
+                    if (mobileProfileIcon) {
+                        mobileProfileIcon.textContent = 'G';
+                        mobileProfileIcon.style.backgroundColor = '#e0e0e0';
+                        mobileProfileIcon.style.color = '#333';
+                    }
+                }
+            }
+
+            const notificationButton = document.getElementById('notificationButton');
+            const mobileNotificationButton = document.getElementById('mobileNotificationButton');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const mobileNotificationBadge = document.getElementById('mobileNotificationBadge');
+
+            async function updateNotificationBadge() {
+                try {
+                    const response = await makeApiRequest('notifications.php?action=fetch_all');
+                    if (response.success) {
+                        const notifications = response.notifications || [];
+                        const unreadCount = notifications.filter(notif => !notif.read).length; 
+                        
+                        if (unreadCount > 0) {
+                            if (notificationBadge) notificationBadge.textContent = unreadCount; // Null check
+                            if (notificationBadge) notificationBadge.style.display = 'flex'; // Null check
+                            if (mobileNotificationBadge) mobileNotificationBadge.textContent = unreadCount; // Null check
+                            if (mobileNotificationBadge) mobileNotificationBadge.style.display = 'flex'; // Null check
+                        } else {
+                            if (notificationBadge) notificationBadge.style.display = 'none'; // Null check
+                            if (mobileNotificationBadge) mobileNotificationBadge.style.display = 'none'; // Null check
+                        }
+                    }
+                } catch (error) {
+                    console.error('Gagal memperbarui lencana notifikasi:', error);
+                }
+            }
+
+            async function markAllNotificationsAsRead() {
+                try {
+                    const response = await makeApiRequest('notifications.php?action=mark_as_read', 'POST', null); 
+                    if (response) {
+                        if (!response.success) {
+                            console.error('Gagal menandai notifikasi sebagai sudah dibaca:', response.message);
+                        }
+                        updateNotificationBadge();
+                    }
+                }
+                catch (error) {
+                    console.error('Gagal menandai notifikasi sebagai sudah dibaca:', error);
+                }
+            }
+
+            if (notificationButton) notificationButton.addEventListener('click', openNotificationPage); // Null check
+            if (mobileNotificationButton) mobileNotificationButton.addEventListener('click', openNotificationPage); // Null check
+
+            window.downloadPin = function(imageUrl) {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'pin_image.jpg';
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showMessage(`Mengunduh pin.`);
+            };
+
+            const moreAccountsButton = document.getElementById('moreAccountsButton');
+            const moreAccountsDropdown = document.getElementById('moreAccountsDropdown');
+            const dropdownUsernameDisplay = document.getElementById('dropdownUsernameDisplay');
+            const dropdownMyProfile = document.getElementById('dropdownMyProfile');
+            const dropdownAdminPanel = document.getElementById('dropdownAdminPanel');
+            const dropdownLogout = document.getElementById('dropdownLogout');
+
+            function toggleDropdown() {
+                updateHeaderDropdown();
+                if (moreAccountsDropdown) moreAccountsDropdown.style.display = moreAccountsDropdown.style.display === 'block' ? 'none' : 'block'; // Null check
+            }
+
+            function updateHeaderDropdown() {
+                if (currentUser) {
+                    if (dropdownUsernameDisplay) dropdownUsernameDisplay.textContent = `Masuk sebagai ${currentUser.username}`; // Null check
+                    if (dropdownMyProfile) dropdownMyProfile.style.display = 'block'; // Null check
+                    if (dropdownAdminPanel) dropdownAdminPanel.style.display = currentUser.isAdmin ? 'block' : 'none'; // Null check
+                    if (dropdownLogout) dropdownLogout.style.display = 'block'; // Null check
+                } else {
+                    if (dropdownUsernameDisplay) dropdownUsernameDisplay.textContent = 'Selamat datang, Tamu!'; // Null check
+                    if (dropdownMyProfile) dropdownMyProfile.style.display = 'none'; // Null check
+                    if (dropdownAdminPanel) dropdownAdminPanel.style.display = 'none'; // Null check
+                    if (dropdownLogout) dropdownLogout.style.display = 'none'; // Null check
+                }
+            }
+
+            if (moreAccountsButton) moreAccountsButton.addEventListener('click', toggleDropdown); // Null check
+
+            document.addEventListener('click', function(event) {
+                if (moreAccountsButton && moreAccountsDropdown && !moreAccountsButton.contains(event.target) && !moreAccountsDropdown.contains(event.target)) {
+                    moreAccountsDropdown.style.display = 'none';
+                }
+            });
+
+            if (dropdownMyProfile) dropdownMyProfile.addEventListener('click', () => { // Null check
+                if (currentUser) {
+                    window.location.href = 'user.php';
+                }
+                if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none'; // Null check
+            });
+
+            if (dropdownAdminPanel) dropdownAdminPanel.addEventListener('click', () => { // Null check
+                if (currentUser && currentUser.isAdmin) {
+                    window.location.href = 'admin.php';
+                } else {
+                    showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
+                }
+                if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none'; // Null check
+            });
+
+            if (dropdownLogout) dropdownLogout.addEventListener('click', async () => { // Null check
+                const response = await makeApiRequest('auth.php?action=logout', 'POST', null); 
+                if (response.success) {
+                    currentUser = null;
+                    updateProfileDisplay();
+                    updateHeaderDropdown();
+                    showMessage('Logout berhasil.', 'Logout');
+                    loadedPinsCount = 0;
+                    currentSearchQuery = ''; 
+                    currentView = 'home';
+                    if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'block'; // Null check
+                    await loadPins(pinsPerPage, false);
+                    mobileNavItems.forEach(i => i.classList.remove('active'));
+                    const homeMobileNav = document.querySelector('.mobile-nav-item[data-action="home"]');
+                    if (homeMobileNav) homeMobileNav.classList.add('active'); // Null check
+                    headerNavButtons.forEach(btn => btn.classList.remove('active'));
+                    const homeDesktopNav = document.querySelector('.nav-button[data-nav="home"]');
+                    if (homeDesktopNav) homeDesktopNav.classList.add('active'); // Null check
+                } else {
+                    showMessage('Logout gagal: ' + response.message, 'Error');
+                }
+                if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none'; // Null check
+            });
+
+            // mobileProfileDropdown dihapus, jadi tidak ada lagi variabel dan fungsi terkait di sini
+            // mobileDropdownUsernameDisplay, mobileDropdownMyProfile, mobileDropdownAdminPanel, mobileDropdownLogout, mobileDropdownClose juga dihapus
+
+            // Perbarui event listener untuk mobile profile button
+            const mobileProfileNavItem = document.querySelector('.mobile-nav-item[data-action="profile"]');
+            if (mobileProfileNavItem) { // Null check
+                mobileProfileNavItem.addEventListener('click', () => {
+                    if (!currentUser) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    if (currentUser.isAdmin) {
+                        window.location.href = 'admin.php';
+                    } else {
+                        window.location.href = 'user.php';
+                    }
+                });
+            }
+
+            async function initializeApp() {
+                loadSearchHistory(); 
+                const urlParams = new URLSearchParams(window.location.search);
+
+                const response = await makeApiRequest('auth.php?action=check_session');
+                if (response.success && response.user) {
+                    currentUser = response.user;
+                    if (typeof currentUser.canUpload === 'undefined') {
+                        currentUser.canUpload = false; 
+                    }
+                    const savedResponse = await makeApiRequest(`pins.php?action=fetch_saved&username=${currentUser.username}`);
+                    if (savedResponse.success) {
+                        currentUser.savedPins = savedResponse.pins.map(pin => pin.id);
+                    } else {
+                        currentUser.savedPins = [];
+                    }
+                } else {
+                    currentUser = null;
+                }
+                updateProfileDisplay();
+                updateHeaderDropdown();
+                updateNotificationBadge();
+                
+                const allPinsResponse = await makeApiRequest('pins.php?action=fetch_all');
+                if (allPinsResponse.success) {
+                    allPinsData = allPinsResponse.pins; 
+                } else {
+                    console.error("Gagal memuat semua pin saat inisialisasi:", allPinsResponse.message);
+                }
+
+                if (currentUser) {
+                    const savedPinsInitialResponse = await makeApiRequest(`pins.php?action=fetch_saved&username=${currentUser.username}`);
+                    if (savedPinsInitialResponse.success) {
+                        savedPinsData = savedPinsInitialResponse.pins;
+                    } else {
+                        console.error("Gagal memuat pin tersimpan saat inisialisasi:", savedPinsInitialResponse.message);
+                    }
+                }
+
+                await loadPins(pinsPerPage, false);
+
+                if (currentView === 'home') {
+                    if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'block'; // Null check
+                } else {
+                    if (desktopCategoriesSection) desktopCategoriesSection.style.display = 'none'; // Null check
+                }
+
+                const pinIdFromUrl = urlParams.get('pin');
+                if (pinIdFromUrl) {
+                    const pinToOpen = (allPinsData || []).find(pin => pin.id === pinIdFromUrl) || (savedPinsData || []).find(pin => pin.id === pinIdFromUrl);
+                    if (pinToOpen) {
+                        openPinDetail(pinToOpen);
+                    } else {
+                        const currentUrl = new URL(window.location.href);
+                        currentUrl.searchParams.delete('pin');
+                        history.replaceState(null, '', currentUrl.toString());
+                    }
+                }
+            }
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
