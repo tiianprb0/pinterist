@@ -1,0 +1,141 @@
+[
+    {
+        "username": "admin",
+        "password": "password123",
+        "isAdmin": true,
+        "canUpload": true,
+        "preferred_categories": [
+            "contoh",
+            "Right Tanktop",
+            "Too Short Crop Top",
+            "Backless Casual"
+        ],
+        "preferred_persons": [
+            "Hehe",
+            "Karina",
+            "Eca",
+            "Tian"
+        ],
+        "manual_persons_requested": [],
+        "profile_image_url": "https://64.media.tumblr.com/84f4eafb18055e3a7904bbcdc3cc95e9/13ce563443d43c46-75/s400x600/b86d162f4bbc5cae61a7940ff559f6e08063fa22.gifv"
+    },
+    {
+        "username": "tiianprb",
+        "email": "tiianprb@gmail.com",
+        "password": "password123",
+        "isAdmin": false,
+        "canUpload": true,
+        "preferred_categories": [
+            "Lingerie Love",
+            "Armpit Heaven",
+            "Wet Fabric Play",
+            "Backless Casual",
+            "Right Tanktop",
+            "Swimsuit Tease"
+        ],
+        "preferred_persons": [
+            "Hehe",
+            "Eca",
+            "Karina"
+        ],
+        "manual_persons_requested": [],
+        "profile_image_url": "https://64.media.tumblr.com/2904555e59366ca8eb2af3dce0ce40fd/abcb31187266701c-8f/s400x600/065c16ab8eca47ee13ec32e54f4c6d1eefafc918.gifv"
+    },
+    {
+        "username": "contoh",
+        "email": "cont@gmail.com",
+        "password": "tidakada",
+        "isAdmin": false,
+        "canUpload": true,
+        "preferred_categories": [],
+        "preferred_persons": [],
+        "manual_persons_requested": [],
+        "profile_image_url": ""
+    },
+    {
+        "username": "test",
+        "email": "sdsds@gm.co",
+        "password": "tidakada",
+        "isAdmin": false,
+        "canUpload": true,
+        "preferred_categories": [
+            "Underboob n Sideboob",
+            "Mood Post",
+            "Backless Casual",
+            "Too Short Crop Top"
+        ],
+        "preferred_persons": [
+            "rtrt",
+            "Karina",
+            "Eca",
+            "eska"
+        ],
+        "manual_persons_requested": [
+            "rtrt"
+        ],
+        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3"
+    },
+    {
+        "username": "grgrg4ge",
+        "email": "wqwqw@rere.co",
+        "password": "password123",
+        "isAdmin": false,
+        "canUpload": true,
+        "preferred_categories": [
+            "Underboob n Sideboob",
+            "Steady n Shiny",
+            "Tounge n Lip Bite",
+            "Mood Post"
+        ],
+        "preferred_persons": [
+            "Eca",
+            "eska. hahaha",
+            "contoh",
+            "ML"
+        ],
+        "manual_persons_requested": [],
+        "profile_image_url": "https://i.pinimg.com/236x/79/9a/aa/799aaa5844baa58f32235ef7d0b3f9f5.jpg?nii=t"
+    },
+    {
+        "username": "hhahaha",
+        "email": "wdwd@gnmaic.co",
+        "password": "password123",
+        "isAdmin": false,
+        "canUpload": true,
+        "preferred_categories": [
+            "Steady n Shiny",
+            "Too Short Crop Top",
+            "Backless Casual",
+            "Tounge n Lip Bite",
+            "Mood Post"
+        ],
+        "preferred_persons": [
+            "Eca",
+            "Hehe",
+            "Karina"
+        ],
+        "manual_persons_requested": [],
+        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3"
+    },
+    {
+        "username": "asasw2e",
+        "email": "wewew@gma.com",
+        "password": "password123",
+        "isAdmin": false,
+        "canUpload": true,
+        "preferred_categories": [
+            "Lingerie Love",
+            "Panty Peek",
+            "Wet Fabric Play"
+        ],
+        "preferred_persons": [
+            "contoh",
+            "Karina",
+            "hahaha"
+        ],
+        "manual_persons_requested": [
+            "hahaha"
+        ],
+        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3"
+    }
+]
