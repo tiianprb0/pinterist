@@ -41,6 +41,51 @@
         .notification-link-button:hover i {
             color: #1a1a1a; /* Warna ikon lebih gelap saat hover */
         }
+
+        /* Gaya untuk tombol like baru */
+        .pin-like-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee; /* Garis pemisah */
+        }
+
+        .like-status-text {
+            font-size: 1.1em;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .like-button {
+            background-color: #e60023; /* Warna merah Pinterest */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px; /* Lebih bulat */
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .like-button.liked {
+            background-color: #767676; /* Warna abu-abu saat sudah disukai */
+        }
+
+        .like-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .like-button i {
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -69,6 +114,14 @@
 
             <p id="pinDetailDescription" class="pin-detail-description"></p>
             
+            <!-- NEW: Like Section -->
+            <div id="pinDetailLikeSection" class="pin-like-section" style="display: none;">
+                <span id="likeStatusText" class="like-status-text"></span>
+                <button id="likeButton" class="like-button">
+                    <i class="fas fa-heart"></i> <span id="likeCount">0</span>
+                </button>
+            </div>
+
             <div id="pinDetailPersonTagsSection" class="pin-person-tags-section" style="display: none;">
                 <h3 class="person-in-pin-title">Orang dalam pin</h3>
                 <div id="pinDetailPersonTagsList" class="person-tags-list"></div>
@@ -214,12 +267,9 @@
             async function makeApiRequest(endpoint, method = 'GET', data = null) {
                 try {
                     const options = { method };
-                    if (data !== null && typeof data !== 'undefined') {
-                        if (method === 'POST' && endpoint === 'pins.php') {
-                        } else {
-                            options.headers = { 'Content-Type': 'application/json' };
-                            options.body = JSON.stringify(data);
-                        }
+                    if (data !== null && typeof data !== 'undefined' && method !== 'GET') {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
                     }
                     
                     const response = await fetch(API_BASE_URL + endpoint, options);
@@ -279,6 +329,13 @@
             const pinDetailPersonTagsSection = document.getElementById('pinDetailPersonTagsSection');
             const pinDetailPersonTagsList = document.getElementById('pinDetailPersonTagsList');
             const pinDetailRelatedPins = document.getElementById('pinDetailRelatedPins');
+
+            // NEW: Elemen untuk fungsi like
+            const pinDetailLikeSection = document.getElementById('pinDetailLikeSection');
+            const likeStatusText = document.getElementById('likeStatusText');
+            const likeButton = document.getElementById('likeButton');
+            const likeCountSpan = document.getElementById('likeCount');
+
 
             // Fungsi helper untuk memperbaiki path gambar agar sesuai dengan struktur folder
             function getCorrectedImagePath(originalPath) {
@@ -361,6 +418,54 @@
                 }
             };
 
+            // NEW: Fungsi untuk memperbarui status dan jumlah like
+            async function updateLikeStatus(pinId) {
+                if (!currentUser) {
+                    pinDetailLikeSection.style.display = 'none';
+                    return;
+                }
+                pinDetailLikeSection.style.display = 'flex';
+
+                // Perbarui status like pengguna
+                const isLikedByUser = currentUser.liked_pins && currentUser.liked_pins.includes(pinId);
+                if (isLikedByUser) {
+                    likeStatusText.textContent = 'Kamu menyukai gambar ini!';
+                    likeButton.classList.add('liked');
+                } else {
+                    likeStatusText.textContent = 'Sukai gambar ini?';
+                    likeButton.classList.remove('liked');
+                }
+
+                // Perbarui jumlah like global
+                const response = await makeApiRequest(`pins.php?action=get_pin_like_count&pinId=${pinId}`);
+                if (response.success) {
+                    likeCountSpan.textContent = response.count;
+                } else {
+                    likeCountSpan.textContent = '0'; // Default jika gagal
+                    console.error('Gagal memuat jumlah like:', response.message);
+                }
+
+                // Atur event listener untuk tombol like
+                likeButton.onclick = async (e) => {
+                    e.stopPropagation();
+                    const toggleResponse = await makeApiRequest('pins.php?action=toggle_like_pin', 'POST', { pinId: pinId });
+                    if (toggleResponse.success) {
+                        // Perbarui liked_pins di currentUser
+                        if (toggleResponse.liked_status) {
+                            if (!currentUser.liked_pins) currentUser.liked_pins = [];
+                            currentUser.liked_pins.push(pinId);
+                            showMessage('Pin berhasil disukai!', 'success');
+                        } else {
+                            currentUser.liked_pins = currentUser.liked_pins.filter(id => id !== pinId);
+                            showMessage('Pin berhasil dibatalkan suka!', 'success');
+                        }
+                        // Muat ulang status like dan jumlah
+                        updateLikeStatus(pinId);
+                    } else {
+                        showMessage('Gagal memperbarui status like: ' + toggleResponse.message, 'error');
+                    }
+                };
+            }
 
             async function openPinDetail(pinData) {
                 pinDetailTitle.textContent = pinData.title || 'Tanpa Judul';
@@ -443,6 +548,7 @@
                 }
 
                 updatePinDetailImageSaveButton(pinData);
+                await updateLikeStatus(pinData.id); // NEW: Panggil fungsi updateLikeStatus
 
                 // Person Tags Section
                 pinDetailPersonTagsList.innerHTML = '';
@@ -557,7 +663,9 @@
                     if (pinToOpen) {
                         openPinDetail(pinToOpen);
                     } else {
-                        window.closePinDetail();
+                        const currentUrl = new URL(window.location.href);
+                        currentUrl.searchParams.delete('pin');
+                        history.replaceState(null, '', currentUrl.toString());
                     }
                 } else {
                     window.closePinDetail();
@@ -817,6 +925,7 @@
                 const userPreferredCategories = currentUser.preferred_categories || [];
                 const userPreferredPersons = currentUser.preferred_persons || [];
                 const userSavedPins = currentUser.savedPins || [];
+                const userLikedPins = currentUser.liked_pins || []; // NEW: Ambil pin yang disukai pengguna
 
                 const relevantPins = new Set();
                 const allRecentPins = [];
@@ -830,8 +939,9 @@
                     const isCategoryMatch = pin.categories && pin.categories.some(cat => userPreferredCategories.includes(cat));
                     const isPersonMatch = pin.personTags && pin.personTags.some(person => userPreferredPersons.includes(person));
                     const isSaved = userSavedPins.includes(pin.id);
+                    const isLiked = userLikedPins.includes(pin.id); // NEW: Cek apakah pin disukai
 
-                    if (isCategoryMatch || isPersonMatch || isSaved) {
+                    if (isCategoryMatch || isPersonMatch || isSaved || isLiked) { // NEW: Sertakan pin yang disukai
                         relevantPins.add(pin);
                     }
                 });
@@ -1479,13 +1589,6 @@
                         profileIconLetter.style.backgroundColor = '#e60023';
                         profileIconLetter.style.color = 'white';
                         profileIconLetter.style.backgroundImage = 'none'; // Clear any previous image
-
-                        if (mobileProfileIcon) {
-                            mobileProfileIcon.textContent = currentUser.username.charAt(0).toUpperCase();
-                            mobileProfileIcon.style.backgroundColor = '#fff';
-                            mobileProfileIcon.style.color = '#111';
-                            mobileProfileIcon.style.backgroundImage = 'none'; // Clear any previous image
-                        }
                     }
                 } else {
                     // Default guest display
@@ -1674,10 +1777,12 @@
                         currentUser.preferred_categories = userPrefResponse.preferences.preferred_categories || [];
                         currentUser.preferred_persons = userPrefResponse.preferences.preferred_persons || [];
                         currentUser.profile_image_url = userPrefResponse.preferences.profile_image_url || ''; // Get profile image URL
+                        currentUser.liked_pins = userPrefResponse.preferences.liked_pins || []; // NEW: Ambil pin yang disukai pengguna
                     } else {
                         currentUser.preferred_categories = [];
                         currentUser.preferred_persons = [];
                         currentUser.profile_image_url = ''; // Ensure it's empty if not found
+                        currentUser.liked_pins = []; // NEW: Pastikan kosong jika tidak ditemukan
                     }
 
                 } else {
