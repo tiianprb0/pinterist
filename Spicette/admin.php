@@ -1035,20 +1035,33 @@ $adminUsername = $_SESSION['username'];
                     }
 
                     const response = await fetch(API_BASE_URL + endpoint, options);
+                    // Selalu baca respons sebagai teks terlebih dahulu untuk menangkap pesan kesalahan non-JSON
+                    const textResponse = await response.text(); 
+                    
                     if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
+                        // Jika respons bukan OK, coba parse sebagai JSON, jika gagal, gunakan teks mentah
+                        let errorMessage = `Kesalahan HTTP! Status: ${response.status}`;
+                        try {
+                            const errorJson = JSON.parse(textResponse);
+                            errorMessage += ` - ${errorJson.message || 'Pesan tidak tersedia'}`;
+                        } catch (e) {
+                            errorMessage += ` - Respons: ${textResponse.substring(0, 200)}... (bukan JSON atau terlalu panjang)`; // Batasi panjang untuk logging
+                        }
+                        throw new Error(errorMessage);
                     }
-                    const textResponse = await response.text();
+                    
+                    // Jika respons OK tapi kosong
                     if (!textResponse) {
                         return { success: true, message: 'Tidak ada konten' };
                     }
+                    
+                    // Coba parse respons sebagai JSON
                     try {
                         const jsonResponse = JSON.parse(textResponse);
                         return jsonResponse;
                     } catch (e) {
                         console.error('Gagal mengurai respons JSON:', textResponse);
-                        throw new Error(`Respons JSON tidak valid: ${textResponse}`);
+                        throw new Error(`Respons JSON tidak valid: ${textResponse.substring(0, 200)}...`);
                     }
                 } catch (error) {
                     console.error('Permintaan API Gagal:', error);
@@ -1063,7 +1076,7 @@ $adminUsername = $_SESSION['username'];
                 messageDiv.className = isError ? 'error' : '';
                 messageDiv.style.display = 'block';
                 messageDiv.classList.remove('fadeInOut');
-                void messageDiv.offsetWidth;
+                void messageDiv.offsetWidth; // Memaksa reflow untuk memulai animasi ulang
                 messageDiv.classList.add('fadeInOut');
             }
 
@@ -1475,11 +1488,11 @@ $adminUsername = $_SESSION['username'];
                             fetchUsers();
                         } else {
                             showMessage('Gagal memperbarui izin unggah: ' + response.message, true);
-                            fetchUsers();
+                            fetchUsers(); // Muat ulang untuk memastikan status yang benar jika gagal
                         }
                     } catch (error) {
                         showMessage('Kesalahan memperbarui izin unggah: ' + error.message, true);
-                        fetchUsers();
+                        fetchUsers(); // Muat ulang untuk memastikan status yang benar jika gagal
                     }
                 });
             }
