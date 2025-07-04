@@ -23,8 +23,13 @@ function getUsersForPinsApi() {
     global $usersFile;
     $users = readJsonFile($usersFile);
     foreach ($users as &$user) {
+        // Pastikan 'canUpload' ada
         if (!isset($user['canUpload'])) {
             $user['canUpload'] = false;
+        }
+        // Pastikan 'liked_pins' ada untuk setiap pengguna
+        if (!isset($user['liked_pins'])) {
+            $user['liked_pins'] = [];
         }
     }
     return $users;
@@ -148,6 +153,24 @@ if ($method === 'GET') {
             return false;
         });
         echo json_encode(['success' => true, 'pins' => array_values($filteredPins)]);
+    } elseif ($action === 'get_pin_like_count') { // NEW: Action to get global like count for a pin
+        $pinId = $_GET['pinId'] ?? null;
+        if (empty($pinId)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID Pin diperlukan untuk mendapatkan jumlah like.']);
+            exit;
+        }
+
+        $users = getUsersForPinsApi(); // Get all users
+        $likeCount = 0;
+        foreach ($users as $user) {
+            if (isset($user['liked_pins']) && is_array($user['liked_pins'])) {
+                if (in_array($pinId, $user['liked_pins'])) {
+                    $likeCount++;
+                }
+            }
+        }
+        echo json_encode(['success' => true, 'count' => $likeCount]);
     }
     else {
         http_response_code(400);
@@ -280,6 +303,8 @@ if ($method === 'GET') {
 
     } elseif ($action === 'delete_pin') {
         checkAdmin();
+        $input = getJsonInput();
+        error_log("DEBUG: Input for delete_pin: " . json_encode($input)); // Debug log
         $pinId = $input['pinId'] ?? null;
 
         if (empty($pinId)) {
@@ -321,8 +346,9 @@ if ($method === 'GET') {
              exit;
         }
 
+        // Hapus pin dari daftar tersimpan pengguna
         $users = getUsersForPinsApi();
-        foreach ($users as $user) {
+        foreach ($users as $userKey => $user) {
             $userSavedPinsFile = $savedPinsDir . $user['username'] . '.json';
             if (file_exists($userSavedPinsFile)) {
                 $savedPins = readJsonFile($userSavedPinsFile);
@@ -331,12 +357,22 @@ if ($method === 'GET') {
                 });
                 writeJsonFile($userSavedPinsFile, array_values($updatedSavedPins));
             }
+            // Hapus pin dari daftar liked_pins pengguna
+            if (isset($user['liked_pins']) && is_array($user['liked_pins'])) {
+                $updatedLikedPins = array_filter($user['liked_pins'], function($id) use ($pinId) {
+                    return $id !== $pinId;
+                });
+                $users[$userKey]['liked_pins'] = array_values($updatedLikedPins);
+            }
         }
+        saveUsersForPinsApi($users); // Simpan perubahan pada users.json
 
         echo json_encode(['success' => true, 'message' => 'Pin berhasil dihapus.']);
 
     } elseif ($action === 'delete_user') {
         checkAdmin();
+        $input = getJsonInput();
+        error_log("DEBUG: Input for delete_user: " . json_encode($input)); // Debug log
         $usernameToDelete = $input['username'] ?? null;
 
         if (empty($usernameToDelete)) {
@@ -376,6 +412,7 @@ if ($method === 'GET') {
 
         $pins = getAllPins();
         $updatedPins = array_filter($pins, function($pin) use ($usernameToDelete) {
+            // Hapus pin yang diunggah oleh pengguna yang dihapus
             if (($pin['uploadedBy'] ?? 'unknown') === $usernameToDelete) {
                 if (isset($pin['images']) && is_array($pin['images'])) {
                     foreach ($pin['images'] as $image) {
@@ -396,6 +433,8 @@ if ($method === 'GET') {
 
     } elseif ($action === 'save') {
         checkLoggedIn();
+        $input = getJsonInput();
+        error_log("DEBUG: Input for save: " . json_encode($input));
         $username = $_SESSION['username'];
         $pinId = $input['pinId'] ?? null;
 
@@ -424,6 +463,8 @@ if ($method === 'GET') {
         }
     } elseif ($action === 'unsave') {
         checkLoggedIn();
+        $input = getJsonInput();
+        error_log("DEBUG: Input for unsave: " . json_encode($input));
         $username = $_SESSION['username'];
         $pinId = $input['pinId'] ?? null;
 
@@ -457,6 +498,56 @@ if ($method === 'GET') {
         } else {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Gagal menghapus pin dari daftar simpan. Periksa izin folder data.']);
+        }
+    } elseif ($action === 'toggle_like_pin') { // NEW: Action to toggle like status
+        checkLoggedIn();
+        $input = getJsonInput();
+        error_log("DEBUG: Input for toggle_like_pin: " . json_encode($input)); // Debug log
+        $username = $_SESSION['username'];
+        $pinId = $input['pinId'] ?? null;
+
+        if (empty($pinId)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID Pin diperlukan untuk menyukai/tidak menyukai.']);
+            exit;
+        }
+
+        $users = getUsersForPinsApi();
+        $userFound = false;
+        $likedStatus = false;
+
+        foreach ($users as $key => $user) {
+            if ($user['username'] === $username) {
+                $userFound = true;
+                if (!isset($users[$key]['liked_pins'])) {
+                    $users[$key]['liked_pins'] = [];
+                }
+
+                $index = array_search($pinId, $users[$key]['liked_pins']);
+                if ($index !== false) {
+                    // Pin sudah disukai, hapus
+                    array_splice($users[$key]['liked_pins'], $index, 1);
+                    $likedStatus = false;
+                } else {
+                    // Pin belum disukai, tambahkan
+                    $users[$key]['liked_pins'][] = $pinId;
+                    $likedStatus = true;
+                }
+                break;
+            }
+        }
+
+        if (!$userFound) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Pengguna tidak ditemukan.']);
+            exit;
+        }
+
+        if (saveUsersForPinsApi($users)) {
+            echo json_encode(['success' => true, 'message' => 'Status like pin berhasil diperbarui.', 'liked_status' => $likedStatus]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Gagal memperbarui status like pin. Periksa izin folder data.']);
         }
     } else {
         http_response_code(400);
