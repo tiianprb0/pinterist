@@ -19,6 +19,10 @@ function getUserData($username, $usersFilePath) {
         $users = json_decode(file_get_contents($usersFilePath), true);
         foreach ($users as $user) {
             if ($user['username'] === $username) {
+                // Pastikan 'liked_pins' ada, bahkan jika kosong
+                if (!isset($user['liked_pins'])) {
+                    $user['liked_pins'] = [];
+                }
                 return $user;
             }
         }
@@ -30,6 +34,7 @@ $userData = getUserData($username, $usersFilePath);
 $profileImageUrl = $userData['profile_image_url'] ?? 'https://i.pinimg.com/736x/45/69/16/456916ec52c1c93abed7f12d60749b6f.jpg'; // Default image
 $preferredCategories = $userData['preferred_categories'] ?? [];
 $preferredPersons = $userData['preferred_persons'] ?? [];
+$likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disukai
 
 ?>
 <!DOCTYPE html>
@@ -549,6 +554,7 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
             <div class="tab-navigation">
                 <button class="tab-button active" data-tab="created">Dibuat</button>
                 <button class="tab-button" data-tab="saved">Disimpan</button>
+                <button class="tab-button" data-tab="liked">Disukai</button> <!-- NEW: Tab Disukai -->
             </div>
 
             <div id="createdPinsContent" class="tab-content active user-section">
@@ -563,6 +569,14 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                     <p style="text-align: left; color: #767676;">Memuat pin yang disimpan...</p>
                 </div>
                 <div id="loading-indicator-saved" style="display: none;">Memuat lebih banyak pin...</div>
+            </div>
+
+            <!-- NEW: Konten Tab Disukai -->
+            <div id="likedPinsContent" class="tab-content user-section">
+                <div class="pin-grid" id="likedPinsGrid">
+                    <p style="text-align: left; color: #767676;">Memuat pin yang disukai...</p>
+                </div>
+                <div id="loading-indicator-liked" style="display: none;">Memuat lebih banyak pin...</div>
             </div>
 
         </div>
@@ -640,18 +654,23 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
             const tabButtons = document.querySelectorAll('.tab-button');
             const createdPinsContent = document.getElementById('createdPinsContent');
             const savedPinsContent = document.getElementById('savedPinsContent');
+            const likedPinsContent = document.getElementById('likedPinsContent'); // NEW: Konten tab disukai
             const createdPinsGrid = document.getElementById('createdPinsGrid');
             const savedPinsGrid = document.getElementById('savedPinsGrid');
+            const likedPinsGrid = document.getElementById('likedPinsGrid'); // NEW: Grid pin disukai
             const loadingIndicatorCreated = document.getElementById('loading-indicator-created');
             const loadingIndicatorSaved = document.getElementById('loading-indicator-saved');
+            const loadingIndicatorLiked = document.getElementById('loading-indicator-liked'); // NEW: Indikator loading disukai
 
             let pinsPerPage = 10;
             let loadedCreatedPinsCount = 0;
             let loadedSavedPinsCount = 0;
+            let loadedLikedPinsCount = 0; // NEW: Hitungan pin disukai yang dimuat
             let currentActiveTab = 'created'; // Default active tab
 
             const currentUsername = '<?php echo $username; ?>';
             let initialProfileImageUrl = '<?php echo $profileImageUrl; ?>'; // Store initial URL
+            let initialLikedPins = <?php echo json_encode($likedPins); ?>; // NEW: Ambil pin yang disukai dari PHP
 
             // Initialize sets for selected categories and persons in edit mode
             let editSelectedCategories = new Set(<?php echo json_encode($preferredCategories); ?>);
@@ -744,12 +763,21 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
 
                 pinDiv.appendChild(img);
                 
+                // Tambahkan event listener untuk membuka detail pin saat diklik
+                pinDiv.addEventListener('click', () => {
+                    // Simpan pinData ke sessionStorage agar dapat diakses oleh index.html
+                    sessionStorage.setItem('tempPinDetail', JSON.stringify(pinData));
+                    // Arahkan ke index.html dengan parameter pin
+                    window.location.href = `index.html?pin=${pinData.id}`;
+                });
+
                 return pinDiv;
             }
 
-            // --- Muat Pin Berdasarkan Tipe (Dibuat atau Disimpan) ---
+            // --- Muat Pin Berdasarkan Tipe (Dibuat, Disimpan, atau Disukai) ---
             async function loadPins(type, count, append = true) {
                 let targetGrid, loadingIndicator, loadedCountVar, endpoint;
+                let allPins = []; // Untuk menyimpan semua pin dari respons API
 
                 if (type === 'created') {
                     targetGrid = createdPinsGrid;
@@ -761,6 +789,12 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                     loadingIndicator = loadingIndicatorSaved;
                     loadedCountVar = loadedSavedPinsCount;
                     endpoint = `pins.php?action=fetch_saved&username=${currentUsername}`;
+                } else if (type === 'liked') { // NEW: Handle 'liked' type
+                    targetGrid = likedPinsGrid;
+                    loadingIndicator = loadingIndicatorLiked;
+                    loadedCountVar = loadedLikedPinsCount;
+                    // Untuk pin yang disukai, kita perlu mengambil semua pin, lalu memfilter berdasarkan initialLikedPins
+                    endpoint = `pins.php?action=fetch_all`; 
                 } else {
                     console.error('Tipe pin tidak valid:', type);
                     return;
@@ -774,7 +808,14 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                     console.log(`[loadPins] Respons API untuk ${type} pins:`, response); // Debugging log
 
                     if (response.success) {
-                        const allPins = response.pins || []; // Ensure pins is an array, even if null/undefined
+                        allPins = response.pins || []; 
+                        
+                        // NEW: Filter liked pins if type is 'liked'
+                        if (type === 'liked') {
+                            const likedPinIds = initialLikedPins; // Gunakan daftar pin yang disukai dari PHP
+                            allPins = allPins.filter(pin => likedPinIds.includes(pin.id));
+                        }
+
                         console.log(`[loadPins] Ditemukan ${allPins.length} pin untuk tipe ${type}.`); // Debugging log
 
                         const startIndex = append ? loadedCountVar : 0;
@@ -783,30 +824,32 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                         if (!append) {
                             targetGrid.innerHTML = '';
                             if (type === 'created') loadedCreatedPinsCount = 0;
-                            else loadedSavedPinsCount = 0;
+                            else if (type === 'saved') loadedSavedPinsCount = 0;
+                            else if (type === 'liked') loadedLikedPinsCount = 0; // NEW: Reset liked count
                         }
 
                         const fragment = document.createDocumentFragment();
                         pinsToDisplay.forEach(pinData => {
                             fragment.appendChild(createPinElement(pinData));
                             if (type === 'created') loadedCreatedPinsCount++;
-                            else loadedSavedPinsCount++;
+                            else if (type === 'saved') loadedSavedPinsCount++;
+                            else if (type === 'liked') loadedLikedPinsCount++; // NEW: Increment liked count
                         });
                         targetGrid.appendChild(fragment);
 
                         if (allPins.length === 0) {
-                            targetGrid.innerHTML = `<p style="text-align: left; color: #767676; margin-top: 50px;">Anda belum memiliki pin ${type === 'created' ? 'dibuat' : 'disimpan'} apa pun.</p>`;
+                            targetGrid.innerHTML = `<p style="text-align: left; color: #767676; margin-top: 50px;">Anda belum memiliki pin ${type === 'created' ? 'dibuat' : (type === 'saved' ? 'disimpan' : 'disukai')} apa pun.</p>`;
                         } else if (pinsToDisplay.length === 0 && loadedCountVar > 0) {
                              // Semua pin sudah dimuat, do nothing.
                         }
                     } else {
                         // This block handles response.success === false
-                        showMessage(`Gagal memuat pin ${type === 'created' ? 'dibuat' : 'disimpan'}: ` + response.message, true);
+                        showMessage(`Gagal memuat pin ${type === 'created' ? 'dibuat' : (type === 'saved' ? 'disimpan' : 'disukai')}: ` + response.message, true);
                         targetGrid.innerHTML = `<p style="text-align: left; color: #e60023; margin-top: 50px;">Kesalahan memuat pin. Silakan coba lagi.</p>`;
                     }
                 } catch (error) {
                     // This block handles network errors or JSON parsing errors
-                    showMessage(`Kesalahan memuat pin ${type === 'created' ? 'dibuat' : 'disimpan'}: ` + error.message, true);
+                    showMessage(`Kesalahan memuat pin ${type === 'created' ? 'dibuat' : (type === 'saved' ? 'disimpan' : 'disukai')}: ` + error.message, true);
                     targetGrid.innerHTML = `<p style="text-align: left; color: #e60023; margin-top: 50px;">Terjadi kesalahan. Silakan coba lagi nanti.</p>`;
                     console.error(`[loadPins] Kesalahan saat memuat pin ${type}:`, error); // Debugging log
                 }
@@ -824,14 +867,21 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                     // Hide edit profile section when switching tabs
                     editProfileOverlay.classList.remove('active'); // Hide popup
 
+                    // Hide all tab contents first
+                    createdPinsContent.classList.remove('active');
+                    savedPinsContent.classList.remove('active');
+                    likedPinsContent.classList.remove('active'); // NEW: Sembunyikan tab disukai
+
+                    // Show the active tab content
                     if (tab === 'created') {
                         createdPinsContent.classList.add('active');
-                        savedPinsContent.classList.remove('active');
                         loadPins('created', pinsPerPage, false); // Muat ulang pin dibuat
                     } else if (tab === 'saved') {
                         savedPinsContent.classList.add('active');
-                        createdPinsContent.classList.remove('active');
                         loadPins('saved', pinsPerPage, false); // Muat ulang pin disimpan
+                    } else if (tab === 'liked') { // NEW: Handle 'liked' tab
+                        likedPinsContent.classList.add('active');
+                        loadPins('liked', pinsPerPage, false); // Muat ulang pin disukai
                     }
                 });
             });
@@ -843,6 +893,8 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                     currentLoadingIndicator = loadingIndicatorCreated;
                 } else if (currentActiveTab === 'saved') {
                     currentLoadingIndicator = loadingIndicatorSaved;
+                } else if (currentActiveTab === 'liked') { // NEW: Handle liked tab for infinite scroll
+                    currentLoadingIndicator = loadingIndicatorLiked;
                 }
 
                 // Only load more if edit profile section is not active
@@ -858,6 +910,7 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                 // Hide pin grids when edit profile is active
                 createdPinsContent.classList.remove('active');
                 savedPinsContent.classList.remove('active');
+                likedPinsContent.classList.remove('active'); // NEW: Sembunyikan tab disukai saat edit profil
                 tabButtons.forEach(btn => btn.classList.remove('active')); // Deactivate tab buttons
 
                 // Load all categories and persons for selection
@@ -872,8 +925,10 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                 document.querySelector(`.tab-button[data-tab="${currentActiveTab}"]`).classList.add('active');
                 if (currentActiveTab === 'created') {
                     createdPinsContent.classList.add('active');
-                } else {
+                } else if (currentActiveTab === 'saved') {
                     savedPinsContent.classList.add('active');
+                } else if (currentActiveTab === 'liked') { // NEW: Restore liked tab
+                    likedPinsContent.classList.add('active');
                 }
                 // Reset form fields to initial values if needed (optional, for now just hide)
                 // Re-initialize selected sets from PHP values
@@ -1044,8 +1099,10 @@ $preferredPersons = $userData['preferred_persons'] ?? [];
                     document.querySelector(`.tab-button[data-tab="${currentActiveTab}"]`).classList.add('active');
                     if (currentActiveTab === 'created') {
                         createdPinsContent.classList.add('active');
-                    } else {
+                    } else if (currentActiveTab === 'saved') {
                         savedPinsContent.classList.add('active');
+                    } else if (currentActiveTab === 'liked') { // NEW: Restore liked tab
+                        likedPinsContent.classList.add('active');
                     }
                 } else {
                     showMessage('Gagal memperbarui profil: ' + response.message, true);
