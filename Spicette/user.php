@@ -23,6 +23,10 @@ function getUserData($username, $usersFilePath) {
                 if (!isset($user['liked_pins'])) {
                     $user['liked_pins'] = [];
                 }
+                // Pastikan 'level' ada, bahkan jika kosong
+                if (!isset($user['level'])) {
+                    $user['level'] = 'Pengguna Biasa'; // Default level
+                }
                 return $user;
             }
         }
@@ -35,7 +39,7 @@ $profileImageUrl = $userData['profile_image_url'] ?? 'https://i.pinimg.com/736x/
 $preferredCategories = $userData['preferred_categories'] ?? [];
 $preferredPersons = $userData['preferred_persons'] ?? [];
 $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disukai
-
+$userLevel = $userData['level'] ?? 'Pengguna Biasa'; // Ambil level pengguna
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -398,6 +402,44 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
             width: 100%; /* Ensure status text goes to new line if needed */
         }
 
+        /* Styling for the level icon */
+        .level-icon {
+            margin-right: 8px;
+            font-size: 1.2em; /* Slightly larger icon */
+            vertical-align: middle; /* Align with text */
+        }
+
+        /* Level specific colors */
+        .level-tempted { color: #ff9800; /* Orange */ }
+        .level-Naughty { color: #ffeb3b; /* Yellow */ }
+        .level-sinful { color: #f44336; /* Red */ }
+
+        /* Delete button on pins */
+        .pin .delete-pin-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 10;
+        }
+
+        .pin:hover .delete-pin-btn {
+            opacity: 1;
+        }
+
+
         .user-profile-actions {
             margin-bottom: 30px;
             display: flex;
@@ -512,7 +554,7 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
             <button class="icon-button" aria-label="Profil Pengguna" onclick="window.location.href='user.php'">
                 <div class="profile-icon" id="headerProfileIcon">
                     <?php if (!empty($profileImageUrl)): ?>
-                        <img src="<?php echo htmlspecialchars($profileImageUrl); ?>" alt="Profil Pengguna" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        <img src="<?php echo htmlspecialchars($profileImageUrl); ?>" alt="Profil Pengguna">
                     <?php else: ?>
                         <?php echo strtoupper(substr($username, 0, 1)); ?>
                     <?php endif; ?>
@@ -538,7 +580,14 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
                 <button class="user-logout-btn-mobile" id="userLogoutBtnMobile">
                     <i class="fas fa-sign-out-alt"></i> Out
                 </button>
-                <p>Status: <?php echo $isAdmin ? 'Administrator' : 'Pengguna Biasa'; ?></p>
+                <p>Level: 
+                    <?php if ($isAdmin): ?>
+                        Administrator
+                    <?php else: ?>
+                        <i class="fas fa-star level-icon level-<?php echo strtolower(htmlspecialchars($userLevel)); ?>"></i>
+                        <?php echo htmlspecialchars($userLevel); ?>
+                    <?php endif; ?>
+                </p>
             </div>
 
             <div class="user-profile-actions">
@@ -724,6 +773,62 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
                 }, 3000);
             }
 
+            // --- Modal Konfirmasi Kustom ---
+            function showCustomConfirmation(message, onConfirmCallback) {
+                const modal = document.createElement('div');
+                modal.id = 'customConfirmationModal';
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center;
+                    align-items: center; z-index: 2000; opacity: 0; visibility: hidden;
+                    transition: all 0.3s ease;
+                `;
+                modal.innerHTML = `
+                    <div style="background: #fff; padding: 35px; border-radius: 12px; max-width: 420px;
+                                text-align: center; transform: scale(0.9); opacity: 0;
+                                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #ddd; color: #333;">
+                        <p id="modalMessage" style="font-size: 15px; margin-bottom: 28px; font-weight: 500;"></p>
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <button id="confirmNo" style="border: none; padding: 11px 22px; border-radius: 8px;
+                                        cursor: pointer; font-size: 15px; font-weight: 600;
+                                        transition: all 0.3s ease; background: #ccc; color: #333;">Tidak</button>
+                            <button id="confirmYes" style="border: none; padding: 11px 22px; border-radius: 8px;
+                                        cursor: pointer; font-size: 15px; font-weight: 600;
+                                        transition: all 0.3s ease; background: #e60023; color: white;">Ya</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const modalMessageElem = modal.querySelector('#modalMessage');
+                const confirmYesButton = modal.querySelector('#confirmYes');
+                const confirmNoButton = modal.querySelector('#confirmNo');
+
+                modalMessageElem.textContent = message;
+                modal.style.opacity = '1';
+                modal.style.visibility = 'visible';
+                modal.querySelector('div').style.transform = 'scale(1)';
+                modal.querySelector('div').style.opacity = '1';
+
+                const handleConfirm = () => {
+                    modal.style.opacity = '0';
+                    modal.style.visibility = 'hidden';
+                    modal.querySelector('div').style.transform = 'scale(0.9)';
+                    onConfirmCallback();
+                    modal.remove(); // Remove modal from DOM after action
+                };
+
+                const handleCancel = () => {
+                    modal.style.opacity = '0';
+                    modal.style.visibility = 'hidden';
+                    modal.querySelector('div').style.transform = 'scale(0.9)';
+                    modal.remove(); // Remove modal from DOM after action
+                };
+
+                confirmYesButton.addEventListener('click', handleConfirm);
+                confirmNoButton.addEventListener('click', handleCancel);
+            }
+
             // --- Fungsionalitas Logout Pengguna ---
             async function handleUserLogout() {
                 try {
@@ -741,7 +846,7 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
             userLogoutBtnMobile.addEventListener('click', handleUserLogout); // Add listener for mobile button
 
             // --- Fungsi untuk membuat elemen Pin ---
-            function createPinElement(pinData) {
+            function createPinElement(pinData, isOwnerPin = false) { // Added isOwnerPin parameter
                 const pinDiv = document.createElement('div');
                 pinDiv.classList.add('pin');
                 pinDiv.dataset.id = pinData.id;
@@ -763,6 +868,19 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
 
                 pinDiv.appendChild(img);
                 
+                // Add delete button if it's an owner's pin
+                if (isOwnerPin) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('delete-pin-btn');
+                    deleteButton.innerHTML = '<i class="fas fa-times"></i>';
+                    deleteButton.title = 'Hapus Pin Ini';
+                    deleteButton.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent pin click event from firing
+                        deleteUserPin(pinData.id);
+                    });
+                    pinDiv.appendChild(deleteButton);
+                }
+
                 // Tambahkan event listener untuk membuka detail pin saat diklik
                 pinDiv.addEventListener('click', () => {
                     // Simpan pinData ke sessionStorage agar dapat diakses oleh index.html
@@ -773,6 +891,25 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
 
                 return pinDiv;
             }
+
+            // --- Fungsi untuk menghapus pin pengguna ---
+            async function deleteUserPin(pinId) {
+                showCustomConfirmation('Apakah Anda yakin ingin menghapus pin ini?', async () => {
+                    try {
+                        const response = await makeApiRequest('pins.php?action=delete_user_pin', 'POST', { pinId: pinId });
+                        if (response.success) {
+                            showMessage('Pin berhasil dihapus!', false);
+                            // Muat ulang pin di tab "Dibuat" setelah penghapusan
+                            loadPins('created', pinsPerPage, false);
+                        } else {
+                            showMessage('Gagal menghapus pin: ' + response.message, true);
+                        }
+                    } catch (error) {
+                        showMessage('Kesalahan menghapus pin: ' + error.message, true);
+                    }
+                });
+            }
+
 
             // --- Muat Pin Berdasarkan Tipe (Dibuat, Disimpan, atau Disukai) ---
             async function loadPins(type, count, append = true) {
@@ -830,7 +967,8 @@ $likedPins = $userData['liked_pins'] ?? []; // NEW: Ambil daftar pin yang disuka
 
                         const fragment = document.createDocumentFragment();
                         pinsToDisplay.forEach(pinData => {
-                            fragment.appendChild(createPinElement(pinData));
+                            // Pass true to createPinElement if it's the 'created' tab
+                            fragment.appendChild(createPinElement(pinData, type === 'created'));
                             if (type === 'created') loadedCreatedPinsCount++;
                             else if (type === 'saved') loadedSavedPinsCount++;
                             else if (type === 'liked') loadedLikedPinsCount++; // NEW: Increment liked count
