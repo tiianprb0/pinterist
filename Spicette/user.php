@@ -404,7 +404,8 @@ $userLevel = $userData['level'] ?? 'Pengguna Biasa'; // Ambil level pengguna
 
         /* Styling for the level icon */
         .level-icon {
-            margin-right: 8px;
+            margin-right: 3px;
+            margin-left: 6px;
             font-size: 1.2em; /* Slightly larger icon */
             vertical-align: middle; /* Align with text */
         }
