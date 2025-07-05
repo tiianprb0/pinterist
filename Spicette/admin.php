@@ -368,7 +368,8 @@ $adminUsername = $_SESSION['username'];
         .admin-form input[type="text"],
         .admin-form input[type="url"],
         .admin-form input[type="file"],
-        .admin-form textarea {
+        .admin-form textarea,
+        .admin-form select { /* Added select for user levels */
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -386,7 +387,8 @@ $adminUsername = $_SESSION['username'];
         .admin-form input[type="text"]:focus,
         .admin-form input[type="url"]:focus,
         .admin-form input[type="file"]:focus,
-        .admin-form textarea:focus {
+        .admin-form textarea:focus,
+        .admin-form select:focus { /* Added select for user levels */
             border-color: var(--primary);
             background: var(--card-hover);
             outline: none;
@@ -496,6 +498,43 @@ $adminUsername = $_SESSION['username'];
             cursor: not-allowed;
             opacity: 0.7;
         }
+
+        /* User Level Specific Styles */
+        .user-level-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+        .user-level-control select {
+            flex-grow: 1;
+            min-width: 120px; /* Ensure select box is not too small */
+            color: #333; /* Darker text for select options */
+        }
+        .user-level-control button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex-shrink: 0; /* Prevent button from shrinking */
+        }
+        .user-level-control button:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        .user-level-control button:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
 
         /* Toggle Switch */
         .can-upload-toggle {
@@ -696,7 +735,7 @@ $adminUsername = $_SESSION['username'];
                 margin-top: 25px;
                 margin-bottom: 15px;
             }
-            .admin-form input, .admin-form textarea {
+            .admin-form input, .admin-form textarea, .admin-form select { /* Added select */
                 padding: 10px;
                 font-size: 14px;
                 margin-bottom: 15px;
@@ -809,7 +848,7 @@ $adminUsername = $_SESSION['username'];
                 margin-top: 20px;
                 margin-bottom: 12px;
             }
-            .admin-form input, .admin-form textarea {
+            .admin-form input, .admin-form textarea, .admin-form select { /* Added select */
                 padding: 8px;
                 font-size: 14px;
                 margin-bottom: 12px;
@@ -1410,6 +1449,8 @@ $adminUsername = $_SESSION['username'];
                     return;
                 }
 
+                const userLevels = ['tempted', 'Naughty', 'sinful'];
+
                 users.forEach(user => {
                     const userItem = document.createElement('div');
                     userItem.classList.add('list-item');
@@ -1442,12 +1483,33 @@ $adminUsername = $_SESSION['username'];
                         ? `<img src="${user.profile_image_url}" alt="Profil" class="list-item-img" onerror="this.onerror=null;this.src='https://placehold.co/60x60/e0e0e0/767676?text=Profil';">`
                         : `<img src="https://placehold.co/60x60/e0e0e0/767676?text=Profil" alt="Profil" class="list-item-img">`;
                     
+                    // User Level Dropdown
+                    let levelSelectHtml = '';
+                    if (!user.isAdmin) { // Only show level control for non-admin users
+                        levelSelectHtml = `
+                            <div class="user-level-control">
+                                <label for="userLevel_${user.username}">Level:</label>
+                                <select id="userLevel_${user.username}" data-username="${user.username}" data-initial-level="${user.level || 'tempted'}">
+                                    ${userLevels.map(level => `
+                                        <option value="${level}" ${user.level === level ? 'selected' : ''}>
+                                            ${level.charAt(0).toUpperCase() + level.slice(1)}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                                <button class="save-level-btn" id="saveLevelBtn_${user.username}" data-username="${user.username}" disabled>Simpan Level</button>
+                            </div>
+                        `;
+                    } else {
+                        levelSelectHtml = `<span class="list-item-detail">Level: Administrator</span>`;
+                    }
+
                     userItem.innerHTML = `
                         ${profileImageUrlHtml}
                         <div class="list-item-content">
                             <strong class="list-item-title">${user.username}</strong>
                             <span class="list-item-detail">Email: ${user.email || 'N/A'}</span>
                             <span class="list-item-detail">Status: ${user.isAdmin ? 'Administrator' : 'Pengguna Biasa'}</span>
+                            ${levelSelectHtml}
                             ${preferredCategoriesHtml}
                             ${preferredPersonsHtml}
                             ${manualPersonsHtml}
@@ -1475,6 +1537,24 @@ $adminUsername = $_SESSION['username'];
                         });
                     }
 
+                    const userLevelSelect = userItem.querySelector(`#userLevel_${user.username}`);
+                    const saveLevelBtn = userItem.querySelector(`#saveLevelBtn_${user.username}`);
+
+                    if (userLevelSelect && saveLevelBtn) {
+                        userLevelSelect.addEventListener('change', function() {
+                            if (this.value !== this.dataset.initialLevel) {
+                                saveLevelBtn.disabled = false;
+                            } else {
+                                saveLevelBtn.disabled = true;
+                            }
+                        });
+
+                        saveLevelBtn.addEventListener('click', () => {
+                            const selectedLevel = userLevelSelect.value;
+                            updateUserLevel(user.username, selectedLevel);
+                        });
+                    }
+
                     userList.appendChild(userItem);
                 });
             }
@@ -1492,6 +1572,24 @@ $adminUsername = $_SESSION['username'];
                         }
                     } catch (error) {
                         showMessage('Kesalahan memperbarui izin unggah: ' + error.message, true);
+                        fetchUsers(); // Muat ulang untuk memastikan status yang benar jika gagal
+                    }
+                });
+            }
+
+            async function updateUserLevel(username, level) {
+                showCustomConfirmation(`Apakah Anda yakin ingin mengubah level pengguna ${username} menjadi "${level}"?`, async () => {
+                    try {
+                        const response = await makeApiRequest('update_user_level.php', 'POST', { username: username, level: level });
+                        if (response.success) {
+                            showMessage(`Level pengguna ${username} berhasil diperbarui menjadi "${level}"!`, false);
+                            fetchUsers(); // Muat ulang daftar pengguna untuk menampilkan perubahan
+                        } else {
+                            showMessage('Gagal memperbarui level pengguna: ' + response.message, true);
+                            fetchUsers(); // Muat ulang untuk memastikan status yang benar jika gagal
+                        }
+                    } catch (error) {
+                        showMessage('Kesalahan memperbarui level pengguna: ' + error.message, true);
                         fetchUsers(); // Muat ulang untuk memastikan status yang benar jika gagal
                     }
                 });
