@@ -40,7 +40,8 @@
             "Karina"
         ],
         "manual_persons_requested": [],
-        "profile_image_url": "https://64.media.tumblr.com/2904555e59366ca8eb2af3dce0ce40fd/abcb31187266701c-8f/s400x600/065c16ab8eca47ee13ec32e54f4c6d1eefafc918.gifv"
+        "profile_image_url": "https://64.media.tumblr.com/2904555e59366ca8eb2af3dce0ce40fd/abcb31187266701c-8f/s400x600/065c16ab8eca47ee13ec32e54f4c6d1eefafc918.gifv",
+        "level": "tempted"
     },
     {
         "username": "contoh",
@@ -51,7 +52,8 @@
         "preferred_categories": [],
         "preferred_persons": [],
         "manual_persons_requested": [],
-        "profile_image_url": ""
+        "profile_image_url": "",
+        "level": "tempted"
     },
     {
         "username": "test",
@@ -74,7 +76,8 @@
         "manual_persons_requested": [
             "rtrt"
         ],
-        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3"
+        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3",
+        "level": "tempted"
     },
     {
         "username": "grgrg4ge",
@@ -95,7 +98,8 @@
             "ML"
         ],
         "manual_persons_requested": [],
-        "profile_image_url": "https://i.pinimg.com/236x/79/9a/aa/799aaa5844baa58f32235ef7d0b3f9f5.jpg?nii=t"
+        "profile_image_url": "https://i.pinimg.com/236x/79/9a/aa/799aaa5844baa58f32235ef7d0b3f9f5.jpg?nii=t",
+        "level": "tempted"
     },
     {
         "username": "hhahaha",
@@ -116,7 +120,8 @@
             "Karina"
         ],
         "manual_persons_requested": [],
-        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3"
+        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3",
+        "level": "tempted"
     },
     {
         "username": "asasw2e",
@@ -137,7 +142,8 @@
         "manual_persons_requested": [
             "hahaha"
         ],
-        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3"
+        "profile_image_url": "https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3",
+        "level": "tempted"
     },
     {
         "username": "testaja",
@@ -160,7 +166,8 @@
             "Misellia",
             "Karina"
         ],
-        "profile_image_url": "https://i.pinimg.com/736x/6b/21/40/6b2140e4675c537d5c390c1c5cdc6fc1.jpg"
+        "profile_image_url": "https://i.pinimg.com/736x/6b/21/40/6b2140e4675c537d5c390c1c5cdc6fc1.jpg",
+        "level": "tempted"
     },
     {
         "username": "tauua",
@@ -181,6 +188,7 @@
         "manual_persons_requested": [
             "Eca"
         ],
-        "profile_image_url": "https://i.pinimg.com/originals/5f/ba/df/5fbadff7d603793b18ed9b79c52356ce.jpg"
+        "profile_image_url": "https://i.pinimg.com/originals/5f/ba/df/5fbadff7d603793b18ed9b79c52356ce.jpg",
+        "level": "tempted"
     }
 ]
