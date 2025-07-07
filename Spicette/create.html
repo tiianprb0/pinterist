@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Pin Baru - Spicette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Tailwind CSS CDN REMOVED -->
+    <style>
+        /* Base styles from index.html and user.php */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9f9f9; /* Consistent with user.php and index.html's light theme */
+            color: #1a1a1a; /* Darker text for better contrast */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Main container styling for responsiveness */
+        main {
+            max-width: 800px;
+            margin: 20px auto; /* Adjusted margin */
+            padding: 20px;
+            min-height: calc(100vh - 40px); /* Adjusted for new margin */
+            display: flex;
+            flex-direction: column;
+            background-color: transparent; /* Removed background */
+            border-radius: 12px; /* Consistent border-radius */
+            box-shadow: none; /* Removed shadow */
+            width: 95%;
+            box-sizing: border-box;
+        }
+
+        /* Back button container styling */
+        .back-button-container {
+            margin-bottom: 20px;
+            align-self: flex-start;
+        }
+
+        /* Back button styling - simplified to match index.html icon buttons */
+        .back-button {
+            background: none; /* No background */
+            border: none; /* No border */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            color: #1a1a1a; /* Dark icon color */
+        }
+
+        .back-button:hover {
+            background-color: #f0f0f0; /* Light hover background */
+            transform: scale(1.05);
+        }
+
+        .back-button .fas {
+            font-size: 20px;
+        }
+
+        /* Create pin form styling */
+        .create-pin-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: transparent; /* Removed background */
+            border-radius: 12px;
+            padding: 0; /* Padding handled by main */
+            box-sizing: border-box;
+            box-shadow: none; /* Removed shadow */
+        }
+
+        .create-pin-form h2 {
+            font-family: 'Playfair Display', serif; /* Keep for main title */
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        /* Form group styling */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Input, textarea styling - consistent with index.html search and user.php inputs */
+        .form-group input:not([type="radio"]):not([type="checkbox"]),
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ddd; /* Lighter border */
+            background-color: #f9f9f9; /* Light background */
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            color: #1a1a1a;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .form-group input:not([type="radio"]):not([type="checkbox"]):focus,
+        .form-group textarea:focus {
+            border-color: #e60023; /* Pinterest red focus */
+            background-color: #ffffff; /* White background on focus */
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Submit button styling - solid red like index.html save button */
+        .create-pin-form button[type="submit"] {
+            background-color: #e60023; /* Solid Pinterest red */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            box-sizing: border-box;
+        }
+
+        .create-pin-form button[type="submit"]:hover {
+            background-color: #ad081b; /* Darker red on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .create-pin-form button[type="submit"]:disabled {
+            background-color: #cccccc; /* Lighter gray when disabled */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading spinner styling */
+        .loading-spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #e60023;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .create-pin-form button[type="submit"]:disabled .loading-spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Radio group styling - simplified */
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s ease;
+            background-color: #f9f9f9; /* Light background */
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ddd; /* Subtle border */
+        }
+
+        .radio-group:hover {
+            background-color: #f0f0f0;
+        }
+
+        .radio-group label {
+            font-size: 14px;
+            color: #333;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            -webkit-appearance: none; /* For Safari */
+            -moz-appearance: none; /* For Firefox */
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #999; /* Darker border for unchecked */
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            margin-right: 5px;
+            background-color: #fff; /* White inner background */
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .radio-group input[type="radio"]:checked {
+            border-color: #e60023;
+            background-color: #e60023;
+        }
+
+        .radio-group input[type="radio"]:checked::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Inline form group styling - simplified */
+        .form-group-inline {
+            border: 1px solid #ddd; /* Subtle border */
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9; /* Light background */
+            margin-bottom: 10px;
+        }
+
+        .form-group-inline label {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .form-group-inline textarea {
+            font-size: 14px;
+        }
+
+        /* Recommend button styling - secondary red */
+        .recommend-button {
+            background-color: #ad081b; /* Darker red, still in theme */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            margin-top: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .recommend-button:hover {
+            background-color: #8c0615; /* Even darker red on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .recommend-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Title suggestions styling - simplified */
+        .title-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .title-suggestion {
+            background-color: #f0f0f0; /* Light gray background */
+            border: 1px solid #ddd; /* Subtle border */
+            border-radius: 16px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .title-suggestion:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        /* Person tag suggestions styling - simplified */
+        .person-tag-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ddd; /* Subtle border */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+        }
+
+        .person-tag-suggestions li {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            transition: background-color 0.2s ease;
+        }
+
+        .person-tag-suggestions li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .person-tag-suggestions li.selected {
+            background-color: #e60023;
+            color: white;
+        }
+
+        /* Custom alert styling - consistent with index.html */
+        .custom-alert {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .custom-alert.success {
+            background-color: #4CAF50; /* Green */
+        }
+
+        .custom-alert.error {
+            background-color: #f44336; /* Red */
+        }
+
+        /* Access denied message styling */
+        .access-denied-message {
+            text-align: center;
+            font-size: 18px;
+            color: #e60023;
+            margin-top: 50px;
+            display: none;
+            font-weight: 600;
+            background-color: #fff0f0; /* Light red background */
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f44336;
+        }
+
+        /* Category checkbox styling - simplified */
+        .category-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd; /* Subtle border */
+            border-radius: 8px;
+            background-color: #f9f9f9; /* Light background */
+        }
+
+        .category-checkbox-item {
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0; /* Light gray background */
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .category-checkbox-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        .category-checkbox-item input[type="checkbox"] {
+            -webkit-appearance: none; /* For Safari */
+            -moz-appearance: none; /* For Firefox */
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #999; /* Darker border for unchecked */
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            position: relative;
+            background-color: #fff; /* White inner background */
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .category-checkbox-item input[type="checkbox"]:checked {
+            border-color: #e60023;
+            background-color: #e60023;
+        }
+
+        .category-checkbox-item input[type="checkbox"]:checked::after {
+            content: '\2713'; /* Checkmark character */
+            font-size: 14px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .category-checkbox-item label {
+            font-size: 14px;
+            color: #333;
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        /* New styles for upload status - simplified */
+        #uploadStatus {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f0f0f0; /* Light gray background */
+            border: 1px solid #ddd; /* Subtle border */
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 10px;
+            color: #333;
+        }
+        #uploadStatus.show {
+            display: flex;
+        }
+        #uploadStatus h3 {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        #uploadStatus .file-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            border-bottom: 1px dashed #ccc; /* Lighter dashed line */
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+        #uploadStatus .file-info:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        #uploadStatus .file-info span {
+            word-break: break-all;
+        }
+        #uploadStatus .file-info .size {
+            font-weight: 600;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            main {
+                margin: 15px 10px;
+                padding: 15px;
+            }
+
+            .create-pin-form h2 {
+                font-size: 24px;
+            }
+
+            .form-group input:not([type="radio"]):not([type="checkbox"]),
+            .form-group textarea {
+                font-size: 15px;
+                padding: 10px;
+            }
+
+            .create-pin-form button[type="submit"],
+            .recommend-button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .back-button {
+                width: 36px;
+                height: 36px;
+            }
+
+            .back-button .fas {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .form-group input:not([type="radio"]):not([type="checkbox"]),
+            .form-group textarea {
+                font-size: 15px;
+            }
+
+            .radio-group input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+
+            .radio-group input[type="radio"]:checked::after {
+                width: 8px;
+                height: 8px;
+            }
+
+            .title-suggestion {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.location.href='index.html'" aria-label="Kembali">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+        <form id="createPinForm" class="create-pin-form" enctype="multipart/form-data">
+            <h2>Buat Pin Baru</h2>
+            <div id="createMessage" class="custom-alert"></div>
+            <div class="form-group">
+                <label for="title">Judul Pin:</label>
+                <input type="text" id="title" name="title" placeholder="Masukkan judul pin" required>
+                <button type="button" id="recommendTitleButton" class="recommend-button">Rekomendasikan Judul</button>
+                <div id="titleSuggestions" class="title-suggestions"></div>
+            </div>
+            <div class="form-group">
+                <label for="photoDescription">Penjelasan Foto:</label>
+                <textarea id="photoDescription" name="photo_description" placeholder="Jelaskan isi foto Anda (untuk rekomendasi judul)"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="description">Deskripsi Pin (opsional):</label>
+                <textarea id="description" name="description" placeholder="Jelaskan pin Anda"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="images">Pilih Gambar (multiple diperbolehkan):</label>
+                <input type="file" id="images" name="images[]" accept="image/*" multiple required>
+            </div>
+            <!-- New div to show upload status and file sizes -->
+            <div id="uploadStatus">
+                <h3>Status Unggah Gambar:</h3>
+                <!-- File info will be inserted here -->
+            </div>
+            <div class="form-group">
+                <label>Tipe Tampilan Pin:</label>
+                <div class="radio-group">
+                    <input type="radio" id="displayStacked" name="display_type" value="stacked" checked>
+                    <label for="displayStacked">Gambar Bertumpuk!</label>
+                </div>
+                <div class="radio-group">
+                    <input type="radio" id="displaySlider" name="display_type" value="slider">
+                    <label for="displaySlider">Slider Gambar!</label>
+                </div>
+            </div>
+            <div id="imageDescriptionsContainer" class="form-group"></div>
+            <div class="form-group">
+                <label for="category">Pilih Kategori (bisa lebih dari satu):</label>
+                <div id="categoryCheckboxes" class="category-checkbox-group">
+                    <!-- Categories will be loaded here by JavaScript -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="personTags">Orang dalam Pin (pisahkan dengan koma, opsional):</label>
+                <textarea id="personTags" name="personTags" placeholder="Contoh: John Doe, Jane Smith"></textarea>
+                <ul id="personTagSuggestions" class="person-tag-suggestions"></ul>
+            </div>
+            <!-- Added margin-top to separate from personTagSuggestions -->
+            <button type="submit" id="uploadButton" class="mt-8">Unggah Pin <span class="loading-spinner"></span></button>
+        </form>
+        <div id="accessDenied" class="access-denied-message">
+            Anda tidak memiliki izin untuk mengunggah pin. Harap hubungi administrator.
+        </div>
+    </main>
+
+    <script>
+        const API_BASE_URL = '/Spicette/api/';
+
+        /**
+         * Makes an API request to the specified endpoint.
+         * @param {string} endpoint - The API endpoint.
+         * @param {string} method - The HTTP method (GET, POST).
+         * @param {object} data - The data to send with the request (for POST).
+         * @returns {Promise<object>} - The JSON response from the API.
+         */
+        async function makeApiRequest(endpoint, method = 'GET', data = null) {
+            try {
+                const options = { method };
+                if (data !== null && typeof data !== 'undefined') {
+                    // For FormData, no Content-Type header is needed.
+                    // For other POST requests, assume JSON.
+                    if (!(data instanceof FormData) && method === 'POST') {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
+                    } else if (data instanceof FormData) {
+                        options.body = data;
+                    }
+                }
+                
+                const response = await fetch(API_BASE_URL + endpoint, options);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
+                }
+                
+                const textResponse = await response.text();
+                if (!textResponse) {
+                    return { success: true, message: 'Tidak ada konten' };
+                }
+
+                try {
+                    const jsonResponse = JSON.parse(textResponse);
+                    return jsonResponse;
+                } catch (e) {
+                    console.error('Gagal mengurai respons JSON:', textResponse);
+                    throw new Error(`Respons JSON tidak valid: ${textResponse}`);
+                }
+            } catch (error) {
+                console.error('Permintaan API Gagal:', error);
+                return { success: false, message: 'Kesalahan jaringan atau server.' };
+            }
+        }
+
+        /**
+         * Fetches title suggestions from a third-party AI API.
+         * @param {string[]} categories - Selected categories for the pin.
+         * @param {string} photoDescription - Description of the photo.
+         * @param {string[]} personTags - List of people tagged in the pin.
+         * @returns {Promise<string[]>} - An array of title suggestions.
+         */
+        async function getTitleSuggestions(categories, photoDescription, personTags) {
+            // NOTE: Replace 'YOUR_DEEPSEEK_API_KEY' with your actual DeepSeek API key.
+            const apiKey = 'sk-7ee3372f5d844af297e90551daeab578'; // This is a placeholder, use your actual key
+            const endpoint = 'https://api.deepseek.com/v1/chat/completions';
+            const prompt = `You are a creative assistant tasked with generating sensual and provocative title suggestions (maximum 6 words) for a social media pin, intended for a 21+ audience. The titles may include bold or vulgar terms like "bitch" or "boobs" or "seduces" or something in hot way, The pin belongs to the categories: ${categories.join(', ')}. The photo description is: "${photoDescription}". People in the pin: ${personTags.length > 0 ? personTags.join(', ') : 'None'}. Generate 3 title suggestions without using quotation marks.`;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-chat',
+                        messages: [
+                            { role: 'system', content: prompt },
+                            { role: 'user', content: 'Generate 3 title suggestions.' }
+                        ],
+                        max_tokens: 100,
+                        temperature: 0.8
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`DeepSeek API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const suggestions = data.choices[0].message.content.split('\n').filter(line => line.trim());
+                return suggestions.map(s => s.replace(/^\d+\.\s*/, '').trim());
+            } catch (error) {
+                console.error('DeepSeek API error:', error);
+                return [];
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const createPinForm = document.getElementById('createPinForm');
+            const accessDeniedMessage = document.getElementById('accessDenied');
+            const categoryCheckboxesContainer = document.getElementById('categoryCheckboxes'); // New element for custom checkboxes
+            const imagesInput = document.getElementById('images');
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
+            const displayStackedRadio = document.getElementById('displayStacked');
+            const displaySliderRadio = document.getElementById('displaySlider');
+            const personTagsInput = document.getElementById('personTags');
+            const personTagSuggestionsContainer = document.getElementById('personTagSuggestions');
+            const createMessageDiv = document.getElementById('createMessage');
+            const uploadButton = document.getElementById('uploadButton');
+            const recommendTitleButton = document.getElementById('recommendTitleButton');
+            const titleSuggestionsDiv = document.getElementById('titleSuggestions');
+            const photoDescriptionInput = document.getElementById('photoDescription');
+            const uploadStatusDiv = document.getElementById('uploadStatus'); // New element for upload status
+
+            let allUniquePersonTags = [];
+            let selectedSuggestionIndex = -1;
+
+            /**
+             * Displays a custom alert message.
+             * @param {string} msg - The message to display.
+             * @param {string} type - The type of message (info, success, error).
+             */
+            function showMessage(msg, type = 'info') {
+                createMessageDiv.textContent = msg;
+                createMessageDiv.className = `custom-alert ${type} show`;
+                setTimeout(() => {
+                    createMessageDiv.classList.remove('show');
+                }, 3000);
+            }
+
+            /**
+             * Loads all unique person tags from existing pins.
+             */
+            async function loadAllUniquePersonTags() {
+                const response = await makeApiRequest('pins.php?action=fetch_all');
+                if (response.success && response.pins) {
+                    const tags = new Set();
+                    response.pins.forEach(pin => {
+                        if (pin.personTags && Array.isArray(pin.personTags)) {
+                            pin.personTags.forEach(tag => tags.add(tag.trim()));
+                        }
+                    });
+                    allUniquePersonTags = Array.from(tags).sort();
+                }
+            }
+
+            /**
+             * Loads categories and populates the custom checkbox group.
+             */
+            async function loadCategories() {
+                try {
+                    const response = await makeApiRequest('categories.php?action=fetch_all');
+                    
+                    if (response.success && response.categories) {
+                        categoryCheckboxesContainer.innerHTML = ''; // Clear existing content
+                        response.categories.forEach(cat => {
+                            const checkboxItem = document.createElement('div');
+                            checkboxItem.className = 'category-checkbox-item';
+                            checkboxItem.innerHTML = `
+                                <input type="checkbox" id="category_${cat.name.replace(/\s+/g, '_')}" name="categories" value="${cat.name}">
+                                <label for="category_${cat.name.replace(/\s+/g, '_')}">${cat.name}</label>
+                            `;
+                            categoryCheckboxesContainer.appendChild(checkboxItem);
+                        });
+                    } else {
+                        console.error('Gagal memuat kategori:', response.message);
+                        showMessage('Gagal memuat kategori. Coba lagi.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Kesalahan memuat kategori:', error);
+                    showMessage('Kesalahan jaringan saat memuat kategori.', 'error');
+                }
+            }
+
+            /**
+             * Toggles the visibility of individual image description fields based on display type and number of images.
+             */
+            function toggleDescriptions() {
+                imageDescriptionsContainer.innerHTML = '';
+                const files = imagesInput.files;
+
+                if (displayStackedRadio.checked || files.length === 1) {
+                    if (files.length > 0) {
+                        imageDescriptionsContainer.style.display = 'block';
+                        const header = document.createElement('h3');
+                        header.textContent = 'Deskripsi Gambar Individual (Opsional):';
+                        header.style.fontSize = '16px';
+                        header.style.color = '#333';
+                        header.style.marginBottom = '15px';
+                        header.style.fontWeight = 'bold';
+                        imageDescriptionsContainer.appendChild(header);
+
+                        Array.from(files).forEach((file, index) => {
+                            const fileDescriptionDiv = document.createElement('div');
+                            fileDescriptionDiv.className = 'form-group-inline';
+                            fileDescriptionDiv.innerHTML = `
+                                <label for="image_desc_${index}">${file.name}:</label>
+                                <textarea id="image_desc_${index}" name="image_descriptions[]" placeholder="Jelaskan gambar ini (opsional)"></textarea>
+                            `;
+                            fileDescriptionDiv.dataset.originalFileName = file.name; // Store original file name
+                            imageDescriptionsContainer.appendChild(fileDescriptionDiv);
+                        });
+                    } else {
+                        imageDescriptionsContainer.style.display = 'none';
+                    }
+                } else {
+                    imageDescriptionsContainer.style.display = 'none';
+                }
+
+                // Disable slider option if only one image is selected
+                if (files.length === 1) {
+                    displayStackedRadio.checked = true;
+                    displaySliderRadio.disabled = true;
+                } else {
+                    displaySliderRadio.disabled = false;
+                }
+            }
+
+            /**
+             * Shows person tag suggestions based on user input.
+             */
+            function showPersonTagSuggestions() {
+                const inputValue = personTagsInput.value;
+                const lastCommaIndex = inputValue.lastIndexOf(',');
+                const currentInput = (lastCommaIndex !== -1 ? inputValue.substring(lastCommaIndex + 1) : inputValue).trim().toLowerCase();
+
+                personTagSuggestionsContainer.innerHTML = '';
+                personTagSuggestionsContainer.style.display = 'none';
+                selectedSuggestionIndex = -1;
+
+                if (currentInput.length === 0) {
+                    return;
+                }
+
+                const filteredSuggestions = allUniquePersonTags.filter(tag =>
+                    tag.toLowerCase().includes(currentInput)
+                );
+
+                if (filteredSuggestions.length > 0) {
+                    filteredSuggestions.forEach((tag, index) => {
+                        const li = document.createElement('li');
+                        li.textContent = tag;
+                        li.dataset.index = index;
+                        li.addEventListener('click', () => {
+                            addPersonTagFromSuggestion(tag);
+                        });
+                        personTagSuggestionsContainer.appendChild(li);
+                    });
+                    personTagSuggestionsContainer.style.display = 'block';
+                }
+            }
+
+            /**
+             * Adds a selected person tag suggestion to the input field.
+             * @param {string} tag - The tag to add.
+             */
+            function addPersonTagFromSuggestion(tag) {
+                let inputValue = personTagsInput.value.trim();
+                let currentTags = inputValue.split(',').map(t => t.trim()).filter(t => t !== '');
+
+                // Check if the tag is already in the list to avoid duplicates
+                if (!currentTags.includes(tag)) {
+                    currentTags.push(tag);
+                }
+                
+                // Join them back, ensuring a trailing comma for easy continued typing
+                personTagsInput.value = currentTags.join(', ') + (currentTags.length > 0 ? ', ' : '');
+                
+                personTagsInput.focus();
+                personTagSuggestionsContainer.style.display = 'none';
+            }
+
+            // Event listeners for person tags input
+            personTagsInput.addEventListener('input', showPersonTagSuggestions);
+
+            personTagsInput.addEventListener('keydown', (e) => {
+                const items = personTagSuggestionsContainer.querySelectorAll('li');
+                if (items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+                    updateSelectedSuggestion();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedSuggestionIndex = (selectedSuggestionIndex - 1 + items.length) % items.length;
+                    updateSelectedSuggestion();
+                } else if (e.key === 'Enter') {
+                    if (selectedSuggestionIndex !== -1) {
+                        e.preventDefault();
+                        addPersonTagFromSuggestion(items[selectedSuggestionIndex].textContent);
+                    }
+                }
+            });
+
+            /**
+             * Updates the visual selection of person tag suggestions.
+             */
+            function updateSelectedSuggestion() {
+                const items = personTagSuggestionsContainer.querySelectorAll('li');
+                items.forEach((item, index) => {
+                    if (index === selectedSuggestionIndex) {
+                        item.classList.add('selected');
+                        item.scrollIntoView({ block: 'nearest' });
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+
+            // Hide person tag suggestions when input loses focus
+            personTagsInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (!personTagSuggestionsContainer.contains(document.activeElement)) {
+                        personTagSuggestionsContainer.style.display = 'none';
+                    }
+                }, 100);
+            });
+
+            // Prevent blur event when clicking on a suggestion
+            personTagSuggestionsContainer.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+
+            // Event listener for recommend title button
+            recommendTitleButton.addEventListener('click', async () => {
+                // Get selected categories from custom checkboxes
+                const selectedCategories = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked')).map(checkbox => checkbox.value);
+                const photoDescription = photoDescriptionInput.value.trim();
+                const personTagsValue = personTagsInput.value.trim();
+                const personTagsArray = personTagsValue ? personTagsValue.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : [];
+
+                if (selectedCategories.length === 0) {
+                    showMessage('Pilih setidaknya satu kategori.', 'error');
+                    return;
+                }
+
+                if (!photoDescription) {
+                    showMessage('Masukkan penjelasan foto.', 'error');
+                    return;
+                }
+
+                recommendTitleButton.disabled = true;
+                const suggestions = await getTitleSuggestions(selectedCategories, photoDescription, personTagsArray);
+                recommendTitleButton.disabled = false;
+
+                titleSuggestionsDiv.innerHTML = '';
+                if (suggestions.length > 0) {
+                    suggestions.forEach(suggestion => {
+                        const suggestionElement = document.createElement('div');
+                        suggestionElement.className = 'title-suggestion';
+                        suggestionElement.textContent = suggestion;
+                        suggestionElement.addEventListener('click', () => {
+                            document.getElementById('title').value = suggestion;
+                        });
+                        titleSuggestionsDiv.appendChild(suggestionElement);
+                    });
+                } else {
+                    showMessage('Gagal mendapatkan saran judul.', 'error');
+                }
+            });
+
+            // Initial loads and event listeners
+            loadCategories();
+            toggleDescriptions();
+            loadAllUniquePersonTags();
+
+            displayStackedRadio.addEventListener('change', toggleDescriptions);
+            displaySliderRadio.addEventListener('change', toggleDescriptions);
+            imagesInput.addEventListener('change', toggleDescriptions);
+            
+            // Event listener for form submission
+            createPinForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                uploadButton.disabled = true;
+                uploadStatusDiv.classList.remove('show'); // Hide previous status
+                uploadStatusDiv.innerHTML = '<h3>Status Unggah Gambar:</h3><p>Mengunggah dan mengkompresi gambar...</p>';
+                uploadStatusDiv.classList.add('show');
+
+                const form = event.target;
+                const pinData = new FormData(); // FormData for pin metadata
+                const imageData = new FormData(); // FormData for image files
+
+                // Append image files to imageData FormData
+                if (imagesInput.files.length === 0) {
+                    showMessage('Harap pilih setidaknya satu gambar.', 'error');
+                    uploadButton.disabled = false;
+                    uploadStatusDiv.classList.remove('show');
+                    return;
+                }
+                for (const file of imagesInput.files) {
+                    imageData.append('images[]', file);
+                }
+
+                // Debugging: Log FormData content before sending
+                console.log('Jumlah file yang akan diunggah:', imagesInput.files.length);
+                for (let pair of imageData.entries()) {
+                    console.log(pair[0]+ ', ' + pair[1]); 
+                }
+
+                let uploadedImageUrls = []; // To store URLs from upload.php
+
+                try {
+                    // Step 1: Upload images to upload.php for compression and renaming
+                    const uploadResponse = await makeApiRequest('upload.php', 'POST', imageData);
+
+                    if (uploadResponse.success && uploadResponse.files && uploadResponse.files.length > 0) {
+                        uploadedImageUrls = uploadResponse.files.map(file => file.url);
+                        
+                        // Display upload status and sizes
+                        uploadStatusDiv.innerHTML = '<h3>Status Unggah Gambar:</h3>';
+                        uploadResponse.files.forEach(file => {
+                            const fileInfoDiv = document.createElement('div');
+                            fileInfoDiv.className = 'file-info';
+                            fileInfoDiv.innerHTML = `
+                                <span>${file.url.split('/').pop()}</span>
+                                <span class="size">${file.original_size_kb}KB &rarr; ${file.compressed_size_kb}KB</span>
+                            `;
+                            uploadStatusDiv.appendChild(fileInfoDiv);
+                        });
+                        showMessage('Gambar berhasil diunggah dan dikompresi!', 'success');
+
+                    } else {
+                        showMessage('Gagal mengunggah gambar: ' + uploadResponse.message + (uploadResponse.errors ? '\n' + uploadResponse.errors.join('\n') : ''), 'error');
+                        uploadButton.disabled = false;
+                        return;
+                    }
+
+                    // Step 2: Prepare pin metadata including the processed image URLs
+                    pinData.append('title', document.getElementById('title').value);
+                    pinData.append('description', document.getElementById('description').value);
+                    pinData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
+                    pinData.append('photo_description', photoDescriptionInput.value); // Add photoDescription
+
+                    // Get selected categories from custom checkboxes
+                    const selectedCategories = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked')).map(checkbox => checkbox.value);
+                    if (selectedCategories.length === 0) {
+                        showMessage('Harap pilih setidaknya satu kategori.', 'error');
+                        uploadButton.disabled = false;
+                        uploadStatusDiv.classList.remove('show');
+                        return;
+                    }
+                    pinData.append('categories', JSON.stringify(selectedCategories));
+
+                    const personTagsValue = personTagsInput.value.trim();
+                    let personTagsArray = [];
+                    if (personTagsValue) {
+                        personTagsArray = personTagsValue.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+                    }
+                    pinData.append('personTags', JSON.stringify(personTagsArray));
+
+                    // Append the uploaded image URLs
+                    pinData.append('images', JSON.stringify(uploadedImageUrls.map(url => ({ url: url, description: '' })))); // Format as expected by pins.php
+
+                    // Append image descriptions if stacked display is selected
+                    if (document.getElementById('displayStacked').checked && imagesInput.files.length > 0) {
+                        const imageDescriptions = [];
+                        const descriptionTextareas = document.querySelectorAll('#imageDescriptionsContainer textarea[name="image_descriptions[]"]');
+                        descriptionTextareas.forEach(textarea => {
+                            imageDescriptions.push(textarea.value);
+                        });
+                        // Match descriptions to the uploaded URLs based on original file name if possible, or just order
+                        const finalImagesWithDescriptions = uploadedImageUrls.map((url, index) => {
+                            const originalFileName = url.split('/').pop().substring(4); // Remove 'raw_' prefix
+                            const matchingDescription = Array.from(imageDescriptionsContainer.querySelectorAll('.form-group-inline'))
+                                .find(div => div.dataset.originalFileName && url.includes(div.dataset.originalFileName.split('.')[0])) // Basic matching
+                                ?.querySelector('textarea').value || imageDescriptions[index] || '';
+                            
+                            return { url: url, description: matchingDescription };
+                        });
+                        pinData.set('images', JSON.stringify(finalImagesWithDescriptions));
+                    }
+
+
+                    // Step 3: Submit pin data to pins.php
+                    const pinCreationResponse = await makeApiRequest('pins.php', 'POST', pinData);
+
+                    if (pinCreationResponse.success) {
+                        showMessage('Pin berhasil dibuat!', 'success');
+                        form.reset();
+                        document.getElementById('imageDescriptionsContainer').innerHTML = '';
+                        document.getElementById('displaySlider').disabled = false;
+                        document.getElementById('displayStacked').checked = true;
+                        document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        personTagsInput.value = '';
+                        titleSuggestionsDiv.innerHTML = '';
+                        uploadStatusDiv.classList.remove('show'); // Hide status after successful pin creation
+                        
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showMessage('Gagal membuat pin: ' + pinCreationResponse.message + (pinCreationResponse.errors ? '\n' + pinCreationResponse.errors.join('\n') : ''), 'error');
+                    }
+                } catch (error) {
+                    console.error('Kesalahan:', error);
+                    showMessage('Kesalahan jaringan atau server selama unggah/pembuatan pin.', 'error');
+                } finally {
+                    uploadButton.disabled = false;
+                }
+            });
+
+            // Check user session for upload permissions
+            const userSessionResponse = await makeApiRequest('auth.php?action=check_session', 'GET');
+            if (!userSessionResponse.success || !userSessionResponse.user || !userSessionResponse.user.canUpload) {
+                createPinForm.style.display = 'none';
+                accessDeniedMessage.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+                return;
+            }
+        });
+    </script>
+</body>
+</html>
