@@ -1,5 +1,7 @@
 <?php
 // PASTIKAN TIDAK ADA KARAKTER APAPUN SEBELUM BARIS INI
+// ATAU SETELAH TAG PENUTUP PHP DI AKHIR FILE.
+// Karakter tak terlihat atau spasi/baris baru di luar tag PHP dapat menyebabkan SyntaxError di JavaScript.
 session_start();
 require_once 'api/utils.php';
 
@@ -223,7 +225,11 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
     <script>
         let currentUser = null;
-        let currentPersonName = '<?php echo htmlspecialchars(str_replace('-', ' ', $personName)); ?>'; // Changed to currentPersonName
+        // Fix: Use json_encode to properly escape the PHP variable for JavaScript.
+        // Ensure that the value passed to json_encode is always explicitly cast to a string
+        // and trim any potential whitespace from the PHP side before encoding.
+        // This line is at the root of the "Unexpected token ')'" error.
+        let currentPersonName = <?php echo json_encode(trim((string)str_replace('-', ' ', $personName))); ?>; 
         let allPinsData = [];
         const NOTIFICATION_LS_KEY_READ_STATUS = 'spicette_notifications_read';
         let searchSuggestionsData = [];
@@ -368,7 +374,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 e.stopPropagation(); 
                 showMessage('Fungsi simpan ditangani di halaman utama.', 'info');
                 showGlobalLoading();
-                window.location.href = `index.html?pin=${pinData.id}`; // Redirect to index.html for saving
+                window.location.href = `/Spicette/index.html?pin=${pinData.id}`; // Redirect to index.html for saving
             };
             overlayTop.appendChild(saveButton);
 
@@ -398,7 +404,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             infoDiv.classList.add('pin-info');
             if (pinData.categories && Array.isArray(pinData.categories) && pinData.categories.length > 0) { 
                  const link = document.createElement('a');
-                 link.href = `index.html?category=${encodeURIComponent(pinData.categories[0].trim().toLowerCase().replace(/ /g, '-'))}`; // Redirect to index.html for category
+                 link.href = `/Spicette/tag/${encodeURIComponent(pinData.categories[0].trim().toLowerCase().replace(/ /g, '-'))}`; // Updated path
                  link.target = '_self'; // Open in same tab
                  link.textContent = pinData.categories[0];
                  link.onclick = (e) => {
@@ -440,7 +446,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                 // Modified: Redirect to index.html with pin ID on click (only if not blurred)
                 pinDiv.onclick = () => {
                     showGlobalLoading(); // Show loading overlay
-                    window.location.href = `index.html?pin=${pinData.id}`;
+                    window.location.href = `/Spicette/index.html?pin=${pinData.id}`;
                 };
             }
             
@@ -540,7 +546,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     const desktopLi = document.createElement('li');
                     desktopLi.textContent = historyItem;
                     desktopLi.addEventListener('click', () => {
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
+                        window.location.href = `/Spicette/search?query=${encodeURIComponent(historyItem)}`;
                     });
                     desktopSearchHistoryList.appendChild(desktopLi);
                 }
@@ -549,7 +555,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     const mobileLi = document.createElement('li');
                     mobileLi.textContent = historyItem;
                     mobileLi.addEventListener('click', () => {
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(historyItem)}`;
+                        window.location.href = `/Spicette/search?query=${encodeURIComponent(historyItem)}`;
                     });
                     mobileSearchHistoryList.appendChild(mobileLi);
                 }
@@ -596,7 +602,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     const listItem = document.createElement('li');
                     listItem.textContent = suggestion;
                     listItem.addEventListener('click', () => {
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(suggestion)}`;
+                        window.location.href = `/Spicette/search?query=${encodeURIComponent(suggestion)}`;
                     });
                     suggestionsList.appendChild(listItem);
                 });
@@ -611,7 +617,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         }
 
         async function performSearch(query) {
-            window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`;
+            window.location.href = `/Spicette/search?query=${encodeURIComponent(query)}`;
         }
 
         mobileSearchInputOverlay.addEventListener('input', (e) => {
@@ -671,7 +677,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     const query = desktopSearchInput.value.trim();
                     if (query) {
                         addSearchToHistory(query);
-                        window.location.href = `/Spicette/search.php?query=${encodeURIComponent(query)}`; 
+                        window.location.href = `/Spicette/search?query=${encodeURIComponent(query)}`; 
                     }
                 }
             });
@@ -808,7 +814,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
 
                 if (navAction === 'home') {
-                    window.location.href = '/Spicette/index.html'; // Redirect to home
+                    window.location.href = '/Spicette/'; // Redirect to home
                 } else if (navAction === 'saved') {
                     if (!currentUser) {
                         showMessage('Harap login untuk melihat pin yang Anda simpan.', 'error');
@@ -817,7 +823,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                         window.location.href = '/Spicette/login.html'; 
                         return;
                     }
-                    window.location.href = '/Spicette/index.html?view=saved'; // Redirect to index.html saved tab
+                    window.location.href = '/Spicette/?view=saved'; // Redirect to index.html saved tab
                 }
             });
         });
@@ -869,9 +875,9 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                         return;
                     }
                     if (currentUser.isAdmin) {
-                        window.location.href = '/Spicette/admin.php'; 
+                        window.location.href = '/Spicette/admin'; 
                     } else {
-                        window.location.href = '/Spicette/user.php'; 
+                        window.location.href = '/Spicette/user'; 
                     }
                 }
                 else { 
@@ -891,7 +897,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
 
                     if (action === 'home') {
-                        window.location.href = '/Spicette/index.html'; // Redirect to home
+                        window.location.href = '/Spicette/'; // Redirect to home
                     } else if (action === 'saved') { 
                         if (!currentUser) {
                             window.location.href = '/Spicette/login.html'; 
@@ -899,11 +905,10 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                             document.querySelector('.mobile-nav-item[data-action="home"]').classList.add('active');
                             return;
                         }
-                        window.location.href = '/Spicette/index.html?view=saved'; // Redirect to index.html saved tab
+                        window.location.href = '/Spicette/?view=saved'; // Redirect to index.html saved tab
                     }
-                }
+                });
             });
-        });
 
         const profileButton = document.getElementById('profileButton');
         const profileIconLetter = document.getElementById('profileIconLetter');
@@ -914,9 +919,9 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
                     window.location.href = '/Spicette/login.html'; 
                 } else {
                     if (currentUser.isAdmin) {
-                        window.location.href = '/Spicette/admin.php'; 
+                        window.location.href = '/Spicette/admin'; 
                     } else {
-                        window.location.href = '/Spicette/user.php'; 
+                        window.location.href = '/Spicette/user'; 
                     }
                 }
             });
@@ -1035,7 +1040,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             if (dropdownMyProfile) { 
                 dropdownMyProfile.addEventListener('click', () => {
                     if (currentUser) {
-                        window.location.href = '/Spicette/user.php';
+                        window.location.href = '/Spicette/user';
                     }
                     if (moreAccountsDropdown) moreAccountsDropdown.style.display = 'none';
                 });
@@ -1044,7 +1049,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
             if (dropdownAdminPanel) { 
                 dropdownAdminPanel.addEventListener('click', () => {
                     if (currentUser && currentUser.isAdmin) {
-                        window.location.href = '/Spicette/admin.php'; 
+                        window.location.href = '/Spicette/admin'; 
                     } else {
                         showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
                     }
@@ -1107,7 +1112,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         if (mobileDropdownMyProfile) { 
             mobileDropdownMyProfile.addEventListener('click', () => {
                 if (currentUser) {
-                    window.location.href = '/Spicette/user.php'; 
+                    window.location.href = '/Spicette/user'; 
                 }
                 if (mobileProfileDropdown) { mobileProfileDropdown.style.display = 'none'; }
                 document.body.style.overflow = '';
@@ -1116,7 +1121,7 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
         if (mobileDropdownAdminPanel) { 
             mobileDropdownAdminPanel.addEventListener('click', () => {
                 if (currentUser && currentUser.isAdmin) {
-                    window.location.href = '/Spicette/admin.php'; 
+                    window.location.href = '/Spicette/admin'; 
                 } else {
                     showMessage('Akses ditolak: Diperlukan hak administrator.', 'Error');
                 }
