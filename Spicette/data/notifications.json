@@ -1,0 +1,23 @@
+[
+    {
+        "id": "notif_68679306e302a_1751618310",
+        "text": "gfgfgfg",
+        "link": "",
+        "timestamp": "2025-07-04 15:38:30",
+        "read": true
+    },
+    {
+        "id": "notif_68696f1645ee6_1751740182",
+        "text": "Test",
+        "link": "",
+        "timestamp": "2025-07-06 01:29:42",
+        "read": true
+    },
+    {
+        "id": "notif_68696f22675f6_1751740194",
+        "text": "Akka",
+        "link": "https://nnakwk.com",
+        "timestamp": "2025-07-06 01:29:54",
+        "read": true
+    }
+]
