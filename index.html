@@ -1855,6 +1855,12 @@
                 const response = await makeApiRequest('auth.php?action=check_session');
                 if (response.success && response.user) {
                     currentUser = response.user;
+                    // NEW: Check if user needs username completion
+                    if (currentUser.needs_username_completion) {
+                        window.location.href = 'select_preferences.html?needs_username=true';
+                        return; // Stop further initialization
+                    }
+
                     if (typeof currentUser.canUpload === 'undefined') {
                         currentUser.canUpload = false; 
                     }
