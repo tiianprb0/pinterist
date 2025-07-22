@@ -470,8 +470,8 @@
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" name="email" placeholder="Masukkan email Anda" required>
+                    <label for="loginIdentifier">Email atau Nama Pengguna</label>
+                    <input type="text" id="loginIdentifier" name="identifier" placeholder="Masukkan email atau nama pengguna Anda" required>
                 </div>
                 <div class="form-group input-group">
                     <label for="loginPassword">Kata Sandi</label>
@@ -561,8 +561,8 @@
             </div>
         </div>
 
-        <!-- Username Input Modal for New Google Users -->
-        <div id="usernameModal" class="modal-overlay" style="display: none;">
+        <!-- Username Input Modal for New Google Users (Dihapus, akan dipindahkan ke select_preferences.html) -->
+        <!-- <div id="usernameModal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <h3>Pilih Nama Pengguna</h3>
                 <p>Selamat datang! Silakan buat nama pengguna untuk akun Spicette Anda.</p>
@@ -570,7 +570,7 @@
                 <button id="submitUsernameButton">Lanjutkan</button>
                 <div id="usernameMessage" class="custom-alert"></div>
             </div>
-        </div>
+        </div> -->
     </main>
 
     <!-- Firebase SDKs -->
@@ -622,14 +622,14 @@
             const closeResetModalButton = document.getElementById('closeResetModalButton');
             const resetMessageDiv = document.getElementById('resetMessage');
 
-            // Username Modal elements
-            const usernameModal = document.getElementById('usernameModal');
-            const usernameInput = document.getElementById('usernameInput');
-            const submitUsernameButton = document.getElementById('submitUsernameButton');
-            const usernameMessageDiv = document.getElementById('usernameMessage');
+            // Username Modal elements (Removed from HTML, but variables kept for now if needed for logic before full removal)
+            // const usernameModal = document.getElementById('usernameModal');
+            // const usernameInput = document.getElementById('usernameInput');
+            // const submitUsernameButton = document.getElementById('submitUsernameButton');
+            // const usernameMessageDiv = document.getElementById('usernameMessage');
 
             // Login form specific inputs
-            const loginEmailInput = document.getElementById('loginEmail');
+            const loginIdentifierInput = document.getElementById('loginIdentifier'); // Changed from loginEmail to loginIdentifier
             const loginPasswordInput = document.getElementById('loginPassword');
 
             // Register form specific inputs
@@ -639,8 +639,8 @@
             const registerConfirmPasswordInput = document.getElementById('registerConfirmPassword');
             const passwordStrengthIndicator = document.getElementById('passwordStrengthIndicator');
 
-            // Variable to store user info temporarily for username creation
-            let tempGoogleUser = null;
+            // Variable to store user info temporarily for username creation (not needed here anymore)
+            // let tempGoogleUser = null;
 
 
             // --- API Base URL ---
@@ -729,42 +729,62 @@
                 });
             });
 
-            // --- Login Form Submission (Firebase Email/Password) ---
+            // --- Login Form Submission (Firebase Email/Password or Custom Username/Password) ---
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = loginEmailInput.value.trim();
+                const identifier = loginIdentifierInput.value.trim(); // Can be email or username
                 const password = loginPasswordInput.value.trim();
 
-                if (!email || !password) {
-                    showAlert('Email dan kata sandi wajib diisi.', 'error', authMessageDiv);
+                if (!identifier || !password) {
+                    showAlert('Email/Nama Pengguna dan kata sandi wajib diisi.', 'error', authMessageDiv);
                     return;
                 }
 
-                try {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
+                // Simple regex to check if it looks like an email
+                const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
 
-                    // Sinkronkan data pengguna ke backend PHP
-                    const response = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName // Kirim displayName dari Firebase
-                    });
+                try {
+                    let userCredential;
+                    let response;
+
+                    if (isEmail) {
+                        // Attempt Firebase email/password login
+                        userCredential = await signInWithEmailAndPassword(auth, identifier, password);
+                        const user = userCredential.user;
+
+                        // Sinkronkan data pengguna ke backend PHP
+                        response = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
+                            uid: user.uid,
+                            email: user.email,
+                            displayName: user.displayName // Kirim displayName dari Firebase
+                        });
+
+                    } else {
+                        // Attempt custom username/password login via backend API
+                        response = await makeApiRequest('auth.php?action=login_with_username', 'POST', {
+                            username: identifier,
+                            password: password
+                        });
+                        // If custom login successful, we might need to sign in anonymously to Firebase
+                        // or handle session purely on backend. For now, assume backend handles session.
+                    }
 
                     if (response.success) {
                         showAlert('Login berhasil! Mengalihkan...', 'success', authMessageDiv);
                         setTimeout(() => {
-                            window.location.href = 'select_preferences.html';
+                            // Cek apakah pengguna memiliki username di sistem Tian
+                            // Jika login via email/password, asumsikan username sudah ada atau akan dibuat di backend.
+                            // Jika login via username, username sudah pasti ada.
+                            // Untuk kesederhanaan, langsung redirect ke index.html setelah sinkronisasi/login berhasil.
+                            // Logika pemeriksaan username untuk Google Sign-In akan berbeda.
+                            window.location.href = 'index.html'; // Redirect to index.html after successful login
                         }, 1000);
                     } else {
-                        console.error("Sinkronisasi backend gagal setelah login Firebase:", response.message);
-                        showAlert('Login berhasil, tetapi sinkronisasi data pengguna gagal. Mengalihkan...', 'success', authMessageDiv);
-                        setTimeout(() => {
-                            window.location.href = 'select_preferences.html';
-                        }, 1000);
+                        console.error("Login gagal:", response.message);
+                        showAlert(response.message || 'Login gagal. Periksa kredensial Anda.', 'error', authMessageDiv);
                     }
                 } catch (error) {
-                    console.error("Kesalahan Login Email/Kata Sandi Firebase:", error);
+                    console.error("Kesalahan Login:", error);
                     let displayMessage = 'Login gagal.';
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                         displayMessage = 'Email atau kata sandi tidak valid.';
@@ -847,7 +867,7 @@
                     const user = userCredential.user;
 
                     // Sinkronkan data pengguna ke backend PHP
-                    const response = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
+                    const response = await makeApiRequest('auth.php?action=firebase_register', 'POST', { // Changed action to firebase_register
                         uid: user.uid,
                         email: user.email,
                         displayName: username, // Gunakan username yang dimasukkan pengguna
@@ -896,33 +916,40 @@
                     const user = result.user;
                     const isNewUser = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
 
-                    if (isNewUser) {
-                        // Pengguna baru dari Google, tampilkan modal username
-                        tempGoogleUser = user;
-                        usernameModal.style.display = 'flex';
-                        usernameInput.value = ''; // JANGAN ambil nama dari email/displayName Google
-                        showAlert('Silakan buat nama pengguna Anda.', 'info', usernameMessageDiv);
-                    } else {
-                        // Pengguna lama, langsung sinkronkan dan redirect
-                        const response = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
-                            uid: user.uid,
-                            email: user.email,
-                            displayName: user.displayName, // Kirim displayName yang ada dari Google
-                            photoURL: user.photoURL
-                        });
+                    // Sinkronkan data pengguna ke backend PHP
+                    const syncResponse = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName, // Kirim displayName yang ada dari Google
+                        photoURL: user.photoURL
+                    });
 
-                        if (response.success) {
-                            showAlert('Login dengan Google berhasil! Mengalihkan...', 'success', targetMessageDiv);
-                            setTimeout(() => {
-                                window.location.href = 'select_preferences.html';
-                            }, 1000);
-                        } else {
-                            console.error("Sinkronisasi backend gagal setelah login Google:", response.message);
-                            showAlert('Login dengan Google berhasil, tetapi sinkronisasi data pengguna gagal. Mengalihkan...', 'success', targetMessageDiv);
-                            setTimeout(() => {
-                                window.location.href = 'select_preferences.html';
-                            }, 1000);
-                        }
+                    if (!syncResponse.success) {
+                        console.error("Sinkronisasi backend gagal setelah login Google:", syncResponse.message);
+                        showAlert('Login dengan Google berhasil, tetapi sinkronisasi data pengguna gagal. Mengalihkan...', 'success', targetMessageDiv);
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Fallback redirect
+                        }, 1000);
+                        return;
+                    }
+
+                    // Setelah sinkronisasi, cek apakah pengguna ini memiliki username di sistem Tian
+                    const checkUsernameResponse = await makeApiRequest('auth.php?action=check_username', 'POST', {
+                        uid: user.uid
+                    });
+
+                    if (checkUsernameResponse.success && checkUsernameResponse.has_username) {
+                        // Pengguna sudah memiliki username, langsung redirect ke index.html
+                        showAlert('Login dengan Google berhasil! Mengalihkan...', 'success', targetMessageDiv);
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    } else {
+                        // Pengguna belum memiliki username, arahkan ke select_preferences.html dengan flag
+                        showAlert('Selamat datang! Silakan lengkapi nama pengguna Anda. Mengalihkan...', 'info', targetMessageDiv);
+                        setTimeout(() => {
+                            window.location.href = 'select_preferences.html?needs_username=true';
+                        }, 1000);
                     }
 
                 } catch (error) {
@@ -947,50 +974,16 @@
             googleLoginButton.addEventListener('click', () => handleGoogleLogin(authMessageDiv));
             googleLoginButtonRegister.addEventListener('click', () => handleGoogleLogin(authMessageRegisterDiv));
 
-            // --- Username Modal Submission for Google New Users ---
-            submitUsernameButton.addEventListener('click', async () => {
-                const username = usernameInput.value.trim();
-                if (!username) {
-                    showAlert('Nama pengguna wajib diisi.', 'error', usernameMessageDiv);
-                    return;
-                }
-
-                if (tempGoogleUser) {
-                    try {
-                        const user = tempGoogleUser;
-                        // Sinkronkan data pengguna dengan username yang baru dibuat
-                        const response = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
-                            uid: user.uid,
-                            email: user.email,
-                            displayName: username, // Gunakan username yang dimasukkan pengguna
-                            photoURL: user.photoURL
-                        });
-
-                        if (response.success) {
-                            showAlert('Nama pengguna berhasil disimpan! Mengalihkan...', 'success', usernameMessageDiv);
-                            usernameModal.style.display = 'none'; // Sembunyikan modal
-                            setTimeout(() => {
-                                window.location.href = 'select_preferences.html';
-                            }, 1000);
-                        } else {
-                            console.error("Sinkronisasi backend gagal setelah pembuatan username:", response.message);
-                            showAlert('Gagal menyimpan nama pengguna. Silakan coba lagi.', 'error', usernameMessageDiv);
-                        }
-                    } catch (error) {
-                        console.error("Kesalahan saat menyimpan username Google:", error);
-                        showAlert('Terjadi kesalahan saat menyimpan nama pengguna.', 'error', usernameMessageDiv);
-                    }
-                } else {
-                    showAlert('Terjadi kesalahan. Silakan coba login Google lagi.', 'error', usernameMessageDiv);
-                }
-            });
-
-
             // --- Forgot Password Functionality (using modal) ---
             forgotPasswordLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 forgotPasswordModal.style.display = 'flex'; // Show the modal
-                resetEmailInput.value = loginEmailInput.value.trim(); // Pre-fill email if available
+                // Pre-fill email if the identifier looks like an email
+                if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginIdentifierInput.value.trim())) {
+                    resetEmailInput.value = loginIdentifierInput.value.trim();
+                } else {
+                    resetEmailInput.value = ''; // Clear if it's a username
+                }
                 resetMessageDiv.style.display = 'none'; // Hide any previous messages
             });
 
