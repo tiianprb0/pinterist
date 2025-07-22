@@ -1,0 +1,981 @@
+/*
+ * style.css
+ *
+ * File ini berisi gaya CSS yang spesifik untuk halaman index.html.
+ * Gaya dasar UI yang dapat digunakan kembali telah dipindahkan ke base.css.
+ * File ini sekarang berada di direktori Spicette/style/.
+ */
+
+/* Header Styling - Hanya gaya spesifik yang tidak ada di base.css */
+header .logo {
+    /* Properti width, height, margin-right, cursor sudah ada di base.css */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="%23E60023"><path d="M256 8C119.1 8 8 119.1 8 256s111.1 248 248 248 248-111.1 248-248S392.9 8 256 8zm119.3 270.5c-5.3 14.9-17.5 31.9-41.1 31.9-29.3 0-44.3-21.3-44.3-47.1 0-30.1 19.9-51.3 19.9-51.3s-10.7-43.1-10.7-52.3c0-18.3 12.9-31.3 27.5-31.3 13.1 0 19.3 7.7 19.3 20.3 0 14.1-9.5 35.5-9.5 35.5s6.7-22.5 22.5-22.5c26.1 0 41.5 20.3 41.5 46.5 0 26.7-14.5 44.9-36.1 44.9-7.9 0-14.1-3.7-14.1-3.7s-2.9 11.1-3.9 14.7c-3.5 11.7-10.1 24.7-10.1 24.7s3.9 1.7 8.1 1.7c23.7 0 41.3-20.1 47.1-35.3 3.3-9.3 2.1-19.3 2.1-29.5 0-23.1-5.5-37.9-16.7-50.3-10.9-11.9-27.7-19.9-47.5-19.9-35.7 0-61.9 27.1-61.9 60.9 0 20.7 10.3 39.5 25.9 47.7 1.7 1.1 2.5 1.1 3.3 0 1.7-2.3.9-5.1.9-7.5 0-5.5-2.1-10.1-2.1-10.1s-17.3 71.1-21.1 83.7c-10.5 35.5-30.1 61.5-59.5 61.5-34.5 0-59.3-27.9-59.3-66.1 0-34.3 21.5-64.7 58.1-64.7 18.3 0 30.7 7.7 30.7 24.1 0 13.1-7.5 30.9-12.3 47.7-2.9 10.3-2.3 22.7.9 31.9 3.7 11.5 14.1 20.5 27.9 20.5 18.3 0 30.9-15.3 30.9-39.5 0-18.5-11.1-32.9-29.5-44.3-14.9-9.1-21.5-22.5-21.5-38.7 0-27.3 18.5-49.5 52.1-49.5 27.7 0 43.7 16.5 43.7 40.7 0 21.3-10.1 35.5-25.3 35.5-6.7 0-12.7-4.9-13.3-13.3 0-10.1 6.1-21.7 6.1-21.7z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Mobile specific elements visibility */
+.mobile-notification-icon {
+    display: none; /* Default hidden, shown via media query in this file */
+}
+
+/* Desktop Search History positioning specific to index.html */
+#desktopSearchHistory {
+    margin-top: 10px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 900;
+    display: none; /* Controlled by JS */
+}
+
+/* Desktop Categories Section (initially hidden, shown on search focus) */
+.desktop-categories {
+    padding: 0 20px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out, margin-bottom 0.4s ease-out;
+    margin-bottom: 0;
+}
+
+main.desktop-search-active .desktop-categories {
+    max-height: 400px; /* Adjust as needed */
+    opacity: 1;
+    margin-bottom: 20px;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.category-item {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-weight: bold;
+    font-size: 15px;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s ease;
+}
+
+.category-item:hover {
+    transform: scale(1.03);
+}
+
+.category-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    transition: background 0.2s ease;
+}
+
+.category-item:hover::after {
+    background: rgba(0,0,0,0.5);
+}
+
+.category-item span {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    padding: 5px;
+}
+
+/* Main Content - Pin Grid Styling */
+main {
+    padding-top: 20px;
+    /* padding-bottom akan diatur di media query mobile */
+}
+
+.pin-grid {
+    column-count: 5;
+    column-gap: 15px;
+    padding: 0 20px;
+    display: column; /* Default for masonry layout, will be managed by JS for specificity */
+    padding-left: 10px; /* Padding kiri 0px */
+    padding-right: 10px; /* Padding kanan 0px */
+}
+
+/* Aturan untuk menyembunyikan pin-grid saat desktop search aktif */
+main.desktop-search-active .pin-grid {
+    display: none !important; /* Overwrite with !important to ensure it's hidden when search is active */
+}
+
+.pin {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    background-color: var(--color-white);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pin img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+}
+
+.pin-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+}
+
+.pin:hover .pin-overlay {
+    opacity: 1;
+}
+
+.pin-overlay-top {
+    display: flex;
+    justify-content: flex-end; /* Changed to flex-end to push count to right */
+}
+
+.pin-overlay-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Changed to column */
+}
+
+.pin-save-button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 12px 16px;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.pin-action-icon {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background-color 0.2s ease;
+}
+
+.pin-action-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--color-dark);
+}
+
+.pin-info {
+    color: var(--color-white);
+    font-size: 12px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    width: 100%;
+}
+
+.pin-info a {
+    color: var(--color-white);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.pin-title {
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    margin-bottom: 5px;
+}
+
+.pin-bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.pin-image-count-overlay {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--color-white);
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 10;
+    margin-left: auto;
+}
+
+.pin-image-count-overlay .fa-camera {
+    font-size: 0.8em;
+}
+
+/* Pin Detail Overlay specific styles */
+#pinDetailOverlay {
+    padding-top: 0; /* Header is inside this overlay */
+    z-index: 1200; /* Higher than other general overlays */
+}
+
+.pin-detail-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.pin-detail-back-container {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.pin-detail-back-button {
+    background-color: var(--color-e0e0e0);
+    color: var(--color-text-secondary);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.pin-detail-back-button:hover {
+    background-color: var(--color-e0e0e0);
+}
+
+.pin-header-info {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.uploaded-by-and-share {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 5px;
+}
+
+#pinDetailOverlay #pinDetailTitle {
+    font-family: var(--font-family-heading);
+    font-size: 24px;
+    margin-bottom: 0;
+    color: var(--color-dark);
+    text-align: left;
+    width: 100%;
+}
+
+#pinDetailOverlay .uploaded-by-text {
+    font-family: var(--font-family-body);
+    font-size: 14px;
+    color: var(--color-text-uploaded-by);
+    margin-bottom: 0;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+#pinDetailShareButton {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#pinDetailShareButton .fas {
+    color: var(--color-white);
+    font-size: 14px;
+}
+
+#pinDetailShareButton:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.pin-detail-description {
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text-pin-detail);
+    width: 100%;
+}
+
+.dashed-line {
+    border-top: 1px dashed var(--color-dashed-line);
+    margin: 20px 0 10px 0;
+    width: 100%;
+}
+
+.pin-categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.pin-category-tag {
+    background-color: transparent;
+    color: var(--color-text-uploaded-by);
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: 1px solid var(--color-e0e0e0);
+}
+
+.pin-category-tag:hover {
+    background-color: var(--color-hover-light);
+}
+
+.pin-detail-actions {
+    display: none; /* Removed from HTML, kept for explicit hiding */
+}
+
+.image-individual-description {
+    margin: 10px 0;
+    font-size: 15px;
+    font-family: var(--font-family-body);
+}
+
+.pin-detail-img-main-container {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: transparent;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pin-detail-img-main-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+}
+
+/* Slider Specific Styles */
+.slider-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    border-radius: 8px;
+    background-color: transparent;
+    height: auto;
+    aspect-ratio: 4/5;
+    max-height: 80vh;
+    padding-bottom: 5px;
+}
+
+.slider-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.slider-wrapper .swipe-inner {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.slider-slide {
+    flex: 0 0 auto;
+    width: 85%;
+    scroll-snap-align: center;
+    height: auto;
+    aspect-ratio: 4/5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+.slider-slide img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.slider-button,
+.slider-dots {
+    display: none; /* Hide navigation buttons and dots */
+}
+
+#pinDetailImageSaveButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+}
+
+#pinDetailImageSaveButton:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.pin-detail-img-main-container:hover #pinDetailImageSaveButton {
+    opacity: 1;
+}
+
+/* Full Image Overlay specific styles */
+.full-image-overlay {
+    background-color: rgba(0, 0, 0, 0.9); /* Specific dark background for this overlay */
+    z-index: 1500; /* Higher than pin detail overlay */
+    /* Display properties handled by .overlay-base */
+}
+
+.full-image-overlay #fullImageDisplay {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.full-image-overlay .close-full-image-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 40px;
+    color: var(--color-white);
+    cursor: pointer;
+    z-index: 1501;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.download-button-on-image {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1501;
+    transition: background-color 0.2s ease;
+}
+
+.download-button-on-image:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.download-button-on-image .fas {
+    color: var(--color-white);
+}
+
+/* Notification Overlay specific styles */
+#notificationOverlay {
+    z-index: 1200; /* Higher than other general overlays */
+    /* Display properties handled by .overlay-base */
+}
+#notificationOverlay .overlay-header {
+    background-color: var(--color-white);
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    box-shadow: none;
+    z-index: 1201;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#notificationOverlay .overlay-header h2 {
+    font-size: 24px;
+    color: var(--color-dark);
+    margin: 0;
+}
+.notification-page-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+    width: 100%;
+}
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.notification-item {
+    background-color: var(--color-white);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid var(--color-border-light);
+    font-size: 15px;
+    color: var(--color-text-main);
+    position: relative;
+}
+.notification-item + .notification-item {
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--color-border-medium);
+}
+.notification-item.read {
+    background-color: var(--color-hover-light);
+    color: #777; /* Specific color from original style.css */
+}
+
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav-container {
+    display: none; /* Default hidden, shown on mobile */
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+}
+.mobile-bottom-nav {
+    display: flex;
+    padding: 8px;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-radius: 30px;
+}
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-main);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.mobile-nav-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.mobile-nav-item.active {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+}
+.mobile-nav-item .fas {
+    font-size: 26px;
+    color: currentColor;
+}
+.mobile-nav-item .profile-icon {
+    background-color: var(--color-e0e0e0);
+    color: var(--color-text-main);
+}
+.mobile-nav-item.active .profile-icon {
+    background-color: var(--color-white);
+    color: var(--color-dark);
+}
+
+/* Login Overlay Specifics */
+#loginOverlay .overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 70px);
+}
+#loginOverlay .login-form {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+}
+#loginOverlay .login-form h2 {
+    margin-bottom: 20px;
+    color: var(--color-dark);
+    font-size: 24px;
+}
+#loginOverlay .login-form input {
+    padding: 12px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    width: calc(100% - 24px);
+}
+#loginOverlay .login-form button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#loginOverlay .login-form button:hover {
+    background-color: var(--color-accent-hover);
+}
+#loginOverlay .register-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+#loginOverlay .register-text a {
+    color: var(--color-dark);
+    font-weight: bold;
+    text-decoration: none;
+}
+#loginOverlay .register-text a:hover {
+    text-decoration: underline;
+}
+
+/* Dropdown for More Accounts */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    min-width: 180px;
+    display: none;
+    z-index: 1000;
+    list-style: none;
+}
+
+.dropdown-menu li {
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--color-text-main);
+    transition: background-color 0.2s ease;
+}
+.dropdown-menu li:hover {
+    background-color: var(--color-hover-light);
+}
+.dropdown-menu li.header-item {
+    font-weight: bold;
+    color: #555; /* Specific color from original style.css */
+    border-bottom: 1px solid var(--color-border-light);
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    cursor: default;
+}
+/* Mobile Profile Dropdown */
+#mobileProfileDropdown {
+    position: fixed;
+    bottom: 80px; /* Above mobile nav */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    z-index: 1002;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    max-width: 250px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+#mobileProfileDropdown button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
+#mobileProfileDropdown button.secondary {
+    background-color: var(--color-text-light);
+}
+#mobileProfileDropdown button:hover {
+    opacity: 0.9;
+}
+#mobileProfileDropdown .username-display {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--color-text-main);
+}
+
+/* Skeleton Loader Styles */
+.pin-grid-skeleton {
+    column-count: 5;
+    column-gap: 15px;
+    padding: 0 20px;
+    display: none; /* Hidden by default */
+}
+
+.skeleton-pin {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    background-color: var(--color-e0e0e0);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+}
+
+/* Shimmer effect for skeleton loader */
+.skeleton-pin::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Specific styling for "no related pins" message */
+.no-related-pins-message {
+    text-align: center;
+    color: var(--color-text-light);
+    margin-top: 20px;
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 5px;
+    width: 100%;
+    display: block;
+    column-span: all;
+    -webkit-column-span: all;
+}
+
+/* Style for person tags section */
+.pin-person-tags-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--color-border-light);
+}
+.person-in-pin-title {
+    font-family: var(--font-family-heading);
+    font-size: 22px;
+    color: var(--color-dark);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+.person-tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.person-tag-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--color-hover-light);
+}
+.person-tag-item:last-child {
+    border-bottom: none;
+}
+.person-name-link {
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+.person-name-link:hover {
+    color: var(--color-primary);
+}
+.view-all-button {
+    background-color: var(--color-hover-light);
+    color: var(--color-text-secondary);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+.view-all-button:hover {
+    background-color: var(--color-e0e0e0);
+}
+.view-all-button .fas {
+    font-size: 12px;
+}
+
+/* Ensure pin-grid within overlay is responsive */
+.pin-detail-content .pin-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.pin-detail-content .pin-grid .pin {
+    width: 100%;
+    max-width: none;
+    margin-bottom: 10px;
+}
+.pin-detail-content .pin-grid .pin img {
+    max-height: 200px;
+    object-fit: cover;
+}
+
+/* Responsive adjustments specific to index.html */
+@media (max-width: 768px) {
+    /* SPECIFIC MOBILE HEADER HIDING */
+    header .search-container { /* Hide desktop search bar */
+        display: none;
+    }
+    #desktopCreateButton { /* Hide desktop create button using its ID for higher specificity */
+        display: none;
+    }
+    .header-icons .icon-button:not(.mobile-notification-icon) { /* Hide desktop profile/more accounts icons in header, ONLY show mobile notification */
+        display: none;
+    }
+    .mobile-notification-icon { /* Show mobile notification icon */
+        display: flex;
+        margin-left: auto; /* Push to right */
+    }
+    .mobile-bottom-nav-container { /* Show mobile bottom navigation */
+        display: block;
+    }
+    .desktop-categories { /* Hide desktop categories */
+        display: none;
+    }
+    .pin-grid { /* Adjust pin grid for mobile */
+        column-count: 2;
+        column-gap: 10px;
+        padding: 0 10px;
+    }
+    main { /* Adjust main padding for mobile */
+        padding-top: 10px;
+        padding-bottom: 100px; /* Memberi ruang untuk mobile bottom nav */
+    }
+    .pin { /* Adjust pin margin for mobile */
+        margin-bottom: 10px;
+    }
+
+    /* Adjust new full section overlays for mobile */
+    #pinDetailSection, #notificationSection {
+        padding-top: 60px; /* Adjust for smaller header height on mobile */
+    }
+    #pinDetailSection .detail-content, #notificationSection .content-wrapper {
+        margin: 10px auto; /* Less margin on mobile */
+        padding: 15px;
+    }
+    #pinDetailSection .detail-info h2 {
+        font-size: 24px;
+    }
+    #pinDetailSection .detail-info p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .slider-slide { /* On very small screens, make individual slides full width for better visibility */
+        width: 100%;
+    }
+    .slider-wrapper .swipe-inner {
+        padding: 5px; /* Reduce padding for smaller screens */
+    }
+}

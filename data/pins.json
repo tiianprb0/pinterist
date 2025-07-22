@@ -1,0 +1,23 @@
+[
+    {
+        "id": "pin_68776c631e786_1752656995",
+        "title": "Contoh",
+        "description": "",
+        "photo_description": "Hahahhaa",
+        "images": [
+            {
+                "url_original": "./uploads/pins/raw_68776c58d5b95.jpg",
+                "url_blur": "./uploads/blur-pins/blur_68776c59763af.jpg",
+                "description": ""
+            }
+        ],
+        "display_type": "stacked",
+        "categories": [
+            "contoh"
+        ],
+        "personTags": [],
+        "uploadedBy": "admin",
+        "created_at": "2025-07-16 16:09:55",
+        "level": "tempted"
+    }
+]
