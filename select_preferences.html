@@ -377,6 +377,88 @@
             border: 1px solid red;
         }
 
+        /* Styling for Username Completion Section */
+        #usernameCompletionSection {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px; /* Consistent with login form */
+            box-sizing: border-box;
+            text-align: left;
+            margin-bottom: 30px; /* Space before button group */
+        }
+
+        #usernameCompletionSection h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #111;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        #usernameCompletionSection p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        #usernameCompletionSection input[type="text"] {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            background-color: transparent;
+            border-radius: 0;
+            font-size: 16px;
+            color: #333;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        #usernameCompletionSection input[type="text"]:focus {
+            border-bottom-color: #e60023;
+        }
+
+        #usernameCompletionSection button {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #e60023;
+            color: #ffffff;
+            transition: background-color 0.2s ease;
+            display: block;
+            text-align: center;
+        }
+
+        #usernameCompletionSection button:hover {
+            background-color: #ad081b;
+        }
+
+        #usernameCompletionSection .message-box {
+            position: static; /* Override fixed positioning */
+            transform: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            opacity: 1;
+            visibility: visible;
+            white-space: normal;
+            word-break: break-word;
+            display: none;
+        }
+        #usernameCompletionSection .message-box.show {
+            display: block;
+        }
+
+
         /* Responsive adjustments */
         @media (max-width: 600px) {
             h1 {
@@ -424,6 +506,13 @@
                 padding: 10px 20px;
                 font-size: 15px;
             }
+
+            #usernameCompletionSection {
+                padding: 20px;
+            }
+            #usernameCompletionSection h2 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -435,7 +524,16 @@
         <div id="message" class="message-box"></div>
 
         <div id="preferencesForm">
-            <section id="categorySection">
+            <!-- New Username Completion Section -->
+            <section id="usernameCompletionSection" style="display: none;">
+                <h2 class="section-title">Pilih Nama Pengguna Anda</h2>
+                <p>Selamat datang! Untuk melanjutkan, silakan buat nama pengguna untuk akun Anda.</p>
+                <input type="text" id="usernameInput" placeholder="Nama Pengguna Anda" required>
+                <div id="usernameMessage" class="message-box"></div>
+                <button id="submitUsernameButton">Lanjutkan</button>
+            </section>
+
+            <section id="categorySection" style="display: none;">
                 <h2 class="section-title">Kategori Favorit Anda <span class="min-selection-text">(Minimal 3)</span></h2>
                 <div class="choice-grid" id="categoryGrid">
                     <!-- Categories will be loaded here by JavaScript -->
@@ -485,14 +583,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            const usernameCompletionSection = document.getElementById('usernameCompletionSection'); // New section
+            const usernameInput = document.getElementById('usernameInput'); // New input
+            const submitUsernameButton = document.getElementById('submitUsernameButton'); // New button
+            const usernameMessageDiv = document.getElementById('usernameMessage'); // New message div
+
             const categorySection = document.getElementById('categorySection');
             const personSection = document.getElementById('personSection');
             const profileSection = document.getElementById('profileSection');
 
             const categoryGrid = document.getElementById('categoryGrid');
             const personGrid = document.getElementById('personGrid');
-            const manualPersonInputCard = document.getElementById('manualPersonInputCard'); // New element
-            const manualPersonCardText = document.getElementById('manualPersonCardText'); // New element
+            const manualPersonInputCard = document.getElementById('manualPersonInputCard');
+            const manualPersonCardText = document.getElementById('manualPersonCardText');
             const manualPersonInput = document.getElementById('manualPersonInput');
             const addManualPersonBtn = document.getElementById('addManualPersonBtn');
             const manualPersonList = document.getElementById('manualPersonList');
@@ -501,14 +604,15 @@
             const nextStepBtn = document.getElementById('nextStepBtn');
             const backBtn = document.getElementById('backBtn');
             const messageDiv = document.getElementById('message');
-            const manualInputFields = document.getElementById('manualInputFields'); // Renamed from toggleManualPersonInputBtn
+            const manualInputFields = document.getElementById('manualInputFields');
 
+            let currentFirebaseUid = null; // To store Firebase UID from session
+            let currentUsername = ''; // Variable to store the current user's username
             let selectedCategories = new Set();
             let selectedPersons = new Set();
             let manualPersons = [];
             let selectedProfileImageUrl = '';
-            let currentUsername = ''; // Variable to store the current user's username
-            let currentStep = 1; // 1: Categories, 2: Persons, 3: Profile
+            let currentStep = 0; // 0: Username Completion, 1: Categories, 2: Persons, 3: Profile
 
             const API_BASE_URL = 'api/';
 
@@ -544,30 +648,40 @@
             }
 
             // --- Fungsi untuk Menampilkan Pesan ---
-            function showMessage(msg, type = 'info') {
-                messageDiv.textContent = msg;
-                messageDiv.className = 'message-box ' + type;
-                messageDiv.style.display = 'block';
+            function showMessage(msg, type = 'info', targetDiv = messageDiv) {
+                targetDiv.textContent = msg;
+                targetDiv.className = 'message-box ' + type;
+                targetDiv.style.display = 'block';
                 setTimeout(() => {
-                    messageDiv.style.display = 'none';
+                    targetDiv.style.display = 'none';
                 }, 4000);
             }
 
             // --- Periksa Status Sesi dan Preferensi ---
             async function checkSessionAndPreferences() {
-                const response = await makeApiRequest('check_user_preferences.php', 'GET');
-                if (!response.success || !response.isLoggedIn) {
+                const response = await makeApiRequest('auth.php?action=check_session', 'GET'); // Use auth.php for session check
+                if (!response.success || !response.user) {
                     // Not logged in, redirect to login
                     window.location.href = 'login.html';
                     return false;
                 } else {
-                    currentUsername = response.username; // Set the global username
-                    if (response.preferencesSet) {
-                        // Preferences already set, redirect to home
-                        window.location.href = 'index.html';
-                        return false;
+                    currentUsername = response.user.username; // Set the global username from session
+                    currentFirebaseUid = response.user.firebase_uid; // Set Firebase UID from session
+
+                    if (response.user.needs_username_completion) {
+                        // User needs to complete username
+                        currentStep = 0; // Set initial step to username completion
+                        return true;
+                    } else {
+                        // Check if preferences are already set (assuming this means existing user with username)
+                        const prefsResponse = await makeApiRequest('check_user_preferences.php', 'GET');
+                        if (prefsResponse.success && prefsResponse.preferencesSet) {
+                            window.location.href = 'index.html'; // Preferences already set, redirect to home
+                            return false;
+                        }
                     }
                 }
+                currentStep = 1; // If not needs_username_completion and not preferencesSet, start at categories
                 return true;
             }
 
@@ -719,18 +833,24 @@
             // --- Update Status Tombol ---
             function updateButtonStates() {
                 let canProceed = false;
-                if (currentStep === 1) { // Categories
+                if (currentStep === 0) { // Username Completion
+                    canProceed = usernameInput.value.trim() !== '';
+                    nextStepBtn.textContent = 'Lanjutkan';
+                    backBtn.style.display = 'none'; // No back button for username completion
+                } else if (currentStep === 1) { // Categories
                     canProceed = selectedCategories.size >= 3;
                     nextStepBtn.textContent = 'Lanjutkan';
+                    backBtn.style.display = 'inline-block';
                 } else if (currentStep === 2) { // Persons
                     canProceed = selectedPersons.size >= 3;
                     nextStepBtn.textContent = 'Lanjutkan';
+                    backBtn.style.display = 'inline-block';
                 } else if (currentStep === 3) { // Profile
                     canProceed = selectedProfileImageUrl !== '';
                     nextStepBtn.textContent = 'Simpan Preferensi';
+                    backBtn.style.display = 'inline-block';
                 }
                 nextStepBtn.disabled = !canProceed;
-                backBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
                 
                 // Hide manual input elements unless on person step
                 manualPersonInputCard.style.display = currentStep === 2 ? 'flex' : 'none';
@@ -742,11 +862,14 @@
 
             // --- Navigasi Langkah ---
             function showStep(step) {
+                usernameCompletionSection.style.display = 'none';
                 categorySection.style.display = 'none';
                 personSection.style.display = 'none';
                 profileSection.style.display = 'none';
 
-                if (step === 1) {
+                if (step === 0) {
+                    usernameCompletionSection.style.display = 'block';
+                } else if (step === 1) {
                     categorySection.style.display = 'block';
                 } else if (step === 2) {
                     personSection.style.display = 'block';
@@ -756,6 +879,38 @@
                 currentStep = step;
                 updateButtonStates();
             }
+
+            // --- Submit Username (for step 0) ---
+            submitUsernameButton.addEventListener('click', async () => {
+                const newUsername = usernameInput.value.trim();
+                if (!newUsername) {
+                    showMessage('Nama pengguna tidak boleh kosong.', 'error', usernameMessageDiv);
+                    return;
+                }
+
+                if (!currentFirebaseUid) {
+                    showMessage('Kesalahan: UID Firebase tidak ditemukan. Silakan coba login lagi.', 'error', usernameMessageDiv);
+                    return;
+                }
+
+                const response = await makeApiRequest('auth.php?action=update_username', 'POST', {
+                    uid: currentFirebaseUid,
+                    new_username: newUsername
+                });
+
+                if (response.success) {
+                    showMessage('Nama pengguna berhasil disimpan! Melanjutkan...', 'success', usernameMessageDiv);
+                    currentUsername = newUsername; // Update current username
+                    setTimeout(() => {
+                        showStep(1); // Move to categories
+                        fetchCategories(); // Load categories for the next step
+                        fetchPersons(); // Load persons for the step after
+                    }, 1000);
+                } else {
+                    showMessage('Gagal menyimpan nama pengguna: ' + response.message, 'error', usernameMessageDiv);
+                }
+            });
+
 
             nextStepBtn.addEventListener('click', async () => {
                 if (currentStep === 1) {
@@ -801,7 +956,7 @@
             });
 
             backBtn.addEventListener('click', () => {
-                if (currentStep > 1) {
+                if (currentStep > 0) { // Allow going back from step 1 (categories) onwards
                     showStep(currentStep - 1);
                 }
             });
@@ -812,9 +967,12 @@
             // Inisialisasi
             const canProceed = await checkSessionAndPreferences();
             if (canProceed) {
-                await fetchCategories();
-                await fetchPersons();
-                showStep(1); // Start at step 1 (Categories)
+                // Only fetch categories and persons if we are not on the username completion step initially
+                if (currentStep !== 0) {
+                    await fetchCategories();
+                    await fetchPersons();
+                }
+                showStep(currentStep); // Show the determined initial step
             }
         });
     </script>
