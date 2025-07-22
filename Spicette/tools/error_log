@@ -1,4 +1,0 @@
-[12-Jul-2025 13:16:40 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function shell_exec() in /home/daytianf/public_html/Spicette/tools/conv.php:47
-Stack trace:
-#0 {main}
-  thrown in /home/daytianf/public_html/Spicette/tools/conv.php on line 47
