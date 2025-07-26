@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buat Pin Baru - Spicette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Variabel CSS Global */
+        :root {
+            --color-primary: #e60023; /* Pinterest Red */
+            --color-dark: #111; /* Dark text */
+            --color-text-main: #333; /* Main text color */
+            --color-text-secondary: #5f5f5f; /* Secondary text */
+            --color-text-light: #767676; /* Info message, divider */
+            --color-background-light: #f9f9f9; /* Body background */
+            --color-white: #ffffff; /* White */
+            --color-border-light: #eee; /* Divider border */
+            --color-border-medium: #ddd; /* Google button border, disabled button */
+            --color-hover-light: #f0f0f0; /* Google button hover */
+            --color-success: #28a745; /* Green for success alerts */
+            --color-error: #dc3545; /* Red for error alerts */
+            --color-accent-hover: #ad081b; /* Darker red for hover states of primary elements */
+            --color-dashed-line: #ccc; /* Specific color for dashed line */
+
+            /* Font Families */
+            --font-family-body: 'Plus Jakarta Sans', sans-serif;
+            --font-family-heading: 'Playfair Display', serif;
+
+            /* Base Font Sizes */
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 2.2rem; /* Untuk judul utama */
+        }
+
+        /* Simple CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Gaya dasar untuk body */
+        body {
+            font-family: var(--font-family-body);
+            font-size: var(--font-size-base);
+            line-height: 1.5;
+            background-color: var(--color-background-light);
+            color: var(--color-text-main);
+            display: flex;
+            justify-content: center; /* Pusatkan secara horizontal */
+            align-items: center; /* Pusatkan secara vertikal */
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Container utama untuk form buat pin */
+        .create-pin-container {
+            background-color: var(--color-white);
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 700px; /* Lebar maksimum yang lebih besar dari login */
+            box-sizing: border-box;
+            position: relative; /* Diperlukan untuk positioning elemen internal jika ada */
+        }
+
+        .create-pin-container h2 {
+            font-family: var(--font-family-heading);
+            font-size: var(--font-size-large);
+            color: var(--color-dark);
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .create-pin-container p {
+            font-size: var(--font-size-base);
+            color: var(--color-text-secondary);
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        /* Logo styling */
+        .create-pin-container .logo {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: 0; /* Tetap rata kiri untuk logo */
+            margin-right: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--color-text-main);
+            font-size: var(--font-size-small);
+        }
+
+        .form-group input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 0; /* Padding disesuaikan dengan login.html */
+            border: none; /* Border dihapus */
+            border-bottom: 1px dashed var(--color-dashed-line); /* Hanya border bawah putus-putus */
+            background-color: transparent; /* Background transparan */
+            border-radius: 0; /* Border radius dihapus */
+            font-size: var(--font-size-base); /* Pastikan font-size 16px atau lebih besar untuk mencegah zoom */
+            color: var(--color-text-main);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease; /* Hanya transisi border-color */
+            outline: none;
+            touch-action: manipulation; /* Menambahkan touch-action untuk mencegah zoom pada iOS */
+        }
+
+        .form-group input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-bottom-color: var(--color-primary); /* Warna border bawah saat fokus */
+            background-color: transparent; /* Tetap transparan saat fokus */
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Gaya tombol utama (Unggah Pin) */
+        .btn-primary {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            border: none;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            transition: background-color 0.2s ease; /* Transisi disederhanakan */
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            position: relative;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-accent-hover);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--color-border-medium);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Tombol sekunder (Rekomendasikan Judul) */
+        .btn-secondary {
+            background-color: var(--color-text-light);
+            color: var(--color-white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: var(--font-size-small);
+            cursor: pointer;
+            transition: background-color 0.2s ease; /* Transisi disederhanakan */
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-text-secondary);
+        }
+
+        .btn-secondary:disabled {
+            background-color: var(--color-border-medium);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Custom Alert */
+        .custom-alert {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-text-main);
+            color: var(--color-white);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: var(--font-size-base);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            white-space: nowrap;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .custom-alert.success {
+            background-color: var(--color-success);
+        }
+
+        .custom-alert.error {
+            background-color: var(--color-error);
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .btn-primary:disabled .loading-spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Back button styling - dipindahkan ke bawah dan disesuaikan dengan login.html */
+        .back-button-container {
+            position: fixed; /* Menggunakan fixed agar selalu di viewport */
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: auto; /* Lebar otomatis */
+            padding: 0; /* Hapus padding */
+            opacity: 1; /* Default visible */
+            visibility: visible; /* Default visible */
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Transisi untuk sembunyi/tampil */
+        }
+
+        .back-button-container.hidden-button {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-button {
+            background-color: var(--color-text-light); /* Warna background seperti tombol back di login.html */
+            color: var(--color-white); /* Warna teks putih */
+            border: none;
+            padding: 12px 20px; /* Padding disesuaikan */
+            border-radius: 24px; /* Border radius disesuaikan */
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex; /* Untuk ikon dan teks sejajar */
+            align-items: center;
+            gap: 8px; /* Jarak antara ikon dan teks */
+        }
+
+        .back-button:hover {
+            background-color: var(--color-text-secondary); /* Warna hover disesuaikan */
+            transform: none; /* Hapus transform pada hover */
+        }
+
+        .back-button .fas {
+            font-size: 18px; /* Ukuran ikon disesuaikan */
+        }
+
+        /* Radio group styling */
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px 08px 0; /* Mengikuti CSS yang diberikan */
+
+            transition: background-color 0.2s ease;
+        }
+
+        .radio-group:hover {
+            background-color: var(--color-hover-light);
+        }
+
+        .radio-group label {
+            font-size: var(--font-size-small);
+            color: var(--color-text-main);
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-text-light);
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            margin-right: 5px;
+            background-color: var(--color-white);
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .radio-group input[type="radio"]:checked {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary);
+        }
+
+        .radio-group input[type="radio"]:checked::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--color-white);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Inline form group styling */
+        .form-group-inline {
+            border: 1px solid var(--color-border-medium);
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--color-background-light);
+            margin-bottom: 10px;
+        }
+
+        .form-group-inline label {
+            font-size: var(--font-size-small);
+            color: var(--color-text-secondary);
+        }
+
+        /* Title suggestions styling */
+        .title-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .title-suggestion {
+            background-color: var(--color-hover-light);
+            border: 1px solid var(--color-border-light);
+            border-radius: 16px;
+            padding: 8px 16px;
+            font-size: var(--font-size-small);
+            color: var(--color-text-main);
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .title-suggestion:hover {
+            background-color: var(--color-border-medium);
+            transform: translateY(-1px);
+        }
+
+        /* Person tag suggestions styling */
+        .person-tag-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--color-white);
+            border: 1px solid var(--color-border-medium);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+        }
+
+        .person-tag-suggestions li {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: var(--font-size-small);
+            color: var(--color-text-main);
+            transition: background-color 0.2s ease;
+        }
+
+        .person-tag-suggestions li:hover {
+            background-color: var(--color-hover-light);
+        }
+
+        .person-tag-suggestions li.selected {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        /* Access denied message styling */
+        .access-denied-message {
+            text-align: center;
+            font-size: 18px;
+            color: var(--color-error);
+            margin-top: 50px;
+            display: none;
+            font-weight: 600;
+            background-color: #fff0f0;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--color-error);
+        }
+
+        /* Category checkbox styling */
+        .category-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 8px 0 8px 0; /* Mengikuti CSS yang diberikan */
+
+        }
+
+        .category-checkbox-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--color-hover-light);
+            border: 1px solid var(--color-border-light);
+            border-radius: 16px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .category-checkbox-item:hover {
+            background-color: var(--color-border-medium);
+        }
+
+        .category-checkbox-item input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--color-text-light);
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            position: relative;
+            background-color: var(--color-white);
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .category-checkbox-item input[type="checkbox"]:checked {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary);
+        }
+
+        .category-checkbox-item input[type="checkbox"]:checked::after {
+            content: '\2713';
+            font-size: 14px;
+            color: var(--color-white);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .category-checkbox-item label {
+            font-size: var(--font-size-small);
+            color: var(--color-text-main);
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        /* Upload status styling */
+        #uploadStatus {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--color-background-light);
+            border: 1px solid var(--color-border-medium);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            color: var(--color-text-main);
+        }
+        #uploadStatus.show {
+            display: flex;
+        }
+        #uploadStatus h3 {
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            margin-bottom: 5px;
+        }
+        #uploadStatus .file-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-small);
+            border-bottom: 1px dashed var(--color-dashed-line);
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+        #uploadStatus .file-info:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        #uploadStatus .file-info span {
+            word-break: break-all;
+        }
+        #uploadStatus .file-info .size {
+            font-weight: 600;
+        }
+
+        /* Drag and Drop Area */
+        .drag-area {
+            border: 2px dashed var(--color-dashed-line);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            margin-bottom: 15px;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+        }
+
+        .drag-area.highlight {
+            background-color: var(--color-hover-light);
+            border-color: var(--color-primary);
+        }
+
+        .drag-area i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: var(--color-text-light);
+        }
+
+        .drag-area p {
+            margin: 0;
+            font-size: var(--font-size-base);
+            color: var(--color-text-secondary);
+        }
+
+        .drag-area span {
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .drag-area input[type="file"] {
+            display: none; /* Sembunyikan input file asli */
+        }
+
+        /* Indikator file yang dipilih */
+        #selectedFilesIndicator {
+            margin-top: 10px;
+            font-size: var(--font-size-small);
+            color: var(--color-text-main);
+            text-align: center;
+            display: none; /* Sembunyikan secara default */
+            font-weight: 500;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .create-pin-container {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            .create-pin-container h2 {
+                font-size: 2rem;
+            }
+
+            .form-group input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
+            .form-group textarea,
+            .form-group select {
+                font-size: var(--font-size-base);
+                padding: 10px 0; /* Padding disesuaikan */
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                font-size: var(--font-size-small);
+                padding: 10px;
+            }
+
+            .back-button-container {
+                bottom: 10px; /* Sesuaikan posisi untuk mobile */
+            }
+            .back-button {
+                width: auto; /* Lebar otomatis */
+                max-width: 250px; /* Batasi lebar */
+            }
+
+            .drag-area {
+                padding: 15px;
+                font-size: var(--font-size-small);
+            }
+
+            .drag-area i {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .create-pin-container {
+                padding: 15px;
+            }
+
+            .create-pin-container h2 {
+                font-size: 1.8rem;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .radio-group input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+
+            .radio-group input[type="radio"]:checked::after {
+                width: 8px;
+                height: 8px;
+            }
+
+            .title-suggestion {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="create-pin-container">
+            <!-- Logo Spicette -->
+            <img src="https://placehold.co/50x50/e60023/ffffff?text=S" alt="Spicette Logo" class="logo">
+            <h2>Buat Pin Baru</h2>
+            <p>Unggah gambar dan tambahkan detail untuk pin Anda.</p>
+
+            <form id="createPinForm" enctype="multipart/form-data">
+                <div id="createMessage" class="custom-alert"></div>
+
+                <div class="form-group">
+                    <label for="images">Pilih Gambar (multiple diperbolehkan):</label>
+                    <div id="dragArea" class="drag-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Seret & lepas gambar di sini atau <span>klik untuk memilih</span></p>
+                        <input type="file" id="images" name="images[]" accept="image/*" multiple required>
+                    </div>
+                    <div id="selectedFilesIndicator"></div> <!-- Indikator file yang dipilih -->
+                </div>
+                <!-- New div to show upload status and file sizes -->
+                <div id="uploadStatus">
+                    <h3>Status Unggah Gambar:</h3>
+                    <!-- File info will be inserted here -->
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Judul Pin:</label>
+                    <input type="text" id="title" name="title" placeholder="Masukkan judul pin" required>
+                    <button type="button" id="recommendTitleButton" class="btn-secondary">Rekomendasikan Judul</button>
+                    <div id="titleSuggestions" class="title-suggestions"></div>
+                </div>
+                <div class="form-group">
+                    <label for="photoDescription">Penjelasan Foto:</label>
+                    <textarea id="photoDescription" name="photo_description" placeholder="Jelaskan isi foto Anda (untuk rekomendasi judul)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="description">Deskripsi Pin (opsional):</label>
+                    <textarea id="description" name="description" placeholder="Jelaskan pin Anda"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipe Tampilan Pin:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="displayStacked" name="display_type" value="stacked" checked>
+                        <label for="displayStacked">Gambar Bertumpuk!</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="displaySlider" name="display_type" value="slider">
+                        <label for="displaySlider">Slider Gambar!</label>
+                    </div>
+                </div>
+                <div id="imageDescriptionsContainer" class="form-group"></div>
+                <div class="form-group">
+                    <label for="category">Pilih Kategori (bisa lebih dari satu):</label>
+                    <div id="categoryCheckboxes" class="category-checkbox-group">
+                        <!-- Categories will be loaded here by JavaScript -->
+                    </div>
+                </div>
+                <div class="form-group" id="pinLevelGroup">
+                    <label for="pinLevel">Visibilitas Pin:</label>
+                    <select id="pinLevel" name="pin_level">
+                        <!-- Options will be dynamically loaded by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="personTags">Orang dalam Pin (pisahkan dengan koma, opsional):</label>
+                    <textarea id="personTags" name="personTags" placeholder="Contoh: John Doe, Jane Smith"></textarea>
+                    <ul id="personTagSuggestions" class="person-tag-suggestions"></ul>
+                </div>
+                <button type="submit" id="uploadButton" class="btn-primary">Unggah Pin <span class="loading-spinner"></span></button>
+            </form>
+            <div id="accessDenied" class="access-denied-message">
+                Anda tidak memiliki izin untuk mengunggah pin. Harap hubungi administrator.
+            </div>
+        </div>
+        <!-- Tombol back dipindahkan ke luar create-pin-container -->
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE_URL = 'api/'; // Pastikan jalur API benar
+
+        /**
+         * Mengirim permintaan API ke endpoint yang ditentukan.
+         * @param {string} endpoint - Endpoint API.
+         * @param {string} method - Metode HTTP (GET, POST).
+         * @param {object} data - Data yang akan dikirim dengan permintaan (untuk POST).
+         * @returns {Promise<object>} - Respons JSON dari API.
+         */
+        async function makeApiRequest(endpoint, method = 'GET', data = null) {
+            try {
+                const options = { method };
+                if (data !== null && typeof data !== 'undefined') {
+                    if (!(data instanceof FormData) && method === 'POST') {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
+                    } else if (data instanceof FormData) {
+                        options.body = data;
+                    }
+                }
+                
+                const response = await fetch(API_BASE_URL + endpoint, options);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
+                }
+                
+                const textResponse = await response.text();
+                if (!textResponse) {
+                    return { success: true, message: 'Tidak ada konten' };
+                }
+
+                try {
+                    const jsonResponse = JSON.parse(textResponse);
+                    return jsonResponse;
+                } catch (e) {
+                    console.error('Gagal mengurai respons JSON:', textResponse);
+                    throw new Error(`Respons JSON tidak valid: ${textResponse}`);
+                }
+            } catch (error) {
+                console.error('Permintaan API Gagal:', error);
+                return { success: false, message: 'Kesalahan jaringan atau server.' };
+            }
+        }
+
+        /**
+         * Mengambil saran judul dari API AI pihak ketiga.
+         * @param {string[]} categories - Kategori yang dipilih untuk pin.
+         * @param {string} photoDescription - Deskripsi foto.
+         * @param {string[]} personTags - Daftar orang yang ditandai di pin.
+         * @returns {Promise<string[]>} - Sebuah array saran judul.
+         */
+        async function getTitleSuggestions(categories, photoDescription, personTags) {
+            // NOTE: Ganti 'YOUR_DEEPSEEK_API_KEY' dengan kunci API DeepSeek Anda yang sebenarnya.
+            const apiKey = 'sk-7ee3372f5d844af297e90551daeab578'; // Ini adalah placeholder, gunakan kunci Anda yang sebenarnya
+            const endpoint = 'https://api.deepseek.com/v1/chat/completions';
+            const prompt = `Anda adalah asisten kreatif yang bertugas menghasilkan saran judul yang sensual dan provokatif (maksimal 6 kata) untuk pin media sosial, ditujukan untuk audiens 21+. Judul dapat mencakup istilah-istilah yang berani atau vulgar seperti "bitch" atau "boobs" atau "seduces" atau sesuatu yang seksi, Pin ini termasuk dalam kategori: ${categories.join(', ')}. Deskripsi foto adalah: "${photoDescription}". Orang-orang di pin: ${personTags.length > 0 ? personTags.join(', ') : 'Tidak ada'}. Hasilkan 3 saran judul tanpa menggunakan tanda kutip.`;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-chat',
+                        messages: [
+                            { role: 'system', content: prompt },
+                            { role: 'user', content: 'Hasilkan 3 saran judul.' }
+                        ],
+                        max_tokens: 100,
+                        temperature: 0.8
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`DeepSeek API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const suggestions = data.choices[0].message.content.split('\n').filter(line => line.trim());
+                return suggestions.map(s => s.replace(/^\d+\.\s*/, '').trim());
+            } catch (error) {
+                console.error('DeepSeek API error:', error);
+                return [];
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const createPinForm = document.getElementById('createPinForm');
+            const accessDeniedMessage = document.getElementById('accessDenied');
+            const categoryCheckboxesContainer = document.getElementById('categoryCheckboxes');
+            const imagesInput = document.getElementById('images');
+            const imageDescriptionsContainer = document.getElementById('imageDescriptionsContainer');
+            const displayStackedRadio = document.getElementById('displayStacked');
+            const displaySliderRadio = document.getElementById('displaySlider');
+            const personTagsInput = document.getElementById('personTags');
+            const personTagSuggestionsContainer = document.getElementById('personTagSuggestions');
+            const createMessageDiv = document.getElementById('createMessage');
+            const uploadButton = document.getElementById('uploadButton');
+            const recommendTitleButton = document.getElementById('recommendTitleButton');
+            const titleSuggestionsDiv = document.getElementById('titleSuggestions');
+            const photoDescriptionInput = document.getElementById('photoDescription');
+            const uploadStatusDiv = document.getElementById('uploadStatus');
+            const pinLevelSelect = document.getElementById('pinLevel');
+            const pinLevelGroup = document.getElementById('pinLevelGroup');
+            const dragArea = document.getElementById('dragArea'); // Elemen drag and drop
+            const selectedFilesIndicator = document.getElementById('selectedFilesIndicator'); // Indikator file yang dipilih
+            const backButtonContainer = document.querySelector('.back-button-container'); // Container tombol back
+
+            let allUniquePersonTags = [];
+            let selectedSuggestionIndex = -1;
+            let currentUserLevel = 'tempted'; // Tingkat default, akan diperbarui dari sesi
+
+            /**
+             * Menampilkan pesan alert kustom.
+             * @param {string} msg - Pesan yang akan ditampilkan.
+             * @param {string} type - Tipe pesan (info, success, error).
+             */
+            function showMessage(msg, type = 'info') {
+                createMessageDiv.textContent = msg;
+                createMessageDiv.className = `custom-alert ${type} show`;
+                setTimeout(() => {
+                    createMessageDiv.classList.remove('show');
+                }, 3000);
+            }
+
+            /**
+             * Memuat semua tag orang unik dari pin yang ada.
+             */
+            async function loadAllUniquePersonTags() {
+                const response = await makeApiRequest('pins.php?action=fetch_all');
+                if (response.success && response.pins) {
+                    const tags = new Set();
+                    response.pins.forEach(pin => {
+                        if (pin.personTags && Array.isArray(pin.personTags)) {
+                            pin.personTags.forEach(tag => tags.add(tag.trim()));
+                        }
+                    });
+                    allUniquePersonTags = Array.from(tags).sort();
+                }
+            }
+
+            /**
+             * Memuat kategori dan mengisi grup checkbox kustom.
+             */
+            async function loadCategories() {
+                try {
+                    const response = await makeApiRequest('categories.php?action=fetch_all');
+                    
+                    if (response.success && response.categories) {
+                        if (!categoryCheckboxesContainer) {
+                            console.error('Error: Element with ID "categoryCheckboxes" not found in the DOM. Cannot load categories.');
+                            showMessage('Gagal memuat kategori: Elemen tampilan tidak ditemukan.', 'error');
+                            return;
+                        }
+                        categoryCheckboxesContainer.innerHTML = '';
+                        response.categories.forEach(cat => {
+                            const checkboxItem = document.createElement('div');
+                            checkboxItem.className = 'category-checkbox-item';
+                            checkboxItem.innerHTML = `
+                                <input type="checkbox" id="category_${cat.name.replace(/\s+/g, '_')}" name="categories" value="${cat.name}">
+                                <label for="category_${cat.name.replace(/\s+/g, '_')}">${cat.name}</label>
+                            `;
+                            categoryCheckboxesContainer.appendChild(checkboxItem);
+                        });
+                    } else {
+                        console.error('Gagal memuat kategori:', response.message);
+                        showMessage('Gagal memuat kategori. Coba lagi.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Kesalahan memuat kategori:', error);
+                    showMessage('Kesalahan jaringan saat memuat kategori.', 'error');
+                }
+            }
+
+            /**
+             * Mengaktifkan atau menonaktifkan bidang deskripsi gambar individual berdasarkan tipe tampilan dan jumlah gambar.
+             */
+            function toggleDescriptions() {
+                imageDescriptionsContainer.innerHTML = '';
+                const files = imagesInput.files;
+
+                if (files.length > 0) {
+                    selectedFilesIndicator.textContent = `${files.length} file dipilih`;
+                    selectedFilesIndicator.style.display = 'block';
+                } else {
+                    selectedFilesIndicator.textContent = '';
+                    selectedFilesIndicator.style.display = 'none';
+                }
+
+                if (displayStackedRadio.checked || files.length === 1) {
+                    if (files.length > 0) {
+                        imageDescriptionsContainer.style.display = 'block';
+                        const header = document.createElement('h3');
+                        header.textContent = 'Deskripsi Gambar Individual (Opsional):';
+                        header.style.fontSize = 'var(--font-size-base)';
+                        header.style.color = 'var(--color-text-main)';
+                        header.style.marginBottom = '15px';
+                        header.style.fontWeight = 'bold';
+                        imageDescriptionsContainer.appendChild(header);
+
+                        Array.from(files).forEach((file, index) => {
+                            const fileDescriptionDiv = document.createElement('div');
+                            fileDescriptionDiv.className = 'form-group-inline';
+                            fileDescriptionDiv.innerHTML = `
+                                <label for="image_desc_${index}">${file.name}:</label>
+                                <textarea id="image_desc_${index}" name="image_descriptions[]" placeholder="Jelaskan gambar ini (opsional)"></textarea>
+                            `;
+                            fileDescriptionDiv.dataset.originalFileName = file.name;
+                            imageDescriptionsContainer.appendChild(fileDescriptionDiv);
+                        });
+                    } else {
+                        imageDescriptionsContainer.style.display = 'none';
+                    }
+                } else {
+                    imageDescriptionsContainer.style.display = 'none';
+                }
+
+                if (files.length === 1) {
+                    displayStackedRadio.checked = true;
+                    displaySliderRadio.disabled = true;
+                } else {
+                    displaySliderRadio.disabled = false;
+                }
+            }
+
+            /**
+             * Menampilkan saran tag orang berdasarkan input pengguna.
+             */
+            function showPersonTagSuggestions() {
+                const inputValue = personTagsInput.value;
+                const lastCommaIndex = inputValue.lastIndexOf(',');
+                const currentInput = (lastCommaIndex !== -1 ? inputValue.substring(lastCommaIndex + 1) : inputValue).trim().toLowerCase();
+
+                personTagSuggestionsContainer.innerHTML = '';
+                personTagSuggestionsContainer.style.display = 'none';
+                selectedSuggestionIndex = -1;
+
+                if (currentInput.length === 0) {
+                    return;
+                }
+
+                const filteredSuggestions = allUniquePersonTags.filter(tag =>
+                    tag.toLowerCase().includes(currentInput)
+                );
+
+                if (filteredSuggestions.length > 0) {
+                    filteredSuggestions.forEach((tag, index) => {
+                        const li = document.createElement('li');
+                        li.textContent = tag;
+                        li.dataset.index = index;
+                        li.addEventListener('click', () => {
+                            addPersonTagFromSuggestion(tag);
+                        });
+                        personTagSuggestionsContainer.appendChild(li);
+                    });
+                    personTagSuggestionsContainer.style.display = 'block';
+                }
+            }
+
+            /**
+             * Menambahkan saran tag orang yang dipilih ke bidang input, mengganti bagian yang tidak lengkap.
+             * @param {string} tag - Tag yang akan ditambahkan.
+             */
+            function addPersonTagFromSuggestion(tag) {
+                let inputValue = personTagsInput.value;
+                const lastCommaIndex = inputValue.lastIndexOf(',');
+                
+                let newInputValue;
+                if (lastCommaIndex !== -1) {
+                    const existingPart = inputValue.substring(0, lastCommaIndex + 1).trim();
+                    const existingTags = existingPart.split(',').map(t => t.trim().toLowerCase());
+                    if (existingTags.includes(tag.toLowerCase())) {
+                        newInputValue = existingPart + ' ';
+                    } else {
+                        newInputValue = existingPart + ' ' + tag + ', ';
+                    }
+                } else {
+                    newInputValue = tag + ', ';
+                }
+
+                newInputValue = newInputValue.replace(/,\s*,/g, ',').replace(/,\s*$/, ', ').trim();
+                if (!newInputValue.endsWith(',')) {
+                    newInputValue += ', ';
+                }
+                newInputValue = newInputValue.replace(/\s*,\s*/g, ', ').trim();
+                if (!newInputValue.endsWith(',')) {
+                    newInputValue += ',';
+                }
+                newInputValue = newInputValue.replace(/,$/, ', ');
+
+                const finalTagsArray = newInputValue.split(',').map(t => t.trim()).filter(t => t !== '');
+                const uniqueFinalTags = Array.from(new Set(finalTagsArray));
+                personTagsInput.value = uniqueFinalTags.join(', ') + (uniqueFinalTags.length > 0 ? ', ' : '');
+
+                personTagsInput.focus();
+                personTagsInput.selectionStart = personTagsInput.selectionEnd = personTagsInput.value.length;
+                personTagSuggestionsContainer.style.display = 'none';
+            }
+
+            // Event listener untuk input tag orang
+            personTagsInput.addEventListener('input', showPersonTagSuggestions);
+
+            personTagsInput.addEventListener('keydown', (e) => {
+                const items = personTagSuggestionsContainer.querySelectorAll('li');
+                if (items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+                    updateSelectedSuggestion();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedSuggestionIndex = (selectedSuggestionIndex - 1 + items.length) % items.length;
+                    updateSelectedSuggestion();
+                } else if (e.key === 'Enter') {
+                    if (selectedSuggestionIndex !== -1) {
+                        e.preventDefault();
+                        addPersonTagFromSuggestion(items[selectedSuggestionIndex].textContent);
+                    }
+                }
+            });
+
+            /**
+             * Memperbarui visualisasi pemilihan saran tag orang.
+             */
+            function updateSelectedSuggestion() {
+                const items = personTagSuggestionsContainer.querySelectorAll('li');
+                items.forEach((item, index) => {
+                    if (index === selectedSuggestionIndex) {
+                        item.classList.add('selected');
+                        item.scrollIntoView({ block: 'nearest' });
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+
+            // Sembunyikan saran tag orang saat input kehilangan fokus
+            personTagsInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (!personTagSuggestionsContainer.contains(document.activeElement)) {
+                        personTagSuggestionsContainer.style.display = 'none';
+                    }
+                }, 100);
+            });
+
+            // Mencegah event blur saat mengklik saran
+            personTagSuggestionsContainer.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+
+            // Event listener untuk tombol rekomendasi judul
+            recommendTitleButton.addEventListener('click', async () => {
+                const selectedCategories = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked')).map(checkbox => checkbox.value);
+                const photoDescription = photoDescriptionInput.value.trim();
+                const personTagsValue = personTagsInput.value.trim();
+                const personTagsArray = personTagsValue ? personTagsValue.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : [];
+
+                if (selectedCategories.length === 0) {
+                    showMessage('Pilih setidaknya satu kategori.', 'error');
+                    return;
+                }
+
+                if (!photoDescription) {
+                    showMessage('Masukkan penjelasan foto.', 'error');
+                    return;
+                }
+
+                recommendTitleButton.disabled = true;
+                const suggestions = await getTitleSuggestions(selectedCategories, photoDescription, personTagsArray);
+                recommendTitleButton.disabled = false;
+
+                titleSuggestionsDiv.innerHTML = '';
+                if (suggestions.length > 0) {
+                    suggestions.forEach(suggestion => {
+                        const suggestionElement = document.createElement('div');
+                        suggestionElement.className = 'title-suggestion';
+                        suggestionElement.textContent = suggestion;
+                        suggestionElement.addEventListener('click', () => {
+                            document.getElementById('title').value = suggestion;
+                        });
+                        titleSuggestionsDiv.appendChild(suggestionElement);
+                    });
+                } else {
+                    showMessage('Gagal mendapatkan saran judul.', 'error');
+                }
+            });
+
+            // Fungsi untuk mengatur dropdown tingkat pin berdasarkan tingkat pengguna
+            function setupPinLevelDropdown(userLevel) {
+                if (!pinLevelSelect || !pinLevelGroup) {
+                    console.error('Error: Pin level dropdown elements not found.');
+                    return;
+                }
+
+                pinLevelSelect.innerHTML = '';
+                const levels = ['tempted', 'Naughty', 'Sinful'];
+                
+                let availableLevels = [];
+                if (userLevel === 'Sinful') {
+                    availableLevels = levels;
+                } else if (userLevel === 'Naughty') {
+                    availableLevels = ['tempted', 'Naughty'];
+                } else {
+                    pinLevelGroup.style.display = 'none';
+                    return;
+                }
+                
+                pinLevelGroup.style.display = 'block';
+
+                availableLevels.forEach(level => {
+                    const option = document.createElement('option');
+                    option.value = level;
+                    option.textContent = level.charAt(0).toUpperCase() + level.slice(1);
+                    pinLevelSelect.appendChild(option);
+                });
+
+                if (userLevel === 'Naughty') {
+                    pinLevelSelect.value = 'Naughty';
+                } else if (userLevel === 'Sinful') {
+                    pinLevelSelect.value = 'tempted';
+                }
+            }
+
+            // Drag and Drop functionality
+            dragArea.addEventListener('click', () => imagesInput.click());
+
+            dragArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragArea.classList.add('highlight');
+            });
+
+            dragArea.addEventListener('dragleave', () => {
+                dragArea.classList.remove('highlight');
+            });
+
+            dragArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragArea.classList.remove('highlight');
+                imagesInput.files = e.dataTransfer.files;
+                toggleDescriptions(); // Perbarui deskripsi setelah file di-drop
+            });
+
+            // Initial loads and event listeners
+            loadCategories();
+            toggleDescriptions();
+            loadAllUniquePersonTags();
+
+            displayStackedRadio.addEventListener('change', toggleDescriptions);
+            displaySliderRadio.addEventListener('change', toggleDescriptions);
+            imagesInput.addEventListener('change', toggleDescriptions); // Memastikan indikator update saat file dipilih
+
+            // Event listener untuk pengiriman form
+            createPinForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                uploadButton.disabled = true;
+                uploadStatusDiv.classList.remove('show');
+                uploadStatusDiv.innerHTML = '<h3>Status Unggah Gambar:</h3><p>Mengunggah dan mengkompresi gambar...</p>';
+                uploadStatusDiv.classList.add('show');
+
+                const form = event.target;
+                const pinData = new FormData();
+                const imageData = new FormData();
+
+                if (imagesInput.files.length === 0) {
+                    showMessage('Harap pilih setidaknya satu gambar.', 'error');
+                    uploadButton.disabled = false;
+                    uploadStatusDiv.classList.remove('show');
+                    return;
+                }
+                for (const file of imagesInput.files) {
+                    imageData.append('images[]', file);
+                }
+
+                let uploadedFilesData = [];
+
+                try {
+                    // Langkah 1: Unggah gambar ke upload.php untuk kompresi dan penggantian nama
+                    const uploadResponse = await makeApiRequest('upload.php', 'POST', imageData);
+                    console.log('Respons dari upload.php:', uploadResponse); // LOGGING TAMBAHAN
+
+                    if (uploadResponse.success && uploadResponse.files && uploadResponse.files.length > 0) {
+                        uploadedFilesData = uploadResponse.files;
+                        
+                        uploadStatusDiv.innerHTML = '<h3>Status Unggah Gambar:</h3>';
+                        uploadStatusDiv.classList.add('show');
+                        uploadedFilesData.forEach(file => {
+                            const originalFileName = file.url_original ? file.url_original.split('/').pop() : 'Nama file tidak tersedia';
+                            const originalSize = file.original_size_kb ? `${file.original_size_kb}KB` : 'N/A';
+                            const compressedOriginalSize = file.compressed_size_original_kb ? `${file.compressed_size_original_kb}KB` : 'N/A';
+                            const compressedBlurSize = file.compressed_size_blur_kb ? `${file.compressed_size_blur_kb}KB` : 'N/A';
+
+                            const fileInfoDiv = document.createElement('div');
+                            fileInfoDiv.className = 'file-info';
+                            fileInfoDiv.innerHTML = `
+                                <span>${originalFileName}</span>
+                                <span class="size">${originalSize} &rarr; ${compressedOriginalSize} (Original), ${compressedBlurSize} (Blur)</span>
+                            `;
+                            uploadStatusDiv.appendChild(fileInfoDiv);
+                        });
+                        showMessage('Gambar berhasil diunggah dan dikompresi!', 'success');
+
+                    } else {
+                        showMessage('Gagal mengunggah gambar: ' + uploadResponse.message + (uploadResponse.errors ? '\n' + uploadResponse.errors.join('\n') : ''), 'error');
+                        uploadButton.disabled = false;
+                        return;
+                    }
+
+                    // Langkah 2: Siapkan metadata pin termasuk URL gambar yang diproses
+                    pinData.append('title', document.getElementById('title').value);
+                    pinData.append('description', document.getElementById('description').value);
+                    pinData.append('display_type', document.querySelector('input[name="display_type"]:checked').value);
+                    pinData.append('photo_description', photoDescriptionInput.value);
+                    pinData.append('pin_level', pinLevelSelect.value);
+
+                    const selectedCategories = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked')).map(checkbox => checkbox.value);
+                    if (selectedCategories.length === 0) {
+                        showMessage('Harap pilih setidaknya satu kategori.', 'error');
+                        uploadButton.disabled = false;
+                        uploadStatusDiv.classList.remove('show');
+                        return;
+                    }
+                    pinData.append('categories', JSON.stringify(selectedCategories));
+
+                    const personTagsValue = personTagsInput.value.trim();
+                    let personTagsArray = [];
+                    if (personTagsValue) {
+                        personTagsArray = personTagsValue.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+                    }
+                    pinData.append('personTags', JSON.stringify(personTagsArray));
+
+                    const finalImagesWithDescriptions = uploadedFilesData.map((fileData, index) => {
+                        const matchingDescription = Array.from(imageDescriptionsContainer.querySelectorAll('.form-group-inline'))
+                            .find(div => div.dataset.originalFileName && fileData.url_original && fileData.url_original.includes(div.dataset.originalFileName.split('.')[0]))
+                            ?.querySelector('textarea').value || '';
+                        
+                        return { 
+                            url_original: fileData.url_original, 
+                            url_blur: fileData.url_blur, 
+                            description: matchingDescription 
+                        };
+                    });
+                    pinData.set('images', JSON.stringify(finalImagesWithDescriptions));
+
+                    // Langkah 3: Kirim data pin ke pins.php
+                    const pinCreationResponse = await makeApiRequest('pins.php?action=create_pin_from_upload', 'POST', pinData);
+                    console.log('Respons dari pins.php (create_pin_from_upload):', pinCreationResponse); // LOGGING TAMBAHAN
+
+                    if (pinCreationResponse.success) {
+                        showMessage('Pin berhasil dibuat!', 'success');
+                        form.reset();
+                        document.getElementById('imageDescriptionsContainer').innerHTML = '';
+                        document.getElementById('displaySlider').disabled = false;
+                        document.getElementById('displayStacked').checked = true;
+                        document.querySelectorAll('#categoryCheckboxes input[name="categories"]:checked').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        personTagsInput.value = '';
+                        titleSuggestionsDiv.innerHTML = '';
+                        uploadStatusDiv.classList.remove('show');
+                        selectedFilesIndicator.style.display = 'none';
+                        
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showMessage('Gagal membuat pin: ' + pinCreationResponse.message + (pinCreationResponse.errors ? '\n' + pinCreationResponse.errors.join('\n') : ''), 'error');
+                    }
+                } catch (error) {
+                    console.error('Kesalahan:', error);
+                    showMessage('Kesalahan jaringan atau server selama unggah/pembuatan pin.', 'error');
+                } finally {
+                    uploadButton.disabled = false;
+                }
+            });
+
+            // Periksa sesi pengguna untuk izin unggah dan atur dropdown tingkat pin
+            const userSessionResponse = await makeApiRequest('auth.php?action=check_session', 'GET');
+            if (userSessionResponse.success && userSessionResponse.user) {
+                currentUserLevel = userSessionResponse.user.level;
+                if (!['Naughty', 'Sinful'].includes(currentUserLevel)) {
+                    createPinForm.style.display = 'none';
+                    accessDeniedMessage.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                } else {
+                    createPinForm.style.display = 'block'; // Menggunakan 'block' karena form adalah flexbox
+                    accessDeniedMessage.style.display = 'none';
+                    setupPinLevelDropdown(currentUserLevel);
+                }
+            } else {
+                createPinForm.style.display = 'none';
+                accessDeniedMessage.style.display = 'block';
+                accessDeniedMessage.textContent = 'Anda belum login. Mengarahkan ke halaman login...';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            }
+
+            // Logika sembunyikan/tampilkan tombol back saat scroll
+            window.addEventListener('scroll', () => {
+                const scrollHeight = document.documentElement.scrollHeight;
+                const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                const clientHeight = document.documentElement.clientHeight;
+
+                // Hitung persentase scroll
+                const scrolledPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+
+                if (scrolledPercentage >= 85) {
+                    backButtonContainer.classList.add('hidden-button');
+                } else {
+                    backButtonContainer.classList.remove('hidden-button');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

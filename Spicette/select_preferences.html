@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Preferensi Anda - Spicette</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; /* Menggunakan font Plus Jakarta Sans */
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #111;
+            margin-bottom: 10px;
+            text-align: left; /* Rata kiri */
+            width: 100%; /* Pastikan mengambil lebar penuh untuk rata kiri */
+        }
+
+        p.subtitle {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: left; /* Rata kiri */
+            width: 100%; /* Pastikan mengambil lebar penuh untuk rata kiri */
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #111;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: left;
+            /* border-bottom: 1px dashed #ddd; */ /* Dihapus sesuai permintaan */
+            padding-bottom: 10px;
+        }
+
+        .min-selection-text {
+            font-size: 15px; /* Sekitar 1.6x lebih kecil dari 24px */
+            color: #767676;
+            margin-left: 10px;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        /* Styling for Category Choice Cards (similar to category-item in index.html) */
+        #categoryGrid .choice-card {
+            position: relative;
+            aspect-ratio: 4 / 5; /* Maintain aspect ratio */
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column; /* Stack image and text */
+            align-items: center;
+            justify-content: center;
+            color: white; /* Text color for overlay */
+            font-weight: bold;
+            font-size: 15px;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.2s ease, border-color 0.2s ease; /* Hapus box-shadow dari transisi default */
+            /* box-shadow: 0 2px 8px rgba(0,0,0,0.05); */ /* Dihapus sesuai permintaan */
+            background-color: #fff; /* Fallback background */
+            /* border: 2px solid #eee; */ /* Dihapus sesuai permintaan */
+        }
+
+        #categoryGrid .choice-card:hover {
+            transform: scale(1.03);
+            border: 2px solid #e60023; /* Border hanya saat hover */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Shadow hanya saat hover */
+        }
+
+        #categoryGrid .choice-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3); /* Dark overlay */
+            transition: background 0.2s ease;
+            z-index: 1; /* Ensure overlay is above image but below text */
+        }
+
+        #categoryGrid .choice-card:hover::after {
+            background: rgba(0,0,0,0.5); /* Darker on hover */
+        }
+
+        #categoryGrid .choice-card.selected {
+            border: 2px solid #e60023; /* Border saat selected */
+            box-shadow: 0 4px 12px rgba(230,0,35,0.2); /* Shadow saat selected */
+        }
+
+        #categoryGrid .choice-card.selected::after {
+            background: rgba(230,0,35,0.7); /* Red overlay when selected */
+        }
+
+        #categoryGrid .choice-card .card-image {
+            display: none; /* Hide image for categories, use background-image instead */
+        }
+
+        #categoryGrid .choice-card .card-text {
+            position: relative;
+            z-index: 2; /* Ensure text is above overlay */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            padding: 5px;
+            color: white; /* Text color for categories */
+        }
+
+        /* Styling for Person Choice Cards (text only) */
+        #personGrid .choice-card {
+            background-color: #fff;
+            /* border: 2px solid #eee; */ /* Dihapus sesuai permintaan */
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            /* box-shadow: 0 2px 8px rgba(0,0,0,0.05); */ /* Dihapus sesuai permintaan */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px; /* Diubah sesuai permintaan */
+            aspect-ratio: auto; /* Remove aspect ratio for text-only */
+        }
+
+        #personGrid .choice-card:hover {
+            border: 2px solid #e60023; /* Border hanya saat hover */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Shadow hanya saat hover */
+            transform: translateY(-2px);
+        }
+
+        #personGrid .choice-card.selected {
+            background-color: #e60023;
+            color: white;
+            border: 2px solid #e60023; /* Border saat selected */
+            box-shadow: 0 4px 12px rgba(230,0,35,0.2); /* Shadow saat selected */
+        }
+
+        #personGrid .choice-card .card-image {
+            display: none; /* Hide image for person cards */
+        }
+
+        #personGrid .choice-card .card-text {
+            font-weight: bold;
+            font-size: 15px;
+            color: #333; /* Default text color for persons */
+        }
+
+        #personGrid .choice-card.selected .card-text {
+            color: white; /* Text color when selected */
+        }
+
+
+        /* Manual Input Group Modern & Simple */
+        /* This will now be a choice-card itself */
+        .manual-input-card {
+            background-color: #f0f0f0; /* Lighter background for input card */
+            border: 2px dashed #ccc; /* Dashed border to indicate input */
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px; /* Match other person cards */
+            aspect-ratio: auto;
+            transition: all 0.2s ease;
+            cursor: pointer; /* Make the card clickable to toggle input */
+        }
+
+        .manual-input-card:hover {
+            border-color: #e60023;
+            background-color: #e8e8e8;
+        }
+
+        .manual-input-card .custom-toggle-button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 8px 15px; /* Smaller padding for button inside card */
+            border-radius: 15px; /* Smaller border-radius */
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px; /* Smaller font size */
+            transition: background-color 0.2s ease;
+            margin-top: 10px; /* Space between text and button */
+        }
+
+        .manual-input-card .custom-toggle-button:hover {
+            background-color: #777;
+        }
+
+        .manual-input-fields {
+            display: none; /* Hidden by default */
+            width: 100%; /* Take full width of the card */
+            margin-top: 10px; /* Space from toggle button */
+        }
+
+        .manual-input-fields.active {
+            display: block; /* Show when active */
+        }
+
+        .manual-input-fields input {
+            width: calc(100% - 20px); /* Account for padding */
+            padding: 8px 10px; /* Smaller padding */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px; /* Smaller font size */
+            margin-bottom: 8px; /* Space below input */
+        }
+
+        .manual-input-fields button {
+            background-color: #e60023;
+            color: white;
+            border: none;
+            padding: 8px 12px; /* Smaller padding */
+            border-radius: 15px; /* Smaller border-radius */
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px; /* Smaller font size */
+            transition: background-color 0.2s ease;
+        }
+        .manual-input-fields button:hover {
+            background-color: #ad081b;
+        }
+
+        .manual-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            width: 100%; /* Take full width of the card */
+        }
+
+        .manual-list li {
+            background-color: #e9e9e9; /* Lighter background for list items */
+            padding: 6px 10px; /* Smaller padding */
+            border-radius: 6px; /* Smaller border-radius */
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px; /* Smaller font size */
+            border: 1px solid #ddd; /* Subtle border for list items */
+        }
+        .manual-list li button {
+            background: none;
+            border: none;
+            color: #e60023;
+            cursor: pointer;
+            font-size: 16px; /* Slightly smaller icon */
+        }
+
+        .profile-image-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-image-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            /* border: 3px solid #eee; */ /* Dihapus sesuai permintaan */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            /* box-shadow: none; */ /* Pastikan tidak ada shadow default */
+        }
+
+        .profile-image-option.selected {
+            border: 3px solid #e60023; /* Border saat selected */
+            box-shadow: 0 0 0 3px rgba(230,0,35,0.3); /* Shadow saat selected */
+        }
+
+        .profile-image-option:hover {
+            transform: scale(1.05);
+            border: 3px solid #e60023; /* Border hanya saat hover */
+            box-shadow: 0 0 0 3px rgba(230,0,35,0.3); /* Shadow hanya saat hover */
+        }
+
+        .custom-image-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .button-group button {
+            background-color: #e60023;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .button-group button:hover {
+            background-color: #ad081b;
+        }
+
+        .button-group button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message-box {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+        }
+        .message-box.success {
+            background-color: #e6ffe6;
+            color: green;
+            border: 1px solid green;
+        }
+        .message-box.error {
+            color: red;
+            background-color: #ffe6e6;
+            border: 1px solid red;
+        }
+
+        /* Styling for Username Completion Section */
+        #usernameCompletionSection {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px; /* Consistent with login form */
+            box-sizing: border-box;
+            text-align: left;
+            margin-bottom: 30px; /* Space before button group */
+        }
+
+        #usernameCompletionSection h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #111;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        #usernameCompletionSection p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        #usernameCompletionSection input[type="text"] {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            background-color: transparent;
+            border-radius: 0;
+            font-size: 16px;
+            color: #333;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        #usernameCompletionSection input[type="text"]:focus {
+            border-bottom-color: #e60023;
+        }
+
+        #usernameCompletionSection button {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #e60023;
+            color: #ffffff;
+            transition: background-color 0.2s ease;
+            display: block;
+            text-align: center;
+        }
+
+        #usernameCompletionSection button:hover {
+            background-color: #ad081b;
+        }
+
+        #usernameCompletionSection .message-box {
+            position: static; /* Override fixed positioning */
+            transform: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            opacity: 1;
+            visibility: visible;
+            white-space: normal;
+            word-break: break-word;
+            display: none;
+        }
+        #usernameCompletionSection .message-box.show {
+            display: block;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 28px;
+            }
+            .subtitle {
+                font-size: 14px;
+            }
+            .section-title {
+                font-size: 20px;
+            }
+            .choice-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 10px;
+            }
+            #categoryGrid .choice-card {
+                padding: 10px;
+                min-height: 100px;
+            }
+            #personGrid .choice-card { /* Adjust for person cards on mobile */
+                padding: 10px;
+                min-height: 45px; /* Keep min-height for mobile */
+            }
+            .manual-input-card { /* Adjust for manual input card on mobile */
+                padding: 10px;
+                min-height: 45px;
+            }
+            .choice-card .card-image {
+                width: 50px;
+                height: 50px;
+            }
+            .choice-card .card-text {
+                font-size: 13px;
+            }
+            .profile-image-option {
+                width: 60px;
+                height: 60px;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .button-group button {
+                width: 100%;
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+
+            #usernameCompletionSection {
+                padding: 20px;
+            }
+            #usernameCompletionSection h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Beritahu Kami Apa yang Anda Suka!</h1>
+        <p class="subtitle">Ini akan membantu kami mempersonalisasi feed Anda.</p>
+
+        <div id="message" class="message-box"></div>
+
+        <div id="preferencesForm">
+            <!-- New Username Completion Section -->
+            <section id="usernameCompletionSection" style="display: none;">
+                <h2 class="section-title">Pilih Nama Pengguna Anda</h2>
+                <p>Selamat datang! Untuk melanjutkan, silakan buat nama pengguna untuk akun Anda.</p>
+                <input type="text" id="usernameInput" placeholder="Nama Pengguna Anda" required>
+                <div id="usernameMessage" class="message-box"></div>
+                <button id="submitUsernameButton">Lanjutkan</button>
+            </section>
+
+            <section id="categorySection" style="display: none;">
+                <h2 class="section-title">Kategori Favorit Anda <span class="min-selection-text">(Minimal 3)</span></h2>
+                <div class="choice-grid" id="categoryGrid">
+                    <!-- Categories will be loaded here by JavaScript -->
+                    <p style="text-align: center; grid-column: 1 / -1; color: #767676;">Memuat kategori...</p>
+                </div>
+            </section>
+
+            <section id="personSection" style="display: none;">
+                <h2 class="section-title">Orang yang Anda Kagumi <span class="min-selection-text">(Minimal 3)</span></h2>
+                <div class="choice-grid" id="personGrid">
+                    <!-- Persons will be loaded here by JavaScript -->
+                    <p style="text-align: center; grid-column: 1 / -1; color: #767676;">Memuat orang...</p>
+                    <!-- Manual input group moved inside personGrid and styled as a card -->
+                    <div class="manual-input-card" id="manualPersonInputCard">
+                        <span id="manualPersonCardText">Tambahkan Orang Manual</span>
+                        <div id="manualInputFields" class="manual-input-fields">
+                            <input type="text" id="manualPersonInput" placeholder="Masukkan nama orang">
+                            <button id="addManualPersonBtn">Tambahkan</button>
+                        </div>
+                        <ul class="manual-list" id="manualPersonList">
+                            <!-- Manually added persons will appear here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profileSection" style="display: none;">
+                <h2 class="section-title">Pilih Gambar Profil Anda</h2>
+                <div class="profile-image-options" id="profileImageOptions">
+                    <!-- Predefined profile images -->
+                    <img src="https://i.pinimg.com/736x/45/69/16/456916ec52c1c93abed7f12d60749b6f.jpg" alt="Profil 1" class="profile-image-option" data-url="https://i.pinimg.com/736x/45/69/16/456916ec52c1c93abed7f12d60749b6f.jpg">
+                    <img src="https://i.pinimg.com/236x/79/9a/aa/799aaa5844baa58f32235ef7d0b3f9f5.jpg?nii=t" alt="Profil 2" class="profile-image-option" data-url="https://i.pinimg.com/236x/79/9a/aa/799aaa5844baa58f32235ef7d0b3f9f5.jpg?nii=t">
+                    <img src="https://i.pinimg.com/736x/6b/21/40/6b2140e4675c537d5c390c1c5cdc6fc1.jpg" alt="Profil 3" class="profile-image-option" data-url="https://i.pinimg.com/736x/6b/21/40/6b2140e4675c537d5c390c1c5cdc6fc1.jpg">
+                    <img src="https://i.pinimg.com/originals/5f/ba/df/5fbadff7d603793b18ed9b79c52356ce.jpg" alt="Profil 4" class="profile-image-option" data-url="https://i.pinimg.com/originals/5f/ba/df/5fbadff7d603793b18ed9b79c52356ce.jpg">
+                    <img src="https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Profil 5" class="profile-image-option" data-url="https://tse1.explicit.bing.net/th/id/OIP.7UR6j3hOBM2uhYt9F0VIdgHaHa?r=0&w=2000&h=2000&rs=1&pid=ImgDetMain&o=7&rm=3">
+                    <img src="https://i.pinimg.com/originals/67/57/af/6757afa1cfd959e31e07eec92f9311ec.jpg" alt="Profil 6" class="profile-image-option" data-url="https://i.pinimg.com/originals/67/57/af/6757afa1cfd959e31e07eec92f9311ec.jpg">
+                </div>
+                <input type="url" id="customProfileImageInput" class="custom-image-input" placeholder="Atau masukkan URL gambar profil kustom">
+            </section>
+        </div>
+
+        <div class="button-group">
+            <button id="backBtn" style="display: none;">Kembali</button>
+            <button id="nextStepBtn">Lanjutkan</button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const usernameCompletionSection = document.getElementById('usernameCompletionSection'); // New section
+            const usernameInput = document.getElementById('usernameInput'); // New input
+            const submitUsernameButton = document.getElementById('submitUsernameButton'); // New button
+            const usernameMessageDiv = document.getElementById('usernameMessage'); // New message div
+
+            const categorySection = document.getElementById('categorySection');
+            const personSection = document.getElementById('personSection');
+            const profileSection = document.getElementById('profileSection');
+
+            const categoryGrid = document.getElementById('categoryGrid');
+            const personGrid = document.getElementById('personGrid');
+            const manualPersonInputCard = document.getElementById('manualPersonInputCard');
+            const manualPersonCardText = document.getElementById('manualPersonCardText');
+            const manualPersonInput = document.getElementById('manualPersonInput');
+            const addManualPersonBtn = document.getElementById('addManualPersonBtn');
+            const manualPersonList = document.getElementById('manualPersonList');
+            const profileImageOptions = document.getElementById('profileImageOptions');
+            const customProfileImageInput = document.getElementById('customProfileImageInput');
+            const nextStepBtn = document.getElementById('nextStepBtn');
+            const backBtn = document.getElementById('backBtn');
+            const messageDiv = document.getElementById('message');
+            const manualInputFields = document.getElementById('manualInputFields');
+
+            let currentFirebaseUid = null; // To store Firebase UID from session
+            let currentUsername = ''; // Variable to store the current user's username
+            let selectedCategories = new Set();
+            let selectedPersons = new Set();
+            let manualPersons = [];
+            let selectedProfileImageUrl = '';
+            let currentStep = 0; // 0: Username Completion, 1: Categories, 2: Persons, 3: Profile
+
+            const API_BASE_URL = 'api/';
+
+            // --- Fungsi Pembantu untuk Permintaan API ---
+            async function makeApiRequest(endpoint, method = 'GET', data = null) {
+                try {
+                    const options = { method };
+                    if (data !== null && typeof data !== 'undefined') {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
+                    }
+                    const response = await fetch(API_BASE_URL + endpoint, options);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Kesalahan HTTP! Status: ${response.status} - ${errorText}`);
+                    }
+                    const textResponse = await response.text();
+                    if (!textResponse) {
+                        return { success: true, message: 'Tidak ada konten' };
+                    }
+                    try {
+                        const jsonResponse = JSON.parse(textResponse);
+                        return jsonResponse;
+                    } catch (e) {
+                        console.error('Gagal mengurai respons JSON:', textResponse);
+                        throw new Error(`Respons JSON tidak valid: ${textResponse}`);
+                    }
+                } catch (error) {
+                    console.error('Permintaan API Gagal:', error);
+                    showMessage(`Kesalahan jaringan atau server: ${error.message}`, 'error');
+                    return { success: false, message: 'Kesalahan jaringan atau server.' };
+                }
+            }
+
+            // --- Fungsi untuk Menampilkan Pesan ---
+            function showMessage(msg, type = 'info', targetDiv = messageDiv) {
+                targetDiv.textContent = msg;
+                targetDiv.className = 'message-box ' + type;
+                targetDiv.style.display = 'block';
+                setTimeout(() => {
+                    targetDiv.style.display = 'none';
+                }, 4000);
+            }
+
+            // --- Periksa Status Sesi dan Preferensi ---
+            async function checkSessionAndPreferences() {
+                const response = await makeApiRequest('auth.php?action=check_session', 'GET'); // Use auth.php for session check
+                if (!response.success || !response.user) {
+                    // Not logged in, redirect to login
+                    window.location.href = 'login.html';
+                    return false;
+                } else {
+                    currentUsername = response.user.username; // Set the global username from session
+                    currentFirebaseUid = response.user.firebase_uid; // Set Firebase UID from session
+
+                    if (response.user.needs_username_completion) {
+                        // User needs to complete username
+                        currentStep = 0; // Set initial step to username completion
+                        return true;
+                    } else {
+                        // Check if preferences are already set (assuming this means existing user with username)
+                        const prefsResponse = await makeApiRequest('check_user_preferences.php', 'GET');
+                        if (prefsResponse.success && prefsResponse.preferencesSet) {
+                            window.location.href = 'index.html'; // Preferences already set, redirect to home
+                            return false;
+                        }
+                    }
+                }
+                currentStep = 1; // If not needs_username_completion and not preferencesSet, start at categories
+                return true;
+            }
+
+            // --- Ambil Kategori ---
+            async function fetchCategories() {
+                categoryGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #767676;">Memuat kategori...</p>';
+                const response = await makeApiRequest('categories.php?action=fetch_all'); // Use fetch_all from categories.php
+                if (response.success) {
+                    renderCategories(response.categories);
+                } else {
+                    showMessage('Gagal memuat kategori: ' + response.message, 'error');
+                    categoryGrid.innerHTML = `<p style="text-align: center; grid-column: 1 / -1; color: red;">Gagal memuat kategori.</p>`;
+                }
+            }
+
+            function renderCategories(categories) {
+                categoryGrid.innerHTML = '';
+                categories.forEach(category => {
+                    const card = document.createElement('div');
+                    card.classList.add('choice-card');
+                    card.dataset.name = category.name;
+                    // Set background image for the card
+                    if (category.imageUrl) {
+                        card.style.backgroundImage = `url('${category.imageUrl}')`;
+                    } else {
+                        card.style.backgroundImage = `url('https://placehold.co/700x400/e0e0e0/767676?text=Kategori')`;
+                    }
+                    card.innerHTML = `
+                        <span class="card-text">${category.name}</span>
+                    `;
+                    card.addEventListener('click', () => toggleSelection(card, selectedCategories));
+                    categoryGrid.appendChild(card);
+                });
+            }
+
+            // --- Ambil Orang ---
+            async function fetchPersons() {
+                personGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #767676;">Memuat orang...</p>';
+                const response = await makeApiRequest('get_persons.php');
+                if (response.success) {
+                    renderPersons(response.persons);
+                } else {
+                    showMessage('Gagal memuat orang: ' + response.message, 'error');
+                    personGrid.innerHTML = `<p style="text-align: center; grid-column: 1 / -1; color: red;">Gagal memuat orang.</p>`;
+                }
+            }
+
+            function renderPersons(persons) {
+                personGrid.innerHTML = '';
+                persons.forEach(person => {
+                    const card = document.createElement('div');
+                    card.classList.add('choice-card');
+                    card.dataset.name = person;
+                    // Only display persontag, not uploadBy. The 'person' variable already contains just the name.
+                    card.innerHTML = `
+                        <span class="card-text">${person}</span>
+                    `;
+                    card.addEventListener('click', () => toggleSelection(card, selectedPersons));
+                    personGrid.appendChild(card);
+                });
+                // Append the manual input card last
+                personGrid.appendChild(manualPersonInputCard);
+            }
+
+            // --- Toggle Seleksi Kartu ---
+            function toggleSelection(card, selectionSet) {
+                const name = card.dataset.name;
+                if (selectionSet.has(name)) {
+                    selectionSet.delete(name);
+                    card.classList.remove('selected');
+                } else {
+                    selectionSet.add(name);
+                    card.classList.add('selected');
+                }
+                updateButtonStates(); // Update button state after selection change
+            }
+
+            // --- Toggle Manual Person Input (now by clicking the card) ---
+            manualPersonInputCard.addEventListener('click', (e) => {
+                // Prevent toggling if clicking inside the input fields or list items
+                if (e.target.closest('#manualInputFields') || e.target.closest('#manualPersonList')) {
+                    return;
+                }
+                manualInputFields.classList.toggle('active');
+                if (manualInputFields.classList.contains('active')) {
+                    manualPersonCardText.style.display = 'none'; // Hide text when input is active
+                } else {
+                    manualPersonCardText.style.display = 'block'; // Show text when input is hidden
+                }
+            });
+
+            // --- Tambahkan Orang Manual ---
+            addManualPersonBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent the card's click listener from firing
+                const personName = manualPersonInput.value.trim();
+                if (personName) {
+                    if (manualPersons.includes(personName) || selectedPersons.has(personName)) {
+                        showMessage('Orang ini sudah dipilih atau ditambahkan.', 'error');
+                    } else {
+                        manualPersons.push(personName);
+                        renderManualPersons();
+                        manualPersonInput.value = '';
+                        selectedPersons.add(personName); // Add to selected persons set as well
+                        updateButtonStates(); // Update button state
+                    }
+                } else {
+                    showMessage('Nama orang tidak boleh kosong.', 'error');
+                }
+            });
+
+            function renderManualPersons() {
+                manualPersonList.innerHTML = '';
+                manualPersons.forEach((person, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${person}</span>
+                        <button data-index="${index}"><i class="fas fa-times"></i></button>
+                    `;
+                    li.querySelector('button').addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent the card's click listener from firing
+                        const idx = parseInt(e.target.closest('button').dataset.index);
+                        const removedPerson = manualPersons.splice(idx, 1)[0];
+                        selectedPersons.delete(removedPerson); // Remove from selected persons set
+                        renderManualPersons();
+                        updateButtonStates(); // Update button state
+                    });
+                    manualPersonList.appendChild(li);
+                });
+                manualPersonList.style.display = manualPersons.length > 0 ? 'block' : 'none'; // Show/hide list based on content
+            }
+
+            // --- Pilih Gambar Profil ---
+            profileImageOptions.addEventListener('click', (e) => {
+                if (e.target.classList.contains('profile-image-option')) {
+                    document.querySelectorAll('.profile-image-option').forEach(img => img.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                    selectedProfileImageUrl = e.target.dataset.url;
+                    customProfileImageInput.value = ''; // Clear custom input if a predefined is selected
+                    updateButtonStates(); // Update button state
+                }
+            });
+
+            customProfileImageInput.addEventListener('input', () => {
+                document.querySelectorAll('.profile-image-option').forEach(img => img.classList.remove('selected'));
+                selectedProfileImageUrl = customProfileImageInput.value.trim();
+                updateButtonStates(); // Update button state
+            });
+
+            // --- Update Status Tombol ---
+            function updateButtonStates() {
+                let canProceed = false;
+                if (currentStep === 0) { // Username Completion
+                    canProceed = usernameInput.value.trim() !== '';
+                    nextStepBtn.textContent = 'Lanjutkan';
+                    backBtn.style.display = 'none'; // No back button for username completion
+                } else if (currentStep === 1) { // Categories
+                    canProceed = selectedCategories.size >= 3;
+                    nextStepBtn.textContent = 'Lanjutkan';
+                    backBtn.style.display = 'inline-block';
+                } else if (currentStep === 2) { // Persons
+                    canProceed = selectedPersons.size >= 3;
+                    nextStepBtn.textContent = 'Lanjutkan';
+                    backBtn.style.display = 'inline-block';
+                } else if (currentStep === 3) { // Profile
+                    canProceed = selectedProfileImageUrl !== '';
+                    nextStepBtn.textContent = 'Simpan Preferensi';
+                    backBtn.style.display = 'inline-block';
+                }
+                nextStepBtn.disabled = !canProceed;
+                
+                // Hide manual input elements unless on person step
+                manualPersonInputCard.style.display = currentStep === 2 ? 'flex' : 'none';
+                if (currentStep !== 2) {
+                    manualInputFields.classList.remove('active');
+                    manualPersonCardText.style.display = 'block';
+                }
+            }
+
+            // --- Navigasi Langkah ---
+            function showStep(step) {
+                usernameCompletionSection.style.display = 'none';
+                categorySection.style.display = 'none';
+                personSection.style.display = 'none';
+                profileSection.style.display = 'none';
+
+                if (step === 0) {
+                    usernameCompletionSection.style.display = 'block';
+                } else if (step === 1) {
+                    categorySection.style.display = 'block';
+                } else if (step === 2) {
+                    personSection.style.display = 'block';
+                } else if (step === 3) {
+                    profileSection.style.display = 'block';
+                }
+                currentStep = step;
+                updateButtonStates();
+            }
+
+            // --- Submit Username (for step 0) ---
+            submitUsernameButton.addEventListener('click', async () => {
+                const newUsername = usernameInput.value.trim();
+                if (!newUsername) {
+                    showMessage('Nama pengguna tidak boleh kosong.', 'error', usernameMessageDiv);
+                    return;
+                }
+
+                if (!currentFirebaseUid) {
+                    showMessage('Kesalahan: UID Firebase tidak ditemukan. Silakan coba login lagi.', 'error', usernameMessageDiv);
+                    return;
+                }
+
+                const response = await makeApiRequest('auth.php?action=update_username', 'POST', {
+                    uid: currentFirebaseUid,
+                    new_username: newUsername
+                });
+
+                if (response.success) {
+                    showMessage('Nama pengguna berhasil disimpan! Melanjutkan...', 'success', usernameMessageDiv);
+                    currentUsername = newUsername; // Update current username
+                    setTimeout(() => {
+                        showStep(1); // Move to categories
+                        fetchCategories(); // Load categories for the next step
+                        fetchPersons(); // Load persons for the step after
+                    }, 1000);
+                } else {
+                    showMessage('Gagal menyimpan nama pengguna: ' + response.message, 'error', usernameMessageDiv);
+                }
+            });
+
+
+            nextStepBtn.addEventListener('click', async () => {
+                if (currentStep === 1) {
+                    if (selectedCategories.size < 3) {
+                        showMessage('Harap pilih minimal 3 kategori favorit.', 'error');
+                        return;
+                    }
+                    showStep(2);
+                } else if (currentStep === 2) {
+                    if (selectedPersons.size < 3) {
+                        showMessage('Harap pilih minimal 3 orang yang Anda kagumi.', 'error');
+                        return;
+                    }
+                    showStep(3);
+                } else if (currentStep === 3) {
+                    if (!selectedProfileImageUrl) {
+                        showMessage('Harap pilih atau masukkan URL gambar profil.', 'error');
+                        return;
+                    }
+                    // Final Save
+                    const categoriesArray = Array.from(selectedCategories);
+                    const personsArray = Array.from(selectedPersons);
+
+                    const data = {
+                        username: currentUsername, // Use the logged-in username
+                        preferred_categories: categoriesArray,
+                        preferred_persons: personsArray,
+                        manual_persons_requested: manualPersons, // Send manually added persons
+                        profile_image_url: selectedProfileImageUrl
+                    };
+
+                    const response = await makeApiRequest('save_preferences.php', 'POST', data);
+
+                    if (response.success) {
+                        showMessage('Preferensi berhasil disimpan! Mengarahkan ke beranda...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showMessage('Gagal menyimpan preferensi: ' + response.message, 'error');
+                    }
+                }
+            });
+
+            backBtn.addEventListener('click', () => {
+                if (currentStep > 0) { // Allow going back from step 1 (categories) onwards
+                    showStep(currentStep - 1);
+                }
+            });
+
+            // Initial render of manual persons (if any from previous session, though typically this page is for new users)
+            renderManualPersons();
+            
+            // Inisialisasi
+            const canProceed = await checkSessionAndPreferences();
+            if (canProceed) {
+                // Only fetch categories and persons if we are not on the username completion step initially
+                if (currentStep !== 0) {
+                    await fetchCategories();
+                    await fetchPersons();
+                }
+                showStep(currentStep); // Show the determined initial step
+            }
+        });
+    </script>
+</body>
+</html>

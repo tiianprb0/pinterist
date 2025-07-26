@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Video ke GIF (Client-Side)</title>
+    <!-- Mengimpor font Playfair Display dan Plus Jakarta Sans dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset Sederhana */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Padding untuk responsivitas pada perangkat kecil */
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px; /* Lebar maksimum kontainer */
+            text-align: center;
+            border: 1px solid #eee; /* Tetap pertahankan border container utama */
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .slide {
+            margin-bottom: 30px; /* Jarak antar slide */
+            padding: 0px; /* Padding pada slide dihapus atau disesuaikan */
+            text-align: center;
+            transition: opacity 0.3s ease-in-out; /* Transisi efek fade */
+            opacity: 1;
+            display: flex; /* Gunakan flex untuk mengelola konten di dalamnya */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Pastikan slide mengisi lebar */
+        }
+
+        .slide.hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none; /* Sembunyikan sepenuhnya dari layout */
+        }
+        
+        .slide h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid #eee; /* Garis bawah untuk judul slide */
+            padding-bottom: 10px;
+            width: 100%; /* Pastikan judul mengisi lebar slide */
+        }
+
+        /* Drag and Drop Zone */
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            margin-bottom: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px; /* Tinggi minimum zona drop */
+        }
+
+        .drop-zone.dragover {
+            border-color: #e60023;
+            background-color: #fcebeb;
+        }
+
+        .drop-zone p {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #767676;
+        }
+
+        .file-input-label {
+            background-color: #e60023; /* Warna merah Pinterest */
+            color: white;
+            padding: 14px 30px;
+            border-radius: 28px; /* Bentuk kapsul */
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: inline-block;
+        }
+
+        .file-input-label:hover {
+            background-color: #ad081b; /* Warna merah lebih gelap saat hover */
+        }
+
+        .hidden-input {
+            display: none; /* Menyembunyikan input file asli */
+        }
+
+        #fileName {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #767676;
+        }
+
+        .video-preview-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%; /* Pastikan kontainer pratinjau mengisi lebar slide */
+        }
+
+        #videoPreview {
+            width: 100%; /* Video akan mengisi lebar kontainer */
+            max-width: 500px; /* Batasi lebar video pratinjau */
+            height: auto; /* Penting untuk responsivitas */
+            border-radius: 8px;
+            background-color: #000; /* Latar belakang hitam untuk video */
+            margin-bottom: 15px;
+        }
+
+        /* --- Slider Pemotongan Video --- */
+        .trim-slider-wrapper {
+            width: 100%;
+            max-width: 500px; /* Max-width agar tidak terlalu lebar di desktop */
+            background-color: #f0f0f0; /* Latar belakang slider */
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .trim-time-display {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .trim-time-display span {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .slider-track-container {
+            width: 100%;
+            height: 10px; /* Tinggi track */
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .slider-fill {
+            height: 100%;
+            background: linear-gradient(to right, #e60023, #ff5722); /* Gradient merah-oranye */
+            border-radius: 5px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .slider-thumb {
+            width: 20px; /* Lebar thumb */
+            height: 20px; /* Tinggi thumb */
+            background-color: #fff;
+            border: 2px solid #e60023;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            z-index: 2;
+        }
+
+        .slider-thumb.right {
+            transform: translate(50%, -50%);
+        }
+
+        .trim-duration-info {
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .trim-duration-info svg {
+            width: 16px;
+            height: 16px;
+            fill: #555;
+        }
+
+        /* Input range styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: transparent; /* Sembunyikan track default */
+            outline: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3; /* Pastikan di atas fill dan track */
+            margin: 0; /* Hapus margin default */
+            padding: 0; /* Hapus padding default */
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; /* Sesuaikan dengan .slider-thumb */
+            height: 20px; /* Sesuaikan dengan .slider-thumb */
+            background: transparent; /* Thumb akan digambar manual */
+            border-radius: 50%;
+            cursor: grab;
+            margin-top: 0; /* Pastikan di tengah track */
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border-radius: 50%;
+            cursor: grab;
+        }
+
+        input[type="range"]::-ms-thumb {
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border-radius: 50%;
+            cursor: grab;
+        }
+
+
+        .submit-button {
+            background-color: #111; /* Warna hitam */
+            color: white;
+            padding: 14px 30px;
+            border-radius: 28px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+
+        .submit-button:hover {
+            background-color: #333; /* Warna hitam lebih terang saat hover */
+        }
+
+        .submit-button:disabled {
+            background-color: #ccc; /* Warna abu-abu saat dinonaktifkan */
+            cursor: not-allowed;
+        }
+
+        /* --- Perbaikan Posisi Loading & Pesan --- */
+        /* Container untuk loading dan pesan di bawah tombol */
+        .status-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Jarak antar elemen status */
+            margin-top: 20px; /* Jarak dari tombol Unduh GIF */
+            width: 100%;
+        }
+
+        .message-box {
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.5;
+            display: none; /* Sembunyikan secara default */
+            width: 100%; /* Lebar penuh di dalam status-area */
+            max-width: 400px; /* Batasi lebar pesan */
+        }
+        /* Gaya spesifik untuk jenis pesan */
+        .message-box.error {
+            background-color: #fee2e2; /* Merah muda */
+            color: #991b1b; /* Merah gelap */
+            border: 1px solid #fca5a5;
+        }
+        .message-box.success {
+            background-color: #d1fae5; /* Hijau muda */
+            color: #065f46; /* Hijau gelap */
+            border: 1px solid #a7f3d0;
+        }
+        .message-box.info {
+            background-color: #dbeafe; /* Biru muda */
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .gif-result {
+            margin-top: 30px;
+            text-align: center;
+            display: flex; /* Gunakan flex untuk menengahkan konten */
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .gif-result h3 {
+            font-size: 20px;
+            color: #111;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .gif-preview {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto 15px auto;
+        }
+
+        /* Perbaikan Tata Letak Info GIF */
+        .gif-info {
+            display: flex; /* Gunakan flexbox untuk horizontal */
+            justify-content: center; /* Pusatkan item secara horizontal */
+            gap: 25px; /* Jarak antar item info */
+            margin-top: 10px;
+            margin-bottom: 20px; /* Jarak dari tombol unduh */
+            flex-wrap: wrap; /* Izinkan wrap pada layar kecil */
+        }
+        .gif-info .info-item {
+            display: flex;
+            flex-direction: column; /* Label di atas nilai */
+            align-items: center; /* Pusatkan teks di dalam item */
+            font-size: 14px;
+            color: #555;
+        }
+        .gif-info .info-item .info-label {
+            font-weight: normal; /* Label tidak terlalu tebal */
+            color: #767676; /* Warna label lebih lembut */
+            margin-bottom: 3px;
+        }
+        .gif-info .info-item .info-value {
+            font-weight: bold; /* Nilai lebih tebal */
+            color: #333; /* Warna nilai lebih gelap */
+            font-size: 16px; /* Ukuran nilai sedikit lebih besar */
+        }
+
+
+        .download-link, .new-file-button { /* Gaya untuk tombol unduh dan tombol file baru */
+            display: inline-block;
+            background-color: #e60023;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border: none; /* Hapus border default */
+            margin-top: 15px; /* Jarak dari elemen di atasnya */
+        }
+
+        .download-link:hover, .new-file-button:hover {
+            background-color: #ad081b;
+        }
+
+        .new-file-button {
+            background-color: #555; /* Warna abu-abu untuk tombol file baru */
+        }
+        .new-file-button:hover {
+            background-color: #777;
+        }
+
+
+        /* Loading Indicator (Spinner) */
+        .loading-spinner {
+            display: none; /* Sembunyikan secara default */
+            border: 4px solid #f3f3f3; /* Abu-abu terang */
+            border-top: 4px solid #e60023; /* Merah Pinterest */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Progress Bar (Horizontal) */
+        .progress-bar-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            margin-top: 10px;
+            display: none; /* Sembunyikan secara default */
+            overflow: hidden; /* Pastikan fill tidak keluar */
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #e60023; /* Merah Pinterest */
+            border-radius: 5px;
+            /* Transisi untuk animasi unduhan yang mulus */
+            transition: width 1.5s linear; 
+        }
+        .progress-text {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+            display: none; /* Sembunyikan secara default */
+        }
+
+
+        /* Responsif untuk layar lebih kecil */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            .slide {
+                padding: 0px; /* Padding pada slide dihapus di mobile juga */
+                margin-bottom: 20px; /* Jarak antar slide di mobile */
+            }
+            .slide h2 {
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+            .trim-slider-wrapper {
+                padding: 15px; /* Kurangi padding slider di mobile */
+            }
+            .submit-button {
+                max-width: 100%;
+            }
+            .drop-zone {
+                padding: 20px; /* Kurangi padding drop zone di mobile */
+                min-height: 120px;
+            }
+            .drop-zone p {
+                font-size: 16px;
+            }
+            .file-input-label {
+                padding: 12px 25px;
+                font-size: 15px;
+            }
+            .gif-info {
+                gap: 15px; /* Kurangi jarak antar info di mobile */
+            }
+            .gif-info .info-item {
+                font-size: 13px;
+            }
+            .gif-info .info-item .info-value {
+                font-size: 15px;
+            }
+            .download-link, .new-file-button {
+                margin-top: 10px; /* Kurangi jarak antar tombol di mobile */
+            }
+            .status-area {
+                gap: 10px; /* Kurangi jarak antar elemen status di mobile */
+            }
+            .message-box {
+                max-width: 100%; /* Lebar penuh di mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <!-- Judul (h1) dan penjelasan (p) telah dihapus dari sini -->
+        </header>
+
+        <section id="select-video-slide" class="slide">
+            <h2>Pilih Video</h2>
+            <div class="drop-zone" id="dropZone">
+                <p>Seret & Lepas Video di Sini</p>
+                <p>atau</p>
+                <input type="file" name="videoFile" id="videoFile" accept="video/mp4,video/quicktime" class="hidden-input">
+                <label for="videoFile" class="file-input-label">
+                    Pilih File Video
+                </label>
+                <span id="fileName">Belum ada file yang dipilih.</span>
+            </div>
+        </section>
+
+        <section id="preview-trim-slide" class="slide hidden">
+            <h2>Pratinjau & Pemotongan</h2>
+            <div class="video-preview-container">
+                <!-- playsinline untuk mencegah full-screen otomatis di iOS Safari, controls dihapus -->
+                <video id="videoPreview" playsinline></video>
+                <div class="trim-slider-wrapper">
+                    <div class="trim-time-display">
+                        <span id="currentTimeStart">0:00</span>
+                        <span id="currentTimeEnd">0:00</span>
+                    </div>
+                    <div class="slider-track-container">
+                        <div class="slider-fill"></div>
+                        <input type="range" id="rangeStart" min="0" max="100" value="0" step="0.1">
+                        <input type="range" id="rangeEnd" min="0" max="100" value="100" step="0.1">
+                        <!-- Thumbs akan digambar secara visual di atas range input -->
+                        <div class="slider-thumb left-thumb"></div>
+                        <div class="slider-thumb right-thumb"></div>
+                    </div>
+                    <div class="trim-duration-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 3.2 15.1 8.7 20.7l128 128c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9L272 240V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>
+                        <span id="trimDuration">0:00</span>
+                    </div>
+                </div>
+                <!-- Tombol Konversi dipindahkan ke sini -->
+                <button id="convertButton" class="submit-button" disabled>Konversi ke GIF</button>
+            </div>
+        </section>
+
+        <section id="convert-result-slide" class="slide hidden" style="flex-direction: column; align-items: center;">
+            <h2>Hasil Konversi</h2>
+            <div id="gifResult" class="gif-result">
+                <h3>GIF Anda Siap!</h3>
+                <img id="convertedGif" src="" alt="GIF yang dikonversi" class="gif-preview">
+                <div class="gif-info">
+                    <div class="info-item">
+                        <span class="info-label">Durasi:</span>
+                        <span id="gifDurationInfo" class="info-value">0:00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ukuran:</span>
+                        <span id="gifSizeInfo" class="info-value">0 KB</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Area status untuk loading, progress, dan pesan. Dipindahkan ke luar gifResult untuk kontrol terpisah -->
+            <div class="status-area">
+                <!-- Progress Bar (horizontal) -->
+                <div class="progress-bar-container" id="progressBarContainer">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <span class="progress-text" id="progressText"></span>
+                <!-- Spinner melingkar (hanya untuk proses tak terukur seperti upload) -->
+                <div id="loadingSpinner" class="loading-spinner"></div> 
+                <div id="messageBox" class="message-box"></div>
+                <a id="downloadGifLink" href="#" class="download-link">Unduh GIF</a>
+                <button id="newFileButton" class="new-file-button">Konversi File Baru</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Memuat ffmpeg.min.js dari CDN versi 0.10.0 -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.10.0/dist/ffmpeg.min.js"></script>
+    <!-- Kode JavaScript utama digabungkan di sini -->
+    <script>
+        // Memastikan semua kode JavaScript berjalan setelah DOM sepenuhnya dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inisialisasi FFmpeg.
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ log: true, corePath: 'https://unpkg.com/@ffmpeg/core@0.10.0/dist/ffmpeg-core.js' });
+
+            // Dapatkan referensi ke elemen-elemen DOM
+            const dropZone = document.getElementById('dropZone');
+            const videoFileInput = document.getElementById('videoFile');
+            const fileNameSpan = document.getElementById('fileName');
+            const selectVideoSlide = document.getElementById('select-video-slide');
+            const previewTrimSlide = document.getElementById('preview-trim-slide');
+            const convertResultSlide = document.getElementById('convert-result-slide');
+            const videoPreview = document.getElementById('videoPreview');
+            
+            // Elemen-elemen slider
+            const rangeStart = document.getElementById('rangeStart');
+            const rangeEnd = document.getElementById('rangeEnd');
+            const sliderTrackContainer = document.querySelector('.slider-track-container');
+            const sliderFill = document.querySelector('.slider-fill'); // Menggunakan class yang benar
+            const leftThumb = document.querySelector('.left-thumb');
+            const rightThumb = document.querySelector('.right-thumb');
+            const currentTimeStart = document.getElementById('currentTimeStart');
+            const currentTimeEnd = document.getElementById('currentTimeEnd');
+            const trimDurationSpan = document.getElementById('trimDuration');
+
+            const convertButton = document.getElementById('convertButton');
+            // Elemen-elemen status
+            const statusArea = document.querySelector('.status-area'); 
+            const loadingSpinner = document.getElementById('loadingSpinner'); // Spinner melingkar
+            const progressBarContainer = document.getElementById('progressBarContainer'); // Container progress bar
+            const progressBarFill = document.getElementById('progressBarFill'); // Fill progress bar
+            const progressText = document.getElementById('progressText'); // Teks persentase progress
+            const messageBox = document.getElementById('messageBox'); // Kotak pesan
+
+            const gifResultDiv = document.getElementById('gifResult');
+            const convertedGifImg = document.getElementById('convertedGif');
+            const downloadGifLink = document.getElementById('downloadGifLink');
+            const gifDurationInfo = document.getElementById('gifDurationInfo');
+            const gifSizeInfo = document.getElementById('gifSizeInfo');
+            const newFileButton = document.getElementById('newFileButton');
+
+            let selectedFile = null;
+            let videoDuration = 0;
+            let generatedGifBlob = null; 
+
+            // Fungsi untuk memformat waktu dari detik ke MM:SS
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            }
+
+            // Fungsi untuk memformat ukuran file (bytes ke KB/MB)
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            // Fungsi untuk menampilkan pesan kepada pengguna
+            function showMessage(text, type = 'info') {
+                messageBox.textContent = text;
+                messageBox.style.display = 'block';
+                messageBox.className = 'message-box'; // Reset class
+                if (type === 'error') messageBox.classList.add('error');
+                else if (type === 'success') messageBox.classList.add('success');
+                else messageBox.classList.add('info');
+            }
+
+            // Fungsi untuk menyembunyikan kotak pesan
+            function hideMessage() {
+                messageBox.style.display = 'none';
+            }
+
+            // Fungsi untuk mengelola tampilan slide
+            function showSlide(slideToShow) {
+                const allSlides = [selectVideoSlide, previewTrimSlide, convertResultSlide];
+                allSlides.forEach(slide => {
+                    if (slide === slideToShow) {
+                        slide.classList.remove('hidden');
+                        slide.style.display = 'flex';
+                    } else {
+                        slide.classList.add('hidden');
+                        slide.style.display = 'none';
+                    }
+                });
+            }
+
+            // Fungsi untuk memperbarui tampilan slider dan pratinjau video
+            function updateSliderAndPreview() {
+                const startPercent = parseFloat(rangeStart.value);
+                const endPercent = parseFloat(rangeEnd.value);
+
+                // Ensure start is not greater than end, and end is not less than start
+                if (startPercent > endPercent) {
+                    rangeStart.value = endPercent;
+                }
+                if (endPercent < startPercent) {
+                    rangeEnd.value = startPercent;
+                }
+
+                const startTime = (parseFloat(rangeStart.value) / 100) * videoDuration;
+                const endTime = (parseFloat(rangeEnd.value) / 100) * videoDuration;
+
+                currentTimeStart.textContent = formatTime(startTime);
+                currentTimeEnd.textContent = formatTime(endTime);
+                trimDurationSpan.textContent = formatTime(endTime - startTime);
+
+                const trackWidth = sliderTrackContainer.offsetWidth;
+                const leftPosition = (parseFloat(rangeStart.value) / 100) * trackWidth;
+                const fillWidth = ((parseFloat(rangeEnd.value) - parseFloat(rangeStart.value)) / 100) * trackWidth;
+                
+                sliderFill.style.left = `${leftPosition}px`;
+                sliderFill.style.width = `${fillWidth}px`;
+
+                leftThumb.style.left = `${parseFloat(rangeStart.value)}%`;
+                rightThumb.style.left = `${parseFloat(rangeEnd.value)}%`;
+
+                if (videoPreview.duration) {
+                    if (videoPreview.currentTime < startTime || videoPreview.currentTime >= endTime) {
+                        videoPreview.currentTime = startTime;
+                    }
+                    if (videoPreview.paused) {
+                        videoPreview.play();
+                    }
+                }
+            }
+
+            // Fungsi yang dipanggil saat file video dipilih (baik dari input maupun drag & drop)
+            function handleFileSelection(file) {
+                if (file) {
+                    if (!file.type.startsWith('video/mp4') && !file.type.startsWith('video/quicktime')) {
+                        showMessage('File yang dipilih bukan MP4 atau MOV. Harap pilih file video yang valid.', 'error');
+                        fileNameSpan.textContent = 'Belum ada file yang dipilih.';
+                        selectedFile = null;
+                        convertButton.disabled = true;
+                        showSlide(selectVideoSlide);
+                        return;
+                    }
+
+                    fileNameSpan.textContent = file.name;
+                    selectedFile = file;
+
+                    const videoUrl = URL.createObjectURL(file);
+                    videoPreview.src = videoUrl;
+                    
+                    showSlide(previewTrimSlide);
+                    hideMessage();
+                    gifResultDiv.style.display = 'none'; // Sembunyikan hasil GIF saat memilih file baru
+                    convertButton.disabled = true;
+
+                } else {
+                    fileNameSpan.textContent = 'Belum ada file yang dipilih.';
+                    selectedFile = null;
+                    convertButton.disabled = true;
+                    
+                    showSlide(selectVideoSlide);
+                    videoPreview.src = '';
+                }
+            }
+
+            // Event listener saat metadata video dimuat (untuk mendapatkan durasi)
+            videoPreview.addEventListener('loadedmetadata', () => {
+                videoDuration = videoPreview.duration;
+                rangeStart.max = 100;
+                rangeEnd.max = 100;
+                rangeStart.value = 0;
+                rangeEnd.value = 100;
+
+                updateSliderAndPreview();
+                convertButton.disabled = false;
+                videoPreview.play();
+            });
+
+            // Event listeners untuk slider
+            rangeStart.addEventListener('input', updateSliderAndPreview);
+            rangeEnd.addEventListener('input', updateSliderAndPreview);
+
+            // Event listener untuk memutar ulang segmen saat mencapai akhir
+            videoPreview.addEventListener('timeupdate', () => {
+                const endPercent = parseFloat(rangeEnd.value);
+                const endTime = (endPercent / 100) * videoDuration;
+                if (videoPreview.currentTime >= endTime) {
+                    const startPercent = parseFloat(rangeStart.value);
+                    const startTime = (startPercent / 100) * videoDuration;
+                    videoPreview.currentTime = startTime;
+                }
+            });
+
+            // Event listener untuk input file
+            videoFileInput.addEventListener('change', (event) => {
+                handleFileSelection(event.target.files[0]);
+            });
+
+            // --- Drag and Drop Event Listeners ---
+            dropZone.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', (event) => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelection(files[0]);
+                }
+            });
+
+            // --- FFmpeg Progress Listener ---
+            // Ini akan memperbarui progress bar horizontal untuk proses konversi
+            ffmpeg.setProgress(({ ratio }) => {
+                const percent = Math.round(ratio * 100);
+                if (percent >= 0 && percent <= 100) { // Pastikan rasio valid
+                    progressBarFill.style.width = `${percent}%`;
+                    progressText.textContent = `${percent}%`; // Tetap tampilkan persentase untuk konversi
+                    showMessage(`Memproses konversi GIF: ${percent}%`, 'info'); // Pesan progress
+                }
+            });
+
+
+            // Event listener untuk tombol konversi (proses FFmpeg)
+            convertButton.addEventListener('click', async () => {
+                if (!selectedFile) {
+                    showMessage('Harap pilih file video terlebih dahulu.', 'error');
+                    return;
+                }
+
+                const startPercent = parseFloat(rangeStart.value);
+                const endPercent = parseFloat(rangeEnd.value);
+                const startTime = (startPercent / 100) * videoDuration;
+                const endTime = (endPercent / 100) * videoDuration;
+
+                if (isNaN(startTime) || isNaN(endTime) || startTime < 0 || endTime <= startTime || endTime > videoDuration) {
+                    showMessage(`Waktu pemotongan tidak valid. Pastikan Waktu Mulai (${formatTime(startTime)}) < Waktu Akhir (${formatTime(endTime)}) dan berada dalam durasi video (${formatTime(videoDuration)}).`, 'error');
+                    return;
+                }
+
+                showSlide(convertResultSlide);
+                gifResultDiv.style.display = 'none'; // Sembunyikan hasil GIF dulu
+                downloadGifLink.style.display = 'none'; // Sembunyikan tombol unduh
+                newFileButton.style.display = 'none'; // Sembunyikan tombol file baru
+
+                // Tampilkan progress bar horizontal dan teks progress untuk konversi FFmpeg
+                loadingSpinner.style.display = 'none'; // Sembunyikan spinner melingkar
+                progressBarContainer.style.display = 'block'; // Tampilkan progress bar
+                progressBarFill.style.width = '0%'; // Reset progress bar
+                progressText.style.display = 'block'; // Tampilkan teks progress
+                progressText.textContent = '0%'; // Reset progress text
+
+                convertButton.disabled = true;
+                showMessage('Memuat FFmpeg.wasm. Harap tunggu...', 'info'); // Pesan awal: memuat FFmpeg
+
+                try {
+                    if (!ffmpeg.isLoaded()) {
+                        await ffmpeg.load();
+                        showMessage('FFmpeg.wasm berhasil dimuat. Memulai konversi...', 'info');
+                    } else {
+                        showMessage('Memulai konversi GIF...', 'info'); // Pesan langsung mulai konversi
+                    }
+
+                    // Tulis file ke memori FFmpeg
+                    showMessage('Menulis file video ke memori...', 'info');
+                    ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
+                    showMessage('File video berhasil ditulis. Memulai proses konversi...', 'info');
+
+
+                    await ffmpeg.run(
+                        '-ss', startTime.toString(),
+                        '-i', 'input.mp4',
+                        '-to', (endTime - startTime).toString(),
+                        '-vf', 'fps=10,scale=320:-1:flags=lanczos',
+                        '-c:v', 'gif',
+                        'output.gif'
+                    );
+
+                    const data = ffmpeg.FS('readFile', 'output.gif');
+                    generatedGifBlob = new Blob([data.buffer], { type: 'image/gif' });
+                    
+                    convertedGifImg.src = URL.createObjectURL(generatedGifBlob);
+                    gifResultDiv.style.display = 'flex'; // Tampilkan hasil GIF
+                    downloadGifLink.style.display = 'inline-block'; // Tampilkan tombol unduh
+                    newFileButton.style.display = 'inline-block'; // Tampilkan tombol file baru
+
+
+                    const gifDuration = endTime - startTime;
+                    const gifSize = data.byteLength;
+                    gifDurationInfo.textContent = formatTime(gifDuration);
+                    gifSizeInfo.textContent = formatBytes(gifSize);
+
+                    showMessage('Konversi berhasil!', 'success'); // Pesan sukses
+
+                } catch (error) {
+                    console.error('Terjadi kesalahan selama konversi:', error);
+                    showMessage(`Konversi gagal: ${error.message}. Coba lagi dengan file yang berbeda atau lebih kecil.`, 'error');
+                } finally {
+                    // Sembunyikan semua indikator loading dan progress setelah proses selesai
+                    loadingSpinner.style.display = 'none';
+                    progressBarContainer.style.display = 'none';
+                    progressText.style.display = 'none';
+                    convertButton.disabled = false;
+                    try {
+                        ffmpeg.FS('unlink', 'input.mp4');
+                        ffmpeg.FS('unlink', 'output.gif');
+                    } catch (e) {
+                        console.warn('Gagal menghapus file sementara:', e);
+                    }
+                }
+            });
+
+            // Event listener untuk tombol Unduh GIF (Sekarang melibatkan PHP untuk streaming langsung)
+            downloadGifLink.addEventListener('click', async (event) => {
+                event.preventDefault(); // Mencegah perilaku default
+
+                if (generatedGifBlob) {
+                    // Sembunyikan tombol Unduh dan Konversi File Baru saat proses unduhan dimulai
+                    downloadGifLink.style.display = 'none';
+                    newFileButton.style.display = 'none';
+
+                    // Tampilkan progress bar horizontal dan teks progress untuk unduhan
+                    loadingSpinner.style.display = 'none'; // Sembunyikan spinner melingkar
+                    progressBarContainer.style.display = 'block'; // Pastikan progress bar container ditampilkan
+                    progressText.style.display = 'block'; // Pastikan progress text ditampilkan
+                    progressText.textContent = 'Memproses File Unduhan...'; // Pesan umum unduhan
+
+                    // Reset fill ke 0%
+                    progressBarFill.style.width = '0%';
+                    // Penting: Paksa reflow agar browser merender lebar 0% sebelum transisi
+                    // Ini memastikan transisi CSS akan berjalan dari 0%
+                    progressBarFill.offsetHeight; 
+
+                    // Atur lebar target, transisi CSS akan menghandle animasinya
+                    const finalFillPercentage = 70; // Hingga 70%
+                    progressBarFill.style.width = `${finalFillPercentage}%`;
+
+                    // Tambahkan jeda singkat sebelum submit form untuk memastikan animasi dimulai
+                    setTimeout(() => {
+                        try {
+                            const downloadForm = document.createElement('form');
+                            downloadForm.action = 'download.php';
+                            downloadForm.method = 'POST';
+                            downloadForm.enctype = 'multipart/form-data';
+                            downloadForm.style.display = 'none'; // Sembunyikan form
+                            
+                            const fileInput = document.createElement('input');
+                            fileInput.type = 'file';
+                            fileInput.name = 'gifFile'; 
+                            
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(new File([generatedGifBlob], 'output.gif', { type: 'image/gif' }));
+                            fileInput.files = dataTransfer.files;
+
+                            downloadForm.appendChild(fileInput);
+                            document.body.appendChild(downloadForm);
+
+                            downloadForm.submit(); 
+                            
+                            // Set timeout untuk membersihkan UI setelah download dipicu
+                            const totalAnimationTime = 1500; // 1.5 detik (sesuai CSS transition)
+                            setTimeout(() => {
+                                if (document.body.contains(downloadForm)) {
+                                    document.body.removeChild(downloadForm);
+                                }
+                                showMessage('Unduhan seharusnya sudah dimulai. Cek folder unduhan Anda.', 'success'); // Pesan akhir
+                                // Tampilkan kembali tombol dan sembunyikan indikator progres
+                                downloadGifLink.style.display = 'inline-block';
+                                newFileButton.style.display = 'inline-block';
+                                loadingSpinner.style.display = 'none'; 
+                                progressBarContainer.style.display = 'none';
+                                progressText.style.display = 'none';
+                            }, totalAnimationTime + 500); // Beri waktu browser untuk memproses submit dan navigasi
+                            
+                        } catch (error) {
+                            console.error('Terjadi kesalahan saat menyiapkan unduhan:', error);
+                            showMessage(`Gagal mengunduh GIF: ${error.message}.`, 'error');
+                            // Pastikan semua indikator disembunyikan dan tombol diaktifkan kembali jika terjadi error
+                            loadingSpinner.style.display = 'none';
+                            progressBarContainer.style.display = 'none';
+                            progressText.style.display = 'none';
+                            downloadGifLink.style.display = 'inline-block'; // Aktifkan kembali
+                            newFileButton.style.display = 'inline-block'; // Aktifkan kembali
+                        }
+                    }, 50); // Jeda 50ms sebelum submit form
+                } else {
+                    showMessage('Tidak ada GIF yang siap diunduh.', 'error');
+                }
+            });
+
+            // Event listener untuk tombol "Konversi File Baru"
+            newFileButton.addEventListener('click', () => {
+                // Reset UI ke tahap awal
+                showSlide(selectVideoSlide);
+                fileNameSpan.textContent = 'Belum ada file yang dipilih.';
+                selectedFile = null;
+                convertButton.disabled = true;
+                videoPreview.src = '';
+                gifResultDiv.style.display = 'none';
+                hideMessage();
+                // Pastikan semua indikator loading/progress disembunyikan
+                loadingSpinner.style.display = 'none';
+                progressBarContainer.style.display = 'none';
+                progressText.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk ke Spicette</title>
+    <!-- Mengimpor Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Mengimpor style.css untuk gaya spesifik halaman login (jika ada) -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Variabel CSS yang hanya diperlukan untuk halaman ini */
+        :root {
+            --color-primary: #e60023; /* Pinterest Red */
+            --color-dark: #111; /* Dark text */
+            --color-text-main: #333; /* Main text color */
+            --color-text-secondary: #5f5f5f; /* Secondary text */
+            --color-text-light: #767676; /* Info message, divider */
+            --color-background-light: #f9f9f9; /* Body background */
+            --color-white: #ffffff; /* White */
+            --color-border-light: #eee; /* Divider border */
+            --color-border-medium: #ddd; /* Google button border, disabled button */
+            --color-hover-light: #f0f0f0; /* Google button hover */
+            --color-success: #28a745; /* Green for success alerts */
+            --color-error: #dc3545; /* Red for error alerts */
+            --color-accent-hover: #ad081b; /* Darker red for hover states of primary elements */
+            --color-dashed-line: #ccc; /* Specific color for dashed line */
+
+            /* Font Families */
+            --font-family-body: 'Plus Jakarta Sans', sans-serif;
+            --font-family-heading: 'Playfair Display', serif;
+
+            /* Base Font Sizes */
+            --font-size-base: 16px;
+        }
+
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+        /* Simple CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Gaya dasar untuk body */
+        body {
+            font-family: var(--font-family-body);
+            font-size: var(--font-size-base);
+            line-height: 1.5;
+            background-color: var(--color-background-light);
+            color: var(--color-text-main);
+            display: flex;
+            justify-content: center; /* Pusatkan secara horizontal */
+            align-items: center; /* Pusatkan secara vertikal */
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .login-container {
+            background-color: var(--color-white);
+            padding: 30px; /* Padding yang cukup untuk menjaga jarak dari tepi */
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            position: relative;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .login-container .logo {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: 0; /* Tetap rata kiri untuk logo */
+            margin-right: auto;
+        }
+
+        .login-container h1 {
+            font-family: var(--font-family-heading);
+            font-size: 2.2rem;
+            color: var(--color-dark);
+            margin-bottom: 10px;
+            text-align: left; /* Rata kiri */
+        }
+
+        .login-container p {
+            font-size: var(--font-size-base);
+            color: var(--color-text-secondary);
+            margin-bottom: 25px;
+            text-align: left; /* Rata kiri */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--color-text-main);
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px dashed var(--color-dashed-line); /* Garis bawah putus-putus */
+            background-color: transparent;
+            border-radius: 0;
+            font-size: var(--font-size-base);
+            color: var(--color-text-main);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+            outline: none;
+        }
+
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group input[type="text"]:focus {
+            border-bottom-color: var(--color-primary);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            border: none;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            transition: background-color 0.2s ease;
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-login:hover {
+            background-color: var(--color-accent-hover);
+        }
+
+        .btn-login:disabled {
+            background-color: var(--color-border-medium);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--color-text-light);
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .or-divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .or-divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-border-medium);
+            border-radius: 24px;
+            background-color: var(--color-white);
+            color: var(--color-text-main);
+            font-weight: 500;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-google:hover {
+            background-color: var(--color-hover-light);
+            border-color: var(--color-text-light);
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .register-link {
+            margin-top: 20px;
+            font-size: var(--font-size-base);
+            color: var(--color-text-main);
+            text-align: left; /* Rata kiri */
+        }
+
+        .register-link a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .register-link a:hover {
+            color: var(--color-accent-hover);
+        }
+
+        .custom-alert {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-text-main);
+            color: var(--color-white);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: var(--font-size-base);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            white-space: nowrap;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .custom-alert.success {
+            background-color: var(--color-success);
+        }
+
+        .custom-alert.error {
+            background-color: var(--color-error);
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* Input group untuk password field */
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        /* Tombol toggle password */
+        .toggle-password {
+            position: absolute;
+            right: 0; /* Posisikan di paling kanan input */
+            top: 70%; /* Disesuaikan ke 70% seperti permintaan */
+            transform: translateY(-50%); /* Sesuaikan posisi vertikal */
+            cursor: pointer;
+            color: var(--color-text-light);
+            font-size: 18px;
+            padding: 5px; /* Tambahkan padding agar lebih mudah diklik */
+        }
+
+        /* Gaya untuk pesan kekuatan password */
+        .password-strength {
+            font-size: 12px;
+            text-align: left;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding-left: 0;
+            font-weight: bold;
+        }
+        .password-strength.weak {
+            color: var(--color-error);
+        }
+        .password-strength.medium {
+            color: orange;
+        }
+        .password-strength.strong {
+            color: var(--color-success);
+        }
+
+        .back-button-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .back-button {
+            background-color: var(--color-text-light);
+            color: var(--color-white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-button:hover {
+            background-color: var(--color-text-secondary);
+        }
+        .back-button i {
+            font-size: 18px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--color-white);
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            text-align: left;
+            position: relative;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--color-dark);
+            text-align: left;
+        }
+
+        .modal-content p {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px dashed var(--color-dashed-line);
+            background-color: transparent;
+            border-radius: 0;
+            font-size: var(--font-size-base);
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .modal-content input:focus {
+            border-bottom-color: var(--color-primary);
+        }
+
+        .modal-content button {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            margin-bottom: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        .modal-content button.secondary-button {
+            background-color: var(--color-text-light);
+        }
+
+        .modal-content button:hover {
+            background-color: var(--color-accent-hover);
+        }
+
+        .modal-content button.secondary-button:hover {
+            background-color: var(--color-text-secondary);
+        }
+
+        .modal-content .custom-alert {
+            position: static;
+            transform: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            opacity: 1;
+            visibility: visible;
+            white-space: normal;
+            word-break: break-word;
+            display: none;
+        }
+        .modal-content .custom-alert.show {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
+
+            .login-container h1 {
+                font-size: 2rem;
+            }
+
+            .btn-login {
+                padding: 12px;
+                font-size: var(--font-size-base);
+            }
+
+            .back-button-container {
+                position: fixed;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
+                padding: 0;
+            }
+            .back-button {
+                width: auto;
+                max-width: 250px;
+            }
+
+            .modal-content {
+                width: calc(100% - 40px);
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <!-- Login Form Container -->
+        <div class="login-container active-form" id="loginContainer">
+            <!-- Logo Spicette -->
+            <img src="https://placehold.co/50x50/e60023/ffffff?text=S" alt="Spicette Logo" class="logo">
+            <h1>Selamat Datang di Spicette</h1>
+            <p>Temukan inspirasi visual tanpa batas.</p>
+
+            <!-- Message box for login/registration messages -->
+            <div id="authMessage" class="custom-alert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginIdentifier">Email atau Nama Pengguna</label>
+                    <input type="text" id="loginIdentifier" name="identifier" placeholder="Masukkan email atau nama pengguna Anda" required>
+                </div>
+                <div class="form-group input-group">
+                    <label for="loginPassword">Kata Sandi</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="Masukkan kata sandi Anda" required>
+                    <span class="toggle-password" data-target="loginPassword">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <button type="submit" class="btn-login" id="loginButton">Masuk</button>
+                <p class="register-link">Belum punya akun? <a href="#" id="showRegister">Daftar</a></p>
+                <a href="#" id="forgotPasswordLink" class="register-link forgot-password-link">Lupa Kata Sandi?</a>
+            </form>
+
+            <div class="or-divider">ATAU</div>
+
+            <!-- Tombol Login Google -->
+            <button type="button" class="btn-google" id="googleLoginButton">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" alt="Google Logo">
+                Lanjutkan dengan Google
+            </button>
+        </div>
+
+        <!-- Register Form Container (initially hidden) -->
+        <div class="login-container hidden-right" id="registerContainer" style="display: none;">
+            <!-- Logo Spicette -->
+            <img src="https://placehold.co/50x50/e60023/ffffff?text=S" alt="Spicette Logo" class="logo">
+            <h1>Bergabung dengan Spicette</h1>
+            <p>Buat akun Anda untuk memulai.</p>
+
+            <!-- Message box for login/registration messages (shared) -->
+            <div id="authMessageRegister" class="custom-alert"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Nama Pengguna</label>
+                    <input type="text" id="registerUsername" placeholder="Nama Pengguna Anda" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Email Anda" required>
+                </div>
+                <div class="form-group input-group">
+                    <label for="registerPassword">Kata Sandi</label>
+                    <input type="password" id="registerPassword" placeholder="Buat kata sandi" required>
+                    <span class="toggle-password" data-target="registerPassword">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <!-- Password Strength Indicator -->
+                <div id="passwordStrengthIndicator" class="password-strength"></div>
+                <div class="form-group input-group">
+                    <label for="registerConfirmPassword">Konfirmasi Kata Sandi</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Konfirmasi kata sandi" required>
+                    <span class="toggle-password" data-target="registerConfirmPassword">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <button type="submit" class="btn-login">Daftar</button>
+                <p class="register-link">Sudah punya akun? <a href="#" id="showLogin">Masuk</a></p>
+            </form>
+
+            <div class="or-divider">ATAU</div>
+
+            <!-- Tombol Login Google (juga di form register) -->
+            <button type="button" class="btn-google" id="googleLoginButtonRegister">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" alt="Google Logo">
+                Lanjutkan dengan Google
+            </button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+        </div>
+
+        <!-- Forgot Password Modal -->
+        <div id="forgotPasswordModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h3>Reset Kata Sandi</h3>
+                <p>Masukkan alamat email Anda untuk menerima tautan reset kata sandi.</p>
+                <input type="email" id="resetEmailInput" placeholder="Email Anda" required>
+                <button id="sendResetEmailButton">Kirim Tautan Reset</button>
+                <button id="closeResetModalButton" class="secondary-button">Batal</button>
+                <div id="resetMessage" class="custom-alert"></div>
+            </div>
+        </div>
+
+        <!-- Username Input Modal for New Google Users (Dihapus, akan dipindahkan ke select_preferences.html) -->
+        <!-- <div id="usernameModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h3>Pilih Nama Pengguna</h3>
+                <p>Selamat datang! Silakan buat nama pengguna untuk akun Spicette Anda.</p>
+                <input type="text" id="usernameInput" placeholder="Nama Pengguna Anda" required>
+                <button id="submitUsernameButton">Lanjutkan</button>
+                <div id="usernameMessage" class="custom-alert"></div>
+            </div>
+        </div> -->
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBe_3qshX1-XoAJHb36GBdg0C1alCwVXVI",
+            authDomain: "spicette-abde3.firebaseapp.com",
+            projectId: "spicette-abde3",
+            storageBucket: "spicette-abde3.firebasestorage.app",
+            messagingSenderId: "355280962929",
+            appId: "1:355280962929:web:16ee80a71bba10463a62d0",
+            measurementId: "G-5R54Q6BHG0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginContainer = document.getElementById('loginContainer');
+            const registerContainer = document.getElementById('registerContainer');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const showRegisterButton = document.getElementById('showRegister');
+            const showLoginButton = document.getElementById('showLogin');
+            const authMessageDiv = document.getElementById('authMessage');
+            const authMessageRegisterDiv = document.getElementById('authMessageRegister'); // Pesan untuk form register
+            const googleLoginButton = document.getElementById('googleLoginButton');
+            const googleLoginButtonRegister = document.getElementById('googleLoginButtonRegister');
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+            // Forgot Password Modal elements
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+            const resetEmailInput = document.getElementById('resetEmailInput');
+            const sendResetEmailButton = document.getElementById('sendResetEmailButton');
+            const closeResetModalButton = document.getElementById('closeResetModalButton');
+            const resetMessageDiv = document.getElementById('resetMessage');
+
+            // Username Modal elements (Removed from HTML, but variables kept for now if needed for logic before full removal)
+            // const usernameModal = document.getElementById('usernameModal');
+            // const usernameInput = document.getElementById('usernameInput');
+            // const submitUsernameButton = document.getElementById('submitUsernameButton');
+            // const usernameMessageDiv = document.getElementById('usernameMessage');
+
+            // Login form specific inputs
+            const loginIdentifierInput = document.getElementById('loginIdentifier'); // Changed from loginEmail to loginIdentifier
+            const loginPasswordInput = document.getElementById('loginPassword');
+
+            // Register form specific inputs
+            const registerUsernameInput = document.getElementById('registerUsername');
+            const registerEmailInput = document.getElementById('registerEmail');
+            const registerPasswordInput = document.getElementById('registerPassword');
+            const registerConfirmPasswordInput = document.getElementById('registerConfirmPassword');
+            const passwordStrengthIndicator = document.getElementById('passwordStrengthIndicator');
+
+            // Variable to store user info temporarily for username creation (not needed here anymore)
+            // let tempGoogleUser = null;
+
+
+            // --- API Base URL ---
+            const API_BASE_URL = 'api/';
+
+            // --- Helper Function for Custom Alert ---
+            function showAlert(message, type = 'info', targetDiv) {
+                targetDiv.textContent = message;
+                targetDiv.className = `custom-alert show ${type}`; // Menambahkan kelas 'show' dan tipe
+                setTimeout(() => {
+                    targetDiv.className = 'custom-alert'; // Menghilangkan kelas 'show'
+                    targetDiv.style.display = 'none'; // Sembunyikan setelah transisi
+                }, 3000); // Alert akan hilang setelah 3 detik
+            }
+
+            // --- Helper Function for API Requests ---
+            async function makeApiRequest(endpoint, method = 'POST', data = null) {
+                try {
+                    const options = { method };
+                    if (data !== null && typeof data !== 'undefined') {
+                        options.headers = { 'Content-Type': 'application/json' };
+                        options.body = JSON.stringify(data);
+                    }
+                    const response = await fetch(API_BASE_URL + endpoint, options);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+                    }
+                    const textResponse = await response.text();
+                    if (!textResponse) {
+                        return { success: true, message: 'No content' };
+                    }
+                    try {
+                        const jsonResponse = JSON.parse(textResponse);
+                        return jsonResponse;
+                    } catch (e) {
+                        console.error('Failed to parse JSON response:', textResponse);
+                        throw new Error(`Invalid JSON response: ${textResponse}`);
+                    }
+                } catch (error) {
+                    console.error('API Request Failed:', error);
+                    showAlert(`Kesalahan jaringan atau server: ${error.message}`, 'error', authMessageDiv);
+                    return { success: false, message: 'Kesalahan jaringan atau server.' };
+                }
+            }
+
+            // --- Form Visibility Toggles with Animation ---
+            showRegisterButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginContainer.style.display = 'none'; // Sembunyikan login container
+                registerContainer.style.display = 'block'; // Tampilkan register container
+                registerContainer.classList.remove('hidden-right'); // Pastikan tidak ada kelas hidden
+                registerContainer.classList.add('active-form'); // Aktifkan form
+
+                authMessageDiv.style.display = 'none'; // Sembunyikan pesan di form login
+                authMessageRegisterDiv.style.display = 'none'; // Sembunyikan pesan di form register
+            });
+
+            showLoginButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerContainer.style.display = 'none'; // Sembunyikan register container
+                loginContainer.style.display = 'block'; // Tampilkan login container
+                loginContainer.classList.remove('hidden-left'); // Pastikan tidak ada kelas hidden
+                loginContainer.classList.add('active-form'); // Aktifkan form
+
+                authMessageDiv.style.display = 'none'; // Sembunyikan pesan di form login
+                authMessageRegisterDiv.style.display = 'none'; // Sembunyikan pesan di form register
+            });
+
+            // --- Toggle Password Visibility ---
+            document.querySelectorAll('.toggle-password').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    const passwordInput = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            // --- Login Form Submission (Firebase Email/Password or Custom Username/Password) ---
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const identifier = loginIdentifierInput.value.trim(); // Can be email or username
+                const password = loginPasswordInput.value.trim();
+
+                if (!identifier || !password) {
+                    showAlert('Email/Nama Pengguna dan kata sandi wajib diisi.', 'error', authMessageDiv);
+                    return;
+                }
+
+                // Simple regex to check if it looks like an email
+                const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+
+                try {
+                    let userCredential;
+                    let response;
+
+                    if (isEmail) {
+                        // Attempt Firebase email/password login
+                        userCredential = await signInWithEmailAndPassword(auth, identifier, password);
+                        const user = userCredential.user;
+
+                        // Sinkronkan data pengguna ke backend PHP
+                        response = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
+                            uid: user.uid,
+                            email: user.email,
+                            displayName: user.displayName // Kirim displayName dari Firebase
+                        });
+
+                    } else {
+                        // Attempt custom username/password login via backend API
+                        response = await makeApiRequest('auth.php?action=login_with_username', 'POST', {
+                            username: identifier,
+                            password: password
+                        });
+                        // If custom login successful, we might need to sign in anonymously to Firebase
+                        // or handle session purely on backend. For now, assume backend handles session.
+                    }
+
+                    if (response.success) {
+                        showAlert('Login berhasil! Mengalihkan...', 'success', authMessageDiv);
+                        setTimeout(() => {
+                            // Cek apakah pengguna memiliki username di sistem Tian
+                            // Jika login via email/password, asumsikan username sudah ada atau akan dibuat di backend.
+                            // Jika login via username, username sudah pasti ada.
+                            // Untuk kesederhanaan, langsung redirect ke index.html setelah sinkronisasi/login berhasil.
+                            // Logika pemeriksaan username untuk Google Sign-In akan berbeda.
+                            window.location.href = 'index.html'; // Redirect to index.html after successful login
+                        }, 1000);
+                    } else {
+                        console.error("Login gagal:", response.message);
+                        showAlert(response.message || 'Login gagal. Periksa kredensial Anda.', 'error', authMessageDiv);
+                    }
+                } catch (error) {
+                    console.error("Kesalahan Login:", error);
+                    let displayMessage = 'Login gagal.';
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        displayMessage = 'Email atau kata sandi tidak valid.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        displayMessage = 'Format email tidak valid.';
+                    } else {
+                        displayMessage = 'Login gagal: ' + error.message;
+                    }
+                    showAlert(displayMessage, 'error', authMessageDiv);
+                }
+            });
+
+            // --- Password Strength Checker ---
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                let message = '';
+                let className = '';
+
+                if (password.length >= 8) {
+                    strength += 1;
+                }
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) {
+                    strength += 1;
+                }
+                if (password.match(/\d/)) {
+                    strength += 1;
+                }
+                if (password.match(/[^a-zA-Z0-9]/)) {
+                    strength += 1;
+                }
+
+                if (password.length === 0) {
+                    message = '';
+                    className = '';
+                } else if (strength < 2) {
+                    message = 'Lemah';
+                    className = 'weak';
+                } else if (strength === 2 || strength === 3) {
+                    message = 'Sedang';
+                    className = 'medium';
+                } else {
+                    message = 'Kuat';
+                    className = 'strong';
+                }
+
+                passwordStrengthIndicator.textContent = message;
+                passwordStrengthIndicator.className = 'password-strength ' + className;
+            }
+
+            registerPasswordInput.addEventListener('input', (e) => {
+                checkPasswordStrength(e.target.value);
+            });
+
+
+            // --- Register Form Submission (Firebase Email/Password) ---
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = registerUsernameInput.value.trim(); // This will be stored in users.json
+                const email = registerEmailInput.value.trim();
+                const password = registerPasswordInput.value.trim();
+                const confirmPassword = registerConfirmPasswordInput.value.trim();
+
+                if (!username || !email || !password || !confirmPassword) {
+                    showAlert('Semua kolom wajib diisi.', 'error', authMessageRegisterDiv);
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showAlert('Kata sandi dan Konfirmasi Kata Sandi tidak cocok.', 'error', authMessageRegisterDiv);
+                    return;
+                }
+
+                if (password.length < 6) { // Firebase requires at least 6 characters for password
+                    showAlert('Kata sandi minimal 6 karakter.', 'error', authMessageRegisterDiv);
+                    return;
+                }
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // Sinkronkan data pengguna ke backend PHP
+                    const response = await makeApiRequest('auth.php?action=firebase_register', 'POST', { // Changed action to firebase_register
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: username, // Gunakan username yang dimasukkan pengguna
+                        photoURL: user.photoURL // Akan null awalnya untuk email/password
+                    });
+
+                    if (response.success) {
+                        showAlert('Pendaftaran berhasil! Mengalihkan ke pemilihan preferensi...', 'success', authMessageRegisterDiv);
+                        // Clear registration form
+                        registerUsernameInput.value = '';
+                        registerEmailInput.value = '';
+                        registerPasswordInput.value = '';
+                        registerConfirmPasswordInput.value = '';
+                        passwordStrengthIndicator.textContent = ''; // Clear strength indicator
+                        passwordStrengthIndicator.className = 'password-strength'; // Reset class
+                        setTimeout(() => {
+                             window.location.href = 'select_preferences.html';
+                        }, 1500); // Delay before redirecting for message to be seen
+                    } else {
+                        console.error("Sinkronisasi backend gagal setelah pendaftaran Firebase:", response.message);
+                        showAlert('Pendaftaran berhasil, tetapi sinkronisasi data pengguna gagal. Mengalihkan ke pemilihan preferensi...', 'success', authMessageRegisterDiv);
+                        setTimeout(() => {
+                            window.location.href = 'select_preferences.html';
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error("Kesalahan Pendaftaran Email/Kata Sandi Firebase:", error);
+                    let displayMessage = 'Pendaftaran gagal.';
+                    if (error.code === 'auth/email-already-in-use') {
+                        displayMessage = 'Email ini sudah digunakan. Silakan coba masuk atau gunakan email lain.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        displayMessage = 'Format email tidak valid.';
+                    } else if (error.code === 'auth/weak-password') {
+                        displayMessage = 'Kata sandi terlalu lemah. Silakan pilih kata sandi yang lebih kuat.';
+                    } else {
+                        displayMessage = 'Pendaftaran gagal: ' + error.message;
+                    }
+                    showAlert(displayMessage, 'error', authMessageRegisterDiv);
+                }
+            });
+
+            // --- Firebase Google Login ---
+            async function handleGoogleLogin(targetMessageDiv) {
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const user = result.user;
+                    const isNewUser = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
+
+                    // Sinkronkan data pengguna ke backend PHP
+                    const syncResponse = await makeApiRequest('auth.php?action=firebase_login', 'POST', {
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName, // Kirim displayName yang ada dari Google
+                        photoURL: user.photoURL
+                    });
+
+                    if (!syncResponse.success) {
+                        console.error("Sinkronisasi backend gagal setelah login Google:", syncResponse.message);
+                        showAlert('Login dengan Google berhasil, tetapi sinkronisasi data pengguna gagal. Mengalihkan...', 'success', targetMessageDiv);
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Fallback redirect
+                        }, 1000);
+                        return;
+                    }
+
+                    // Setelah sinkronisasi, cek apakah pengguna ini memiliki username di sistem Tian
+                    const checkUsernameResponse = await makeApiRequest('auth.php?action=check_username', 'POST', {
+                        uid: user.uid
+                    });
+
+                    if (checkUsernameResponse.success && checkUsernameResponse.has_username) {
+                        // Pengguna sudah memiliki username, langsung redirect ke index.html
+                        showAlert('Login dengan Google berhasil! Mengalihkan...', 'success', targetMessageDiv);
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    } else {
+                        // Pengguna belum memiliki username, arahkan ke select_preferences.html dengan flag
+                        showAlert('Selamat datang! Silakan lengkapi nama pengguna Anda. Mengalihkan...', 'info', targetMessageDiv);
+                        setTimeout(() => {
+                            window.location.href = 'select_preferences.html?needs_username=true';
+                        }, 1000);
+                    }
+
+                } catch (error) {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+
+                    console.error("Kesalahan Login Google Firebase:", error);
+                    let displayMessage = 'Login Google gagal.';
+                    if (errorCode === 'auth/popup-closed-by-user') {
+                        displayMessage = 'Popup login Google ditutup. Silakan coba lagi.';
+                    } else if (errorCode === 'auth/cancelled-popup-request') {
+                        displayMessage = 'Permintaan popup login Google dibatalkan. Silakan coba lagi.';
+                    } else if (errorCode === 'auth/account-exists-with-different-credential') {
+                        displayMessage = 'Akun dengan email ini sudah ada. Silakan masuk dengan metode yang sudah ada.';
+                    } else {
+                        displayMessage = 'Login Google gagal: ' + errorMessage;
+                    }
+                    showAlert(displayMessage, 'error', targetMessageDiv);
+                }
+            }
+
+            googleLoginButton.addEventListener('click', () => handleGoogleLogin(authMessageDiv));
+            googleLoginButtonRegister.addEventListener('click', () => handleGoogleLogin(authMessageRegisterDiv));
+
+            // --- Forgot Password Functionality (using modal) ---
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotPasswordModal.style.display = 'flex'; // Show the modal
+                // Pre-fill email if the identifier looks like an email
+                if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginIdentifierInput.value.trim())) {
+                    resetEmailInput.value = loginIdentifierInput.value.trim();
+                } else {
+                    resetEmailInput.value = ''; // Clear if it's a username
+                }
+                resetMessageDiv.style.display = 'none'; // Hide any previous messages
+            });
+
+            closeResetModalButton.addEventListener('click', () => {
+                forgotPasswordModal.style.display = 'none'; // Hide the modal
+            });
+
+            sendResetEmailButton.addEventListener('click', async () => {
+                const email = resetEmailInput.value.trim();
+
+                if (!email) {
+                    showAlert('Silakan masukkan alamat email Anda.', 'error', resetMessageDiv);
+                    return;
+                }
+
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    showAlert('Email reset kata sandi telah dikirim! Periksa kotak masuk Anda.', 'success', resetMessageDiv);
+                } catch (error) {
+                    console.error("Kesalahan Lupa Kata Sandi Firebase:", error);
+                    let displayMessage = 'Gagal mengirim email reset kata sandi.';
+                    if (error.code === 'auth/invalid-email') {
+                        displayMessage = 'Format alamat email tidak valid.';
+                    } else if (error.code === 'auth/user-not-found') {
+                        displayMessage = 'Tidak ada pengguna yang ditemukan dengan alamat email tersebut di Firebase. Pastikan Anda mendaftar melalui Firebase atau Google.';
+                    } else {
+                        displayMessage = 'Gagal mengirim email reset kata sandi: ' + error.message;
+                    }
+                    showAlert(displayMessage, 'error', resetMessageDiv);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

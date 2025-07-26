@@ -1,0 +1,42 @@
+[
+    {
+        "firebase_uid": "dRp2oIFDWjVoosUct6NYRD0aFHA2",
+        "username": "Tian",
+        "email": "tiianprb@gmail.com",
+        "password": "FIREBASE_AUTH_USER",
+        "isAdmin": true,
+        "canUpload": true,
+        "preferred_categories": [],
+        "preferred_persons": [],
+        "manual_persons_requested": [],
+        "profile_image_url": "https://lh3.googleusercontent.com/a/ACg8ocKMJ5_CNK4iSAdge6FPfBqjXfLKzF5Xf5uqNqasja16imEA0gRk=s96-c",
+        "level": "Sinful",
+        "needs_username_completion": false,
+        "liked_pins": []
+    },
+    {
+        "firebase_uid": "Rjeq7uuGvvbAcspkH1IuKD9CiR23",
+        "username": "gvnixx",
+        "email": "gvnixx@gmail.com",
+        "password": "FIREBASE_AUTH_USER",
+        "isAdmin": false,
+        "canUpload": false,
+        "preferred_categories": [
+            "Armpit Heaven",
+            "Wet Fabric Play",
+            "Right Tanktop"
+        ],
+        "preferred_persons": [
+            "Eca",
+            "Misellia",
+            "qwerty"
+        ],
+        "manual_persons_requested": [
+            "qwerty"
+        ],
+        "profile_image_url": "https://lh3.googleusercontent.com/a/ACg8ocLk9gKKKpZ4sjeg8TAPW1ZuvnPyQGAcXuGutIlv4vXjM4ESTeu5=s96-c",
+        "level": "Tempted",
+        "needs_username_completion": false,
+        "liked_pins": []
+    }
+]

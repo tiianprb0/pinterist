@@ -1,0 +1,898 @@
+/*
+ * base.css
+ *
+ * File ini berisi gaya dasar UI yang bersifat global dan dapat digunakan kembali
+ * di seluruh halaman HTML. Ini mencakup reset CSS, variabel warna dan font,
+ * gaya body dasar, kontainer umum, gaya tombol, input formulir, serta gaya
+ * umum untuk overlay dan loading.
+ *
+ * Semua gaya di sini adalah elemen fondasi UI yang konsisten di seluruh aplikasi.
+ */
+
+/* Variabel CSS untuk warna dan font yang akurat dari style.css */
+:root {
+    --color-primary: #e60023; /* Pinterest Red */
+    --color-dark: #111; /* Dark text, primary hover */
+    --color-text-main: #333; /* Main text color */
+    --color-text-secondary: #5f5f5f; /* Secondary text, icon buttons, register text, admin logout button, skip button */
+    --color-text-light: #767676; /* Search icon, profile icon, info message */
+    --color-background-light: #f9f9f9; /* Body background, overlay background */
+    --color-background-lighter: #efefef; /* Search input background */
+    --color-background-lightest: #e9e9e9; /* Nav button hover, icon button hover */
+    --color-white: #ffffff; /* White */
+    --color-border-light: #eee; /* Search suggestions border, notification item border, dropdown border, admin/user page border, profile image option border */
+    --color-border-medium: #ddd; /* Login form input border, dashed line, list item border */
+    --color-hover-light: #f0f0f0; /* Search suggestions hover, dropdown hover, notification item read, pin category tag hover, manual list item */
+    --color-success: #28a745; /* Green for success alerts */
+    --color-error: #dc3545; /* Red for error alerts */
+    --color-accent-hover: #ad081b; /* Darker red for hover states of primary elements */
+    --color-grey-button: #555; /* Admin logout button, manual toggle button */
+    --color-grey-button-hover: #777; /* Admin logout button hover, manual toggle button hover */
+    --color-e0e0e0: #e0e0e0; /* Specific light grey used in style.css */
+    --color-delete-button: #999; /* Delete button */
+    --color-admin-section-bg: #fcfcfc; /* Admin section background */
+    --color-focus-border: #80bdff; /* Input focus border */
+    --color-focus-shadow: rgba(0, 123, 255, 0.25); /* Input focus shadow */
+    --color-text-pin-detail: #444; /* Specific text color for pin detail description */
+    --color-text-uploaded-by: #555; /* Specific text color for uploaded by text */
+    --color-dashed-line: #ccc; /* Specific color for dashed line */
+
+    /* Font Families */
+    --font-family-body: 'Plus Jakarta Sans', sans-serif;
+    --font-family-heading: 'Playfair Display', serif;
+
+    /* Base Font Sizes and Line Heights */
+    --font-size-base: 16px;
+    --line-height-base: 1.5;
+}
+
+/* Import Google Fonts - Penting agar font tersedia secara global */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+/* Simple CSS Reset - Universal untuk semua halaman */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Gaya dasar untuk body - Universal untuk semua halaman */
+body {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    background-color: var(--color-background-light);
+    color: var(--color-text-main);
+    overscroll-behavior: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilitas untuk mencegah scrolling - Universal */
+body.no-scroll {
+    overflow: hidden;
+}
+
+/* Kontainer umum untuk konten - Universal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+/* Gaya dasar untuk header - Struktur umum header */
+header {
+    background-color: var(--color-white);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: none;
+    height: 70px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Gaya dasar untuk logo - Hanya dimensi dan posisi, bukan SVG spesifik */
+header .logo {
+    width: 36px;
+    height: 36px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* Gaya dasar untuk tautan navigasi di header - Universal */
+.header-nav-links {
+    display: flex;
+    align-items: center;
+}
+
+/* Gaya dasar untuk tombol navigasi - Universal */
+.nav-button {
+    padding: 12px 16px;
+    font-weight: bold;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: var(--font-size-base);
+    border: none;
+}
+
+.nav-button.active {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+}
+
+.nav-button:not(.active) {
+    background-color: transparent;
+    color: var(--color-dark);
+}
+
+.nav-button:hover {
+    background-color: var(--color-background-lightest);
+}
+
+.nav-button.active:hover {
+    background-color: var(--color-text-main);
+}
+
+/* Gaya dasar untuk kontainer pencarian - Universal */
+.search-container {
+    flex-grow: 1;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-container input[type="search"] {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border: none;
+    background-color: var(--color-background-lighter);
+    border-radius: 24px;
+    font-size: var(--font-size-base);
+    outline: none;
+}
+
+.search-container input[type="search"]:focus {
+    background-color: var(--color-e0e0e0);
+    box-shadow: none;
+}
+
+/* Gaya untuk ikon pencarian di dalam input - Universal */
+.search-icon-wrapper .fas.fa-search {
+    position: absolute;
+    left: 15px;
+    font-size: 18px;
+    color: var(--color-text-light);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Gaya dasar untuk ikon di header - Universal */
+.header-icons {
+    display: flex;
+    align-items: center;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.icon-button:hover {
+    background-color: var(--color-background-lightest);
+}
+
+.icon-button .fas {
+    font-size: 24px;
+    color: var(--color-text-secondary);
+}
+
+.profile-icon {
+    width: 28px;
+    height: 28px;
+    background-color: var(--color-border-medium);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-text-light);
+}
+
+/* Badge notifikasi - Universal */
+.notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-white);
+}
+
+/* Gaya dasar untuk alert kustom - Universal */
+.custom-alert {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-text-main);
+    color: var(--color-white);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+.custom-alert.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.custom-alert.success {
+    background-color: var(--color-success);
+}
+
+.custom-alert.error {
+    background-color: var(--color-error);
+    white-space: normal;
+    word-break: break-word;
+}
+
+/* Gaya dasar untuk semua overlay - Universal */
+.overlay-base { /* Kelas baru untuk gaya dasar overlay */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-background-light);
+    z-index: 1100;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Gaya untuk header overlay - Universal */
+.overlay-header {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    margin-bottom: 15px;
+}
+
+.overlay-header button {
+    background: none;
+    border: none;
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    color: var(--color-dark);
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-header button .fas.fa-times {
+    font-size: 24px;
+    color: var(--color-text-secondary);
+}
+
+/* Konten dalam overlay - Universal */
+.overlay-content {
+    padding: 0 15px;
+    overflow-y: auto;
+}
+
+.overlay-content h3 {
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Gaya untuk saran pencarian - Universal */
+.search-suggestions-list { /* Kelas baru untuk daftar saran pencarian */
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--color-border-light);
+    display: none;
+}
+
+.search-suggestions-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--color-text-main);
+    transition: background-color 0.2s ease;
+}
+
+.search-suggestions-list li:hover {
+    background-color: var(--color-hover-light);
+}
+
+.search-suggestions-list li.selected {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* Gaya untuk riwayat pencarian - Universal */
+.search-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 20px 0;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-history-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--color-text-main);
+    transition: background-color 0.2s ease;
+}
+
+.search-history-list li:hover {
+    background-color: var(--color-hover-light);
+}
+
+/* Gaya dasar untuk formulir dan input - Universal */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--color-text-main);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-focus-border);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem var(--color-focus-shadow);
+}
+
+/* Gaya dasar untuk tombol - Universal */
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.btn-secondary {
+    background-color: var(--color-text-secondary);
+    color: var(--color-white);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-text-light);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn:disabled {
+    background-color: var(--color-border-medium);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Gaya dasar untuk item daftar (digunakan di admin/user page) - Universal */
+.list-item {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-white);
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border-light);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+}
+
+.list-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: var(--color-text-main);
+}
+
+.list-item-content strong {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: var(--color-dark);
+}
+
+.list-item-content span {
+    color: var(--color-text-uploaded-by);
+}
+
+.list-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.list-item-actions {
+    margin-left: 20px;
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.list-item-actions button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.list-item-actions button.delete-btn {
+    background-color: var(--color-delete-button);
+}
+
+.list-item-actions button:hover {
+    opacity: 0.9;
+}
+
+/* Gaya untuk pesan informasi/error - Universal */
+#message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    color: var(--color-success);
+    background-color: #e6ffe6;
+    border: 1px solid var(--color-success);
+    display: none;
+}
+
+#message.error {
+    color: var(--color-error);
+    background-color: #ffe6e6;
+    border: 1px solid var(--color-error);
+}
+
+.info-message {
+    text-align: center;
+    color: var(--color-text-light);
+    margin-top: 50px;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    padding: 10px;
+}
+
+.info-message.error-message {
+    color: var(--color-primary);
+}
+
+/* Gaya untuk loading indicator - Universal */
+#loading-indicator {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: var(--color-text-light);
+}
+
+/* Overlay loading global - Universal */
+#globalLoadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+#globalLoadingOverlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid var(--color-primary);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Gaya dasar untuk card pilihan (digunakan di select_preferences.html) - Universal */
+.choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.choice-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    background-color: var(--color-white);
+    border: 2px solid var(--color-border-light);
+}
+
+.choice-card:hover {
+    transform: scale(1.03);
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.choice-card.selected {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(230,0,35,0.2);
+}
+
+.choice-card .card-image {
+    display: none; /* Gambar akan diatur via background-image di CSS spesifik halaman */
+}
+
+.choice-card .card-text {
+    position: relative;
+    z-index: 2;
+    padding: 5px;
+}
+
+/* Gaya untuk input manual (digunakan di select_preferences.html) - Universal */
+.manual-input-group {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.manual-input-group .custom-toggle-button {
+    background-color: var(--color-grey-button);
+    color: var(--color-white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.manual-input-group .custom-toggle-button:hover {
+    background-color: var(--color-grey-button-hover);
+}
+
+.manual-input-fields {
+    display: none;
+    margin-top: 15px;
+}
+
+.manual-input-fields.active {
+    display: block;
+}
+
+.manual-input-fields input {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    margin-bottom: 10px;
+}
+
+.manual-input-fields button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.manual-input-fields button:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.manual-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.manual-list li {
+    background-color: var(--color-hover-light);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.manual-list li button {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Gaya untuk pilihan gambar profil - Universal */
+.profile-image-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.profile-image-option {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-border-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profile-image-option.selected {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(230,0,35,0.3);
+}
+
+.profile-image-option:hover {
+    transform: scale(1.05);
+}
+
+.custom-image-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    margin-bottom: 20px;
+}
+
+/* Gaya untuk grup tombol - Universal */
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+.button-group button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button-group button:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.button-group button:disabled {
+    background-color: var(--color-border-medium);
+    cursor: not-allowed;
+}
+
+.button-group button.skip {
+    background-color: var(--color-text-light);
+}
+
+.button-group button.skip:hover {
+    background-color: var(--color-text-secondary);
+}
+
+/* Gaya dasar untuk judul dan sub-judul - Universal */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-text-main);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+/* Gaya dasar untuk footer - Universal */
+footer {
+    background-color: var(--color-text-main);
+    color: var(--color-white);
+    padding: 1.5rem 0;
+    text-align: center;
+    margin-top: auto;
+}
+
+/* Responsive adjustments global - Hanya yang sangat umum */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    /* Umum untuk header */
+    header .container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    /* Umum untuk navigasi */
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    /* Penyesuaian umum untuk card pilihan */
+    .choice-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 10px;
+    }
+    .choice-card {
+        padding: 10px;
+        min-height: 100px;
+    }
+    .choice-card .card-image {
+        width: 50px;
+        height: 50px;
+    }
+    .choice-card .card-text {
+        font-size: 13px;
+    }
+    .profile-image-option {
+        width: 60px;
+        height: 60px;
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .button-group button {
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-icon-wrapper .fas {
+        left: 12px;
+        width: 16px;
+        height: 16px;
+    }
+}

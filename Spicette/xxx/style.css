@@ -1,0 +1,1133 @@
+/* Variabel CSS Global (dari login.html dan create.html) */
+:root {
+    --color-primary: #e60023; /* Pinterest Red */
+    --color-dark: #111; /* Dark text */
+    --color-text-main: #333; /* Main text color */
+    --color-text-secondary: #5f5f5f; /* Secondary text */
+    --color-text-light: #767676; /* Info message, divider */
+    --color-background-light: #f9f9f9; /* Body background */
+    --color-white: #ffffff; /* White */
+    --color-border-light: #eee; /* Divider border */
+    --color-border-medium: #ddd; /* Google button border, disabled button */
+    --color-hover-light: #f0f0f0; /* Google button hover */
+    --color-success: #28a745; /* Green for success alerts */
+    --color-error: #dc3545; /* Red for error alerts */
+    --color-accent-hover: #ad081b; /* Darker red for hover states of primary elements */
+    --color-dashed-line: #ccc; /* Specific color for dashed line */
+
+    /* Font Families */
+    --font-family-body: 'Plus Jakarta Sans', sans-serif;
+    --font-family-heading: 'Playfair Display', serif;
+
+    /* Base Font Sizes */
+    --font-size-base: 16px;
+    --font-size-small: 14px;
+    --font-size-medium: 1.2rem; /* Ukuran font menengah untuk sub-judul */
+    --font-size-large: 2.2rem; /* Untuk judul utama */
+}
+
+/* Simple CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Gaya dasar untuk body */
+body {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    background-color: var(--color-background-light);
+    color: var(--color-text-main);
+    display: block; /* Menggunakan block, bukan flex untuk main layout */
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Header (konsisten dengan user.php) */
+header {
+    background-color: var(--color-white);
+    padding: 10px 20px;
+    display: flex; /* Tetap pakai flex untuk header */
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border-light);
+    box-shadow: none !important; /* Dihilangkan box-shadow */
+}
+header .logo {
+    font-family: var(--font-family-heading);
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--color-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+header .header-icons {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+header .icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    color: var(--color-text-main);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+header .icon-button:hover {
+    background-color: var(--color-hover-light);
+}
+header .profile-icon {
+    width: 36px;
+    height: 36px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--color-white);
+    overflow: hidden;
+}
+header .profile-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Main layout untuk admin dashboard */
+.admin-dashboard-layout {
+    display: block; /* Menggunakan block */
+    width: 100%;
+    max-width: 1200px; /* Lebar maksimum yang lebih besar */
+    margin: 20px auto; /* Pusatkan */
+    padding: 0 20px; /* Padding horizontal */
+    box-sizing: border-box;
+    overflow: hidden; /* Untuk clear float dari sidebar */
+}
+
+/* Sidebar Admin */
+.admin-sidebar {
+    width: 250px;
+    background-color: var(--color-white);
+    padding: 20px;
+    border-radius: 16px;
+    float: left; /* Menggunakan float untuk layout satu baris */
+    margin-right: 20px; /* Jarak antar sidebar dan content */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Sedikit shadow untuk sidebar */
+    box-sizing: border-box;
+}
+.admin-sidebar h2 {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-large); /* Menggunakan variabel */
+    color: var(--color-dark);
+    margin-bottom: 20px;
+    text-align: left;
+}
+.admin-sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+}
+.admin-sidebar-nav li {
+    margin-bottom: 10px;
+}
+.admin-tab-button {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    background-color: transparent;
+    color: var(--color-text-main);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: block; /* Menggunakan block agar memenuhi lebar */
+}
+.admin-tab-button i {
+    margin-right: 10px;
+    font-size: 18px;
+    vertical-align: middle;
+}
+.admin-tab-button.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+.admin-tab-button:hover:not(.active) {
+    background-color: var(--color-hover-light);
+}
+
+/* Area Konten Admin */
+.admin-content-area {
+    overflow: hidden; /* Clear float dari sidebar */
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Sedikit shadow untuk content area */
+    box-sizing: border-box;
+}
+.admin-tab-content {
+    display: none;
+}
+.admin-tab-content.active {
+    display: block;
+}
+.admin-section {
+    margin-bottom: 30px;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+.admin-section h2 {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-large); /* Menggunakan variabel */
+    color: var(--color-dark);
+    margin-bottom: 20px;
+    text-align: left;
+}
+.admin-section h3 { /* Untuk sub-judul seperti "Statistik Tag Orang" */
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-medium); /* Ukuran menengah */
+    color: var(--color-dark);
+    margin-top: 30px; /* Jarak dari bagian atas */
+    margin-bottom: 15px; /* Jarak dari konten di bawahnya */
+    text-align: left;
+    font-weight: 700;
+}
+
+/* Overview Stats */
+.overview-stats {
+    margin-bottom: 30px;
+    overflow: hidden; /* Clear floats of stat-cards */
+}
+.stat-card {
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-border-medium);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    display: inline-block; /* Menggunakan inline-block */
+    width: calc(50% - 10px); /* Lebar untuk 2 kolom dengan gap */
+    margin-right: 20px; /* Jarak antar card */
+    vertical-align: top;
+    box-sizing: border-box;
+}
+.stat-card:nth-child(2n) { /* Hapus margin kanan untuk setiap card kedua */
+    margin-right: 0;
+}
+.stat-card h4 {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+}
+.stat-card p {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+/* Admin Forms (konsisten dengan create.html) */
+.admin-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--color-text-main);
+    font-size: var(--font-size-small);
+}
+.admin-form input[type="text"],
+.admin-form input[type="url"],
+.admin-form textarea {
+    width: 100%;
+    padding: 12px 0; /* Padding disesuaikan */
+    border: none;
+    border-bottom: 1px dashed var(--color-dashed-line); /* Border bawah putus-putus */
+    background-color: transparent;
+    border-radius: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    outline: none;
+    margin-bottom: 15px;
+    touch-action: manipulation; /* Mencegah zoom pada iOS */
+}
+.admin-form input[type="text"]:focus,
+.admin-form input[type="url"]:focus,
+.admin-form textarea:focus {
+    border-bottom-color: var(--color-primary);
+}
+.admin-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.admin-form button[type="submit"] {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-weight: bold;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: block; /* Menggunakan block */
+    margin-top: 10px; /* Jarak dari input */
+}
+.admin-form button[type="submit"]:hover {
+    background-color: var(--color-accent-hover);
+}
+
+/* Admin Lists (umum untuk notifikasi, pengguna) */
+.admin-list {
+    margin-top: 20px;
+}
+.admin-list .list-item {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-medium);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+    overflow: hidden; /* Clear floats */
+    box-sizing: border-box;
+}
+.admin-list .list-item-img { /* Untuk gambar kecil di list (notifikasi, user) */
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+    float: left; /* Menggunakan float */
+}
+.admin-list .list-item-content {
+    overflow: hidden; /* Clear float */
+    padding-right: 10px; /* Ruang untuk tombol aksi */
+}
+.admin-list .list-item-title {
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    color: var(--color-dark);
+    display: block;
+    margin-bottom: 5px;
+}
+.admin-list .list-item-detail {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+    display: block;
+    margin-bottom: 3px;
+}
+.admin-list .list-item-actions {
+    margin-top: 10px;
+    text-align: right;
+}
+.admin-list .list-item-actions button {
+    background-color: var(--color-error);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-left: 10px;
+    display: inline-block; /* Menggunakan inline-block */
+    vertical-align: middle;
+}
+.admin-list .list-item-actions button:hover {
+    background-color: #c02c3a;
+}
+.admin-list .list-item-actions button.accept-btn {
+    background-color: var(--color-success);
+}
+.admin-list .list-item-actions button.accept-btn:hover {
+    background-color: #218838;
+}
+.admin-list .list-item-actions button.reject-btn {
+    background-color: var(--color-text-light);
+}
+.admin-list .list-item-actions button.reject-btn:hover {
+    background-color: var(--color-text-secondary);
+}
+
+/* Image Grid for Categories and Pins */
+.image-grid {
+    margin-top: 20px;
+    column-count: 4; /* Default 4 kolom untuk desktop (diubah dari 5) */
+    column-gap: 15px;
+    padding: 0;
+}
+.image-grid-item {
+    display: inline-block; /* Penting untuk column-count */
+    width: 100%; /* Agar memenuhi lebar kolom */
+    margin-bottom: 15px; /* Jarak antar baris */
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-medium);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: none; /* Menghapus shadow */
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+}
+.image-grid-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px 12px 0 0; /* Hanya bagian atas yang rounded */
+}
+.image-grid-item-content {
+    padding: 10px;
+    text-align: left;
+    border-top: 1px dashed var(--color-dashed-line); /* Pembatas antar gambar dan detail */
+    margin-top: 5px; /* Jarak dari gambar */
+}
+.image-grid-item-title {
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    color: var(--color-dark);
+    margin-bottom: 5px;
+}
+.image-grid-item-detail {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+    display: block;
+    margin-bottom: 3px;
+    white-space: nowrap; /* Mencegah wrap */
+    overflow: hidden; /* Sembunyikan overflow */
+    text-overflow: ellipsis; /* Tambahkan elipsis */
+}
+.image-grid-item-actions {
+    padding: 0 10px 10px;
+    text-align: right;
+}
+.image-grid-item-actions button {
+    background-color: var(--color-error);
+    color: var(--color-white);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.image-grid-item-actions button:hover {
+    background-color: #c02c3a;
+}
+.image-grid-item-actions .edit-btn { /* Gaya untuk tombol edit */
+    background-color: var(--color-text-light);
+    margin-right: 5px; /* Jarak dari tombol hapus */
+}
+.image-grid-item-actions .edit-btn:hover {
+    background-color: var(--color-text-secondary);
+}
+
+
+/* Person Tag Stats List */
+.person-tag-stats-list {
+    list-style: none;
+    padding: 0;
+}
+.person-tag-stats-list .person-tag-stats-item {
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    display: block; /* Menggunakan block */
+    overflow: hidden; /* Clear float */
+}
+.person-tag-stats-list .person-tag-stats-item span:first-child {
+    font-weight: bold;
+    color: var(--color-text-main);
+    float: left; /* Menggunakan float */
+}
+.person-tag-stats-list .person-tag-stats-item span:last-child {
+    color: var(--color-text-secondary);
+    float: right; /* Menggunakan float */
+}
+
+/* User Management Specifics */
+.user-level-control {
+    margin-top: 10px;
+    display: block; /* Menggunakan block */
+}
+.user-level-control label {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+    margin-right: 5px;
+    display: inline-block; /* Menggunakan inline-block */
+    vertical-align: middle;
+}
+.user-level-control select {
+    padding: 5px 8px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 5px;
+    font-size: var(--font-size-small);
+    background-color: var(--color-background-light);
+    color: var(--color-text-main);
+    display: inline-block; /* Menggunakan inline-block */
+    vertical-align: middle;
+}
+
+.can-upload-toggle {
+    margin-top: 10px;
+    display: block; /* Menggunakan block */
+}
+.can-upload-toggle label {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+    margin-right: 10px;
+    display: inline-block; /* Menggunakan inline-block */
+    vertical-align: middle;
+}
+/* Toggle Switch (dari user.php) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    vertical-align: middle;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 20px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: var(--color-primary);
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--color-primary);
+}
+input:checked + .slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+.expand-user-btn {
+    background-color: var(--color-text-light);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+    display: inline-block; /* Menggunakan inline-block */
+}
+.expand-user-btn:hover {
+    background-color: var(--color-text-secondary);
+}
+
+/* Message Box (konsisten dengan login.html dan create.html) */
+#message {
+    margin-bottom: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    text-align: center;
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    white-space: nowrap;
+    max-width: 90%;
+    box-sizing: border-box;
+    background-color: var(--color-text-main); /* Default background */
+    color: var(--color-white); /* Default text color */
+}
+#message.show {
+    opacity: 1;
+    visibility: visible;
+}
+#message.error {
+    background-color: var(--color-error);
+    color: var(--color-white);
+}
+#message.success {
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+/* Modal Konfirmasi Kustom (konsisten dengan user.php) */
+#customConfirmationModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* Default hidden */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+#customConfirmationModal.show {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+#customConfirmationModal > div {
+    background: var(--color-white);
+    padding: 35px;
+    border-radius: 12px;
+    max-width: 420px;
+    text-align: center;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--color-border-medium);
+    color: var(--color-text-main);
+}
+#customConfirmationModal.show > div {
+    transform: scale(1);
+    opacity: 1;
+}
+#customConfirmationModal #modalMessage {
+    font-size: var(--font-size-base);
+    margin-bottom: 28px;
+    font-weight: 500;
+}
+#customConfirmationModal button {
+    border: none;
+    padding: 11px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+#customConfirmationModal #confirmNo {
+    background: var(--color-border-medium);
+    color: var(--color-text-main);
+}
+#customConfirmationModal #confirmNo:hover {
+    background: var(--color-text-light);
+}
+#customConfirmationModal #confirmYes {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+#customConfirmationModal #confirmYes:hover {
+    background: var(--color-accent-hover);
+}
+
+/* Hamburger Menu (dari user.php) */
+.hamburger-menu-container {
+    display: none; /* Default hidden for desktop */
+    margin-left: 15px;
+}
+.hamburger-menu-icon {
+    width: 30px;
+    height: 20px;
+    position: relative;
+    transform: rotate(0deg);
+    transition: .5s ease-in-out;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.hamburger-menu-icon span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--color-text-main);
+    border-radius: 9px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+}
+.hamburger-menu-icon span:nth-child(1) {
+    top: 0px;
+}
+.hamburger-menu-icon span:nth-child(2) {
+    top: 8px;
+}
+.hamburger-menu-icon span:nth-child(3) {
+    top: 16px;
+}
+.hamburger-menu-icon.active span:nth-child(1) {
+    top: 8px;
+    transform: rotate(135deg);
+}
+.hamburger-menu-icon.active span:nth-child(2) {
+    opacity: 0;
+    left: -60px;
+}
+.hamburger-menu-icon.active span:nth-child(3) {
+    top: 8px;
+    transform: rotate(-135deg);
+}
+
+/* Drag and Drop Area (untuk upload gambar kategori) */
+.drag-area {
+    border: 2px dashed var(--color-dashed-line);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin-bottom: 15px;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    display: block; /* Menggunakan block */
+    min-height: 100px;
+}
+
+.drag-area.highlight {
+    background-color: var(--color-hover-light);
+    border-color: var(--color-primary);
+}
+
+.drag-area i {
+    font-size: 30px;
+    margin-bottom: 5px;
+    color: var(--color-text-light);
+}
+
+.drag-area p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+}
+
+.drag-area span {
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.drag-area input[type="file"] {
+    display: none; /* Sembunyikan input file asli */
+}
+
+/* Indikator file yang dipilih untuk kategori */
+#selectedCategoryImageIndicator {
+    margin-top: 10px;
+    font-size: var(--font-size-small);
+    color: var(--color-text-main);
+    text-align: center;
+    display: none; /* Sembunyikan secara default */
+    font-weight: 500;
+}
+
+/* Admin Profile Summary in Sidebar */
+.admin-profile-summary {
+    text-align: left;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-border-light);
+    margin-bottom: 20px;
+    overflow: hidden; /* Clear floats */
+}
+.admin-profile-summary .profile-icon {
+    float: left; /* Menggunakan float */
+    margin-right: 10px;
+    width: 48px; /* Lebih besar dari header */
+    height: 48px;
+    font-size: 24px;
+}
+.admin-profile-summary .username-text {
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    color: var(--color-dark);
+    display: block; /* Menggunakan block */
+    margin-top: 5px;
+}
+.admin-profile-summary .logout-button-sidebar {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+    display: inline-block; /* Menggunakan inline-block */
+    clear: both; /* Clear float di bawah profil */
+}
+.admin-profile-summary .logout-button-sidebar:hover {
+    background-color: var(--color-accent-hover);
+}
+
+/* Desktop Logout Button in Header */
+.admin-logout-btn-desktop {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-left: 15px;
+    display: none; /* Default hidden, shown on desktop */
+}
+.admin-logout-btn-desktop:hover {
+    background-color: var(--color-accent-hover);
+}
+
+/* Edit Pin Modal Styles */
+.edit-pin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-pin-overlay.active {
+    display: flex;
+}
+
+.edit-pin-section {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    box-sizing: border-box;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.edit-pin-section h2 {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-large);
+    color: var(--color-dark);
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.edit-pin-section .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+    position: relative;
+}
+
+.edit-pin-section .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--color-text-main);
+    font-size: var(--font-size-small);
+}
+
+.edit-pin-section input:not([type="radio"]):not([type="checkbox"]),
+.edit-pin-section textarea,
+.edit-pin-section select {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px dashed var(--color-dashed-line);
+    background-color: transparent;
+    border-radius: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    outline: none;
+    touch-action: manipulation;
+}
+
+.edit-pin-section input:not([type="radio"]):not([type="checkbox"]):focus,
+.edit-pin-section textarea:focus,
+.edit-pin-section select:focus {
+    border-bottom-color: var(--color-primary);
+    background-color: transparent;
+}
+
+.edit-pin-section textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.edit-pin-section .radio-group {
+    display: block; /* Menggunakan block */
+    margin-bottom: 10px;
+    background-color: var(--color-background-light);
+    padding: 8px 8px 0;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-medium);
+    transition: background-color 0.2s ease;
+    overflow: hidden; /* Clear float */
+}
+.edit-pin-section .radio-group label {
+    float: left; /* Menggunakan float */
+    margin-right: 10px;
+    line-height: 20px; /* Sesuaikan dengan tinggi radio button */
+}
+.edit-pin-section .radio-group input[type="radio"] {
+    float: left; /* Menggunakan float */
+    margin-top: 0; /* Sesuaikan margin */
+    margin-bottom: 0;
+    margin-right: 5px;
+}
+
+.edit-pin-section .category-checkbox-group {
+    display: block; /* Menggunakan block */
+    padding: 8px 8px 0;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+    overflow: hidden; /* Clear float */
+}
+.edit-pin-section .category-checkbox-item {
+    float: left; /* Menggunakan float */
+    margin-right: 10px;
+    margin-bottom: 8px;
+    display: block; /* Menggunakan block */
+}
+.edit-pin-section .category-checkbox-item label {
+    float: left; /* Menggunakan float */
+    line-height: 18px; /* Sesuaikan dengan tinggi checkbox */
+    margin-bottom: 0;
+}
+.edit-pin-section .category-checkbox-item input[type="checkbox"] {
+    float: left; /* Menggunakan float */
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 8px;
+}
+
+.edit-pin-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+.edit-pin-actions button {
+    display: inline-block; /* Menggunakan inline-block */
+    margin-left: 10px;
+}
+
+/* Overlay for mobile sidebar */
+.overlay-mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99; /* Di bawah sidebar, di atas konten */
+    display: none; /* Hidden by default */
+}
+.overlay-mobile-sidebar.active {
+    display: block;
+}
+
+/* Category Image Preview */
+.category-image-preview {
+    max-width: 100px;
+    max-height: 100px;
+    margin-top: 10px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-medium);
+    display: block; /* Menggunakan block */
+    margin-left: auto; /* Pusatkan gambar */
+    margin-right: auto;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .admin-dashboard-layout {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+    .admin-sidebar {
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: -250px;
+        height: 100%;
+        z-index: 100;
+        transition: left 0.3s ease-in-out;
+        float: none;
+        margin-right: 0;
+        border-radius: 0;
+        box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    }
+    .admin-sidebar.active {
+        left: 0;
+    }
+    .admin-content-area {
+        width: 100%;
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    header .hamburger-menu-container {
+        display: block; /* Show hamburger on mobile */
+    }
+    .admin-logout-btn-desktop {
+        display: none; /* Hide desktop logout on mobile */
+    }
+    .overview-stats .stat-card {
+        width: 100%;
+        margin-right: 0;
+    }
+    .image-grid {
+        column-count: 3; /* 3 kolom untuk tablet */
+    }
+    /* Adjust padding for forms and lists on mobile */
+    .admin-form input, .admin-form textarea, .admin-form button,
+    .admin-list .list-item,
+    .image-grid-item {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .admin-list .list-item-img {
+        margin-right: 10px;
+    }
+}
+
+@media (min-width: 993px) { /* Desktop styles */
+    header .hamburger-menu-container {
+        display: none; /* Hide hamburger on desktop */
+    }
+    .admin-logout-btn-desktop {
+        display: inline-block; /* Show desktop logout on desktop */
+    }
+    .admin-profile-summary .logout-button-sidebar {
+        display: none; /* Hide sidebar logout on desktop */
+    }
+}
+
+@media (max-width: 768px) {
+    .image-grid {
+        column-count: 2; /* 2 kolom untuk mobile */
+    }
+}
+
+@media (max-width: 576px) {
+    header .logo {
+        font-size: 20px;
+    }
+    header .icon-button {
+        font-size: 16px;
+        padding: 5px;
+    }
+    header .profile-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+    .admin-sidebar {
+        width: 200px;
+        left: -200px;
+    }
+    .admin-sidebar.active {
+        left: 0;
+    }
+    .admin-sidebar h2 {
+        font-size: 1.5rem;
+    }
+    .admin-tab-button {
+        font-size: var(--font-size-small);
+        padding: 10px 12px;
+    }
+    .admin-tab-button i {
+        font-size: 16px;
+    }
+    .admin-content-area {
+        padding: 15px;
+    }
+    .admin-section h2 {
+        font-size: 1.5rem;
+    }
+    .stat-card h4 {
+        font-size: var(--font-size-small);
+    }
+    .stat-card p {
+        font-size: 2rem;
+    }
+    .admin-form input, .admin-form textarea, .admin-form button {
+        font-size: var(--font-size-small);
+        padding: 10px;
+    }
+    .admin-list .list-item-img {
+        width: 50px;
+        height: 50px;
+    }
+    .admin-list .list-item-title {
+        font-size: var(--font-size-small);
+    }
+    .admin-list .list-item-detail {
+        font-size: 12px;
+    }
+    .admin-list .list-item-actions button {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    .image-grid {
+        column-count: 2; /* Tetap 2 kolom untuk mobile */
+    }
+    .image-grid-item-title {
+        font-size: var(--font-size-small);
+    }
+    .image-grid-item-detail {
+        font-size: 12px;
+    }
+    #message {
+        font-size: var(--font-size-small);
+        padding: 10px 15px;
+    }
+    #customConfirmationModal #modalMessage {
+        font-size: var(--font-size-small);
+    }
+    #customConfirmationModal button {
+        font-size: var(--font-size-small);
+        padding: 8px 15px;
+    }
+}
