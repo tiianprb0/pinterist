@@ -2,6 +2,12 @@
 // PASTIKAN TIDAK ADA KARAKTER APAPUN SEBELUM BARIS INI
 // PASTIKAN FILE INI DI-ENCODE SEBAGAI UTF-8 TANPA BOM
 header('Content-Type: application/json');
+
+// Setel durasi sesi cookie menjadi 24 jam (86400 detik)
+ini_set('session.cookie_lifetime', 86400);
+// Setel durasi maksimum sesi di server menjadi 24 jam (86400 detik)
+ini_set('session.gc_maxlifetime', 86400);
+
 session_start();
 
 require_once 'utils.php'; // Sertakan file utilitas
@@ -225,6 +231,7 @@ if ($method === 'POST') {
                     'email' => $loggedInUser['email'],
                     'canUpload' => $loggedInUser['canUpload'] ?? false,
                     'level' => $loggedInUser['level'] ?? 'tempted',
+                    'firebase_uid' => $loggedInUser['firebase_uid'] ?? null,
                     'needs_username_completion' => $loggedInUser['needs_username_completion'] ?? false
                 ]
             ]);
